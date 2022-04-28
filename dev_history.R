@@ -1,0 +1,13 @@
+usethis::use_build_ignore("dev_history.r")
+usethis::use_build_ignore("tests")
+
+usethis::use_package("dplyr")
+usethis::use_package("ggplot2")
+usethis::use_package("purrr")
+usethis::use_package("stringr")
+usethis::use_package("tidyr")
+usethis::use_package("scales")
+usethis::use_package("ggh4x")
+usethis::use_package("data.table")
+usethis::use_package("ofce")
+usethis::use_package("utils")
