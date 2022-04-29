@@ -13,12 +13,13 @@
 #' @param diff If TRUE, the difference from baseline scenario will be plotted. Default is FALSE
 #' @param title Title of plot to display
 #' @param scenario.names Name of the scenario to display. If NULL the scenario variable will be used
-#' @param start_year First year to plot. If NULL (default) reverts to earliest year available.
-#' @param end_year Last year to plot. If NULL (default) reverts to lastest year available.
+#' @param startyear First year to plot. If NULL (default) reverts to earliest year available.
+#' @param endyear Last year to plot. If NULL (default) reverts to lastest year available.
 #' @param template Theme to use (OFCE or nothing)
 #' @param scenario.diff.ref Name of the reference scenario from which to compute the difference. Default is "baseline"
 #' @param growth.rate Whether to plot growth rate or not. Default is FALSE (ie will plot levels)
 #' @param abs.diff If plot is in difference TRUE will plot absolute difference, FALSE (default) will plot relative difference
+#' @param custom_x_breaks integer(1) permet de choisir manuellement les ticks des années à afficher. Si NULL (défaut) alors utilise l'algorithme de la fonction. Si "R" : algorithme par défaut de R sera utilisé
 #'
 #' @import ggplot2 dplyr tidyr ofce purrr scales
 #'
@@ -31,9 +32,10 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
                           diff = FALSE ,
                           title = "" ,
                           scenario.names = NULL,
-                          start_year = NULL, end_year = NULL,
+                          startyear = NULL, endyear = NULL,
                           template = template_default,
-                          scenario.diff.ref = "baseline", growth.rate = FALSE,abs.diff = FALSE){
+                          scenario.diff.ref = "baseline", growth.rate = FALSE,abs.diff = FALSE,
+                          custom_x_breaks = NULL){
 
   #########################
   ### 0. Running Checks ###
@@ -92,24 +94,24 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
   #### Determining years to plot
 
 
-  if(is.null(start_year) ){
-    start_year = min(data$year)
+  if(is.null(startyear) ){
+    startyear = min(data$year)
   }
 
-  if(start_year < min(data$year)){
-    start_year = min(data$year)
+  if(startyear < min(data$year)){
+    startyear = min(data$year)
   }
 
-  if(is.null(end_year) ){
-    end_year = max(data$year)
+  if(is.null(endyear) ){
+    endyear = max(data$year)
   }
 
-  if(end_year > max(data$year)){
-    end_year = max(data$year)
+  if(endyear > max(data$year)){
+    endyear = max(data$year)
   }
 
 
-  years_to_plot <- unique(c(seq(from = start_year, to  = end_year, by  = 1)))
+  years_to_plot <- unique(c(seq(from = startyear, to  = endyear, by  = 1)))
 
   #############################
   ### 1. Preparing the data ###
@@ -176,6 +178,28 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
   graph_data$name <- str_replace_all(graph_data$name,set_names(scenario.names,scenario))
 
 
+  #### Preparing x axis breaks
+  ## calculating the optimal number of ticks to show
+
+  if(is.null(custom_x_breaks)){
+    n_years <- endyear - startyear
+    algo_x_breaks <- 10
+
+    if(n_years <= 35){ algo_x_breaks <- 5 }
+    if(n_years <= 20){ algo_x_breaks <- 2 }
+    if(n_years <= 10){ algo_x_breaks <- 1 }
+
+
+    break_x_sequence <- seq(from = startyear, to =  endyear, by = algo_x_breaks)
+
+  }else{
+    if(is.numeric(custom_x_breaks)){
+      break_x_sequence <- seq(from =  startyear, to = endyear, by = custom_x_breaks)
+
+    }else{
+      break_x_sequence <- waiver()}
+
+  }
 
 
 
@@ -228,7 +252,9 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
   if(growth.rate== FALSE & abs.diff == FALSE & diff == TRUE ){
     res_plot<-res_plot +scale_y_continuous(labels = scales::percent_format())
   }
+
   res_plot <- res_plot +
+    scale_x_continuous(breaks = break_x_sequence)+
 
 
     theme(axis.title.y.right = element_blank(),
@@ -248,6 +274,9 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 
           panel.grid.major.y = element_line(colour = color_gridlines,size = 0.5,linetype = "dashed"),
           panel.grid.minor.y = element_line(colour = color_gridlines,size = 0.5,linetype = "dashed"),
+
+
+          axis.ticks = element_line(size = 0.5, colour = "grey42")
 
     )
 
@@ -269,8 +298,8 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 #' @param diff If TRUE, the difference from baseline scenario will be plotted. Default is FALSE
 #' @param title Title of plot to display
 #' @param scenario.names Name of the scenario to display. If NULL the scenario variable will be used
-#' @param start_year First year to plot. If NULL (default) reverts to earliest year available.
-#' @param end_year Last year to plot. If NULL (default) reverts to lastest year available.
+#' @param startyear First year to plot. If NULL (default) reverts to earliest year available.
+#' @param endyear Last year to plot. If NULL (default) reverts to lastest year available.
 #' @param template Theme to use (OFCE or nothing)
 #' @param interval interval of years to plot
 #' @param corner_text y-axis legend to appear in top left corner
@@ -286,7 +315,7 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
                             title = "" ,
                             scenario.names = NULL,
                             interval = 10,
-                            start_year = NULL, end_year = NULL,
+                            startyear = NULL, endyear = NULL,
                             scenario.diff.ref = "baseline",
                             template = template_default,
                             corner_text = "in Millions"){
@@ -355,24 +384,24 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
     interval <- round(interval,0)
   }
 
-  if(is.null(start_year) ){
-    start_year = min(data$year)
+  if(is.null(startyear) ){
+    startyear = min(data$year)
   }
 
-  if(start_year < min(data$year)){
-    start_year = min(data$year)
+  if(startyear < min(data$year)){
+    startyear = min(data$year)
   }
 
-  if(is.null(end_year) ){
-    end_year = max(data$year)
+  if(is.null(endyear) ){
+    endyear = max(data$year)
   }
 
-  if(end_year > max(data$year)){
-    end_year = max(data$year)
+  if(endyear > max(data$year)){
+    endyear = max(data$year)
   }
 
 
-  years_to_plot <- unique(c(seq(from = start_year, to  = end_year, by  = interval)))
+  years_to_plot <- unique(c(seq(from = startyear, to  = endyear, by  = interval)))
 
   #############################
   ### 1. Preparing the data ###

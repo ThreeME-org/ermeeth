@@ -13,8 +13,8 @@ stacked_sc_plot(
   title = "",
   scenario.names = NULL,
   interval = 10,
-  start_year = NULL,
-  end_year = NULL,
+  startyear = NULL,
+  endyear = NULL,
   scenario.diff.ref = "baseline",
   template = template_default,
   corner_text = "in Millions"
@@ -37,9 +37,9 @@ stacked_sc_plot(
 
 \item{interval}{interval of years to plot}
 
-\item{start_year}{First year to plot. If NULL (default) reverts to earliest year available.}
+\item{startyear}{First year to plot. If NULL (default) reverts to earliest year available.}
 
-\item{end_year}{Last year to plot. If NULL (default) reverts to lastest year available.}
+\item{endyear}{Last year to plot. If NULL (default) reverts to lastest year available.}
 
 \item{scenario.diff.ref}{Name of the reference scenario from which to compute the difference. Default is "baseline"}
 

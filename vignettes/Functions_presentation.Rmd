@@ -28,8 +28,8 @@ data <- oilprice_fra
 
 scenario_name <- "oilprice_fra"
 template_default <-  "ofce"
-start_year = 2015
-end_year = 2040
+start_year = 2020
+end_year = 2050
 ```
 
 # Plot functions
@@ -37,9 +37,13 @@ end_year = 2040
 ## Simple plots 
 ```{r Simple Plot}
 label_macro <- c("Gross domestic Production", "Households consumption", "Investment", "Public spendings")
-simpleplot(data,c("GDP", "CH", "I", "G"), label_macro, startyear =  2015,endyear =  2030, titleplot = "GDP and its components  (in difference from baseline)")
+simpleplot(data,c("GDP", "CH", "I", "G"), label_macro, startyear =  start_year,endyear =  end_year, titleplot = "GDP and its components  (in difference from baseline)")
 
-simpleplot(data,c("RDEBT_G_VAL"),label_series = "Public Debt", startyear = start_year, endyear = end_year, "diff", titleplot = "Public Account (in GDP points, difference from baseline)")
+simpleplot(data,c("RDEBT_G_VAL"),label_series = "Public Debt", startyear = start_year, endyear = 2030, "diff", titleplot = "Public Account (in GDP points, difference from baseline)" , percent_label  = FALSE)
+
+simpleplot(data,c("RDEBT_G_VAL"),label_series = "Public Debt", startyear = start_year, endyear = 2050, "diff", titleplot = "Public Account (in GDP points, difference from baseline)" , percent_label  = FALSE)
+simpleplot(data,c("RDEBT_G_VAL"),label_series = "Public Debt", startyear = start_year, endyear = 2050, "diff", titleplot = "Public Account (in GDP points, difference from baseline)" , percent_label  = FALSE,custom_x_breaks = 3)
+simpleplot(data,c("RDEBT_G_VAL"),label_series = "Public Debt", startyear = start_year, endyear = 2050, "diff", titleplot = "Public Account (in GDP points, difference from baseline)" , percent_label  = FALSE,custom_x_breaks = "R")
 ```
 
 ## Contrib plot
@@ -87,7 +91,7 @@ stacked_sc_plot(data_CO2,"EMS_CO2",interval = 5, diff = TRUE, title = "CO2 emiss
 ### Sector curve plots
 
 ```{r curve sector plots}
-curve_sc_plot(data,"Y", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Production by sector (in difference from baseline)")
+curve_sc_plot(data,"Y", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE,startyear = start_year,endyear = 2030, title = "Production by sector (in difference from baseline)")
 
 ```
 

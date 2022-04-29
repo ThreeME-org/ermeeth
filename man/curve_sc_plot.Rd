@@ -12,12 +12,13 @@ curve_sc_plot(
   diff = FALSE,
   title = "",
   scenario.names = NULL,
-  start_year = NULL,
-  end_year = NULL,
+  startyear = NULL,
+  endyear = NULL,
   template = template_default,
   scenario.diff.ref = "baseline",
   growth.rate = FALSE,
-  abs.diff = FALSE
+  abs.diff = FALSE,
+  custom_x_breaks = NULL
 )
 }
 \arguments{
@@ -35,9 +36,9 @@ curve_sc_plot(
 
 \item{scenario.names}{Name of the scenario to display. If NULL the scenario variable will be used}
 
-\item{start_year}{First year to plot. If NULL (default) reverts to earliest year available.}
+\item{startyear}{First year to plot. If NULL (default) reverts to earliest year available.}
 
-\item{end_year}{Last year to plot. If NULL (default) reverts to lastest year available.}
+\item{endyear}{Last year to plot. If NULL (default) reverts to lastest year available.}
 
 \item{template}{Theme to use (OFCE or nothing)}
 
@@ -46,6 +47,8 @@ curve_sc_plot(
 \item{growth.rate}{Whether to plot growth rate or not. Default is FALSE (ie will plot levels)}
 
 \item{abs.diff}{If plot is in difference TRUE will plot absolute difference, FALSE (default) will plot relative difference}
+
+\item{custom_x_breaks}{integer(1) permet de choisir manuellement les ticks des années à afficher. Si NULL (défaut) alors utilise l'algorithme de la fonction. Si "R" : algorithme par défaut de R sera utilisé}
 }
 \value{
 a ggplot

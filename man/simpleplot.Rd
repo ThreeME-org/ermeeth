@@ -15,7 +15,9 @@ simpleplot(
   decimal = 0.1,
   titleplot = "",
   scenario = scenario_name,
-  template = template_default
+  template = template_default,
+  percent_label = TRUE,
+  custom_x_breaks = NULL
 )
 }
 \arguments{
@@ -40,6 +42,10 @@ simpleplot(
 \item{scenario}{character(1) string, nom du scénario à plotter, doit être dans la base de données.}
 
 \item{template}{character(1) string, nom du thème ggplot retenu pour le plot}
+
+\item{percent_label}{boolean(1) permet d'afficher ou non le signe des pourcentage  lorsque l'échelle est en pourcentage, TRUE par défaut.}
+
+\item{custom_x_breaks}{integer(1) permet de choisir manuellement les ticks des années à afficher. Si NULL (défaut) alors utilise l'algorithme de la fonction. Si "R" : algorithme par défaut de R sera utilisé.}
 }
 \value{
 un ggplot
