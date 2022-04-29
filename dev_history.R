@@ -1,5 +1,9 @@
 usethis::use_build_ignore("dev_history.r")
 usethis::use_build_ignore("tests")
+usethis::use_vignette("Functions_presentation")
+usethis::use_gpl3_license()
+###to build and update
+#### Check if ermeeth is installed
 
 usethis::use_package("dplyr")
 usethis::use_package("ggplot2")
@@ -11,3 +15,7 @@ usethis::use_package("ggh4x")
 usethis::use_package("data.table")
 usethis::use_package("ofce")
 usethis::use_package("utils")
+usethis::use_package("colorspace")
+
+
+devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")

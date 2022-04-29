@@ -14,7 +14,7 @@
 #' @param template character(1) string, nom du thème ggplot retenu pour le plot
 #'
 #' @return un ggplot
-#' @import ggh4x ggplot2 dplyr tidyr scales ofce
+#' @import ggh4x ggplot2 dplyr tidyr scales ofce colorspace
 #'
 #' @export
 contrib.sub.plot <- function(data,
@@ -42,7 +42,7 @@ contrib.sub.plot <- function(data,
   series <- unique(data.1$variable)
 
   # Palette de n couleurs (nombre de secteurs distingués)
-  pal <- sequential_hcl(n = length(series), h = c(-80, 78), c = c(60, 75, 55), l = c(40, 91), power = c(0.8, 1), register = )
+  pal <- colorspace::sequential_hcl(n = length(series), h = c(-80, 78), c = c(60, 75, 55), l = c(40, 91), power = c(0.8, 1), register = )
 
 
 

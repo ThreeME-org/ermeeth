@@ -23,7 +23,6 @@ selectseries <- function(data,
 
   if (is.null(startyear)){startyear  =  min(data$year)}
   if (is.null(endyear)){endyear  =  max(data$year)}
-  if (length(scenarios) > 0 ){stop(message = "Only one scenario must be specified.")}
 
   selection <- data %>%
 
