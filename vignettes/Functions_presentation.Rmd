@@ -21,11 +21,11 @@ library(ggplot2)
 library(tidyr)
 library(ofce)
 library(stringr)
+library(colorspace)
 ```
 
 ```{r dataload}
 data <- oilprice_fra
-
 scenario_name <- "oilprice_fra"
 template_default <-  "ofce"
 start_year = 2020
@@ -51,23 +51,41 @@ simpleplot(data,c("RDEBT_G_VAL"),label_series = "Public Debt", startyear = start
 ### General contrib plot
 
 ```{r contrib plot}
-GDP_comp <- c( "CH","X","M", "I", "G","DS")
-GDP_comp_label <- c( "Households consumption","Exports","Imports", "Investment", "Public spending","Stock variation")
+GDP_comp <- c( "CH","X","M", "I", "G")
+GDP_comp_label <- c( "Households consumption","Exports","Imports", "Investment", "Public spending")
 
+
+# Between two selected scenarios, contributions to yearly growth rate difference (in pp)
 data_plot <-  contrib(data,"GDP", GDP_comp, scenar = c("baseline",scenario_name))
+contrib.plot(data_plot, series = GDP_comp, 
+             label_series = GDP_comp_label,
+             startyear = 2020,
+             titleplot = "Contributions to GDP growth (in relative deviation from baseline)")
 
-
+# For a selected scenario, contributions to yearly growth rate (in pp)
+data_plot <-  contrib(data,"GDP", GDP_comp, scenar = c("baseline",scenario_name), indicator = "gr.diff")
 
 contrib.plot(data_plot, series = GDP_comp, 
              label_series = GDP_comp_label,
-                      startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)")
+             line_tot = TRUE,
+             startyear = 2020,
+             titleplot = "Contributions to GDP growth deviation (in difference in pp from baseline)")
+
+# For a selected scenario, contributions to yearly growth rate (in pp)
+data_plot <-  contrib(data,"GDP", GDP_comp, scenar = c( "oilprice_fra"), indicator = "gr.diff")
+
+contrib.plot(data_plot, series = GDP_comp, 
+             label_series = GDP_comp_label,
+             line_tot = TRUE,
+             startyear = 2020,
+             titleplot = "Contributions to GDP growth rate (in pp)")
 
 ```
 
 ### Sector contrib plots
 ```{r sector contrib}
 data_plot <- contrib.sub(data,var1 =  "Y",
-                        group_type = "sector", scenar = c("baseline", scenario_name))
+                         group_type = "sector", scenar = c("baseline", scenario_name))
 
 contrib.sub.plot(data_plot, template = "ofce", startyear = 2020, endyear = 2050, line_tot =  TRUE, titleplot = "Total production and sectorial decomposition  (in difference from baseline)")
 

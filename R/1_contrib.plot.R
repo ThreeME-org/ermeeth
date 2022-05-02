@@ -1,8 +1,8 @@
-## contribplot requires selectseries to be loaded
+## contribplot requires contrib to be loaded
 
-#' Simple plot
+#' contrib.plot
 #'
-#' Créer un graphe de type geom_line à partir d'un vecteur de variables issues d'une base de données
+#' Créer un graphe de type geom_bar à partir d'un vecteur de variables issues d'une base de données
 #' D'autres arguments de la fonction permette de choisir le type d'indicateur et de compléter les labels
 #'
 #' @param data double(1) a dataframe created with the function loadResults()
@@ -20,29 +20,30 @@
 #' @export
 
 contrib.plot <- function(data,
-                       series,
-                       label_series = NULL,
-                       startyear = NULL,
-                       endyear = NULL,
-                       unit = "percent",
-                       decimal = 0.1,
-                       titleplot = "",
-                       template=template_default) {
+                         series = NULL,
+                         label_series = NULL,
+                         line_tot = FALSE,
+                         startyear = NULL,
+                         endyear = NULL,
+                         unit = "percent",
+                         decimal = 0.1,
+                         titleplot = "",
+                         template = template_default) {
 
   # To debug the function step by step, activate line below
   # browser()
-
 
   # series <- as.list(series)
 
   ## Format of the output plot
   format_img <- c("svg")  # Choose format: "png", "svg"
 
+  # Palette de 5 couleurs en attendant d'en rajouter dans celles OFCE
+  pal <- c("#fbc572", "#fb8072","#68a6c5","#466963", "#6d3535")
 
-
-  # Palette de 4 couleurs en attendant d'en rajouter dans celles OFCE
-  pal <- c("#fbc572", "#fb8072","#68a6c5","#466963")
-
+  if (is.null(series)){
+    series = data$variable %>% unique()
+  }
 
   if (is.null(label_series)){
     label_series =  series
@@ -53,28 +54,44 @@ contrib.plot <- function(data,
 
   data <- data %>% dplyr::filter(year > startyear & year < endyear)
 
-  plotseries <- ggplot(data = data , aes(x = year, y = value, fill = variable)) +
-    geom_bar(stat= "identity", width = 0.9, position = position_stack(reverse = TRUE)) +
-    scale_y_continuous(labels = scales::percent_format(accuracy = decimal)) +
-    scale_fill_manual(values = pal[1:length(series)], limits = series,
-                       labels = label_series)  +
-    labs(x = "", title = titleplot)
+  plot <- ggplot2::ggplot() +
+    ggplot2::geom_bar(data = data , aes(x = year, y = value, fill = variable),
+             stat= "identity", width = 0.9, position = position_stack(reverse = TRUE)) +
+    ggplot2::scale_fill_manual(values = pal[1:length(series)], limits = series,
+                      labels = label_series)  +
+    ggplot2::labs(x = "", title = titleplot)
 
 
-  if(unit != "percent") {
-    plotseries <- plotseries +
-      scale_y_continuous(labels = scales::label_number(accuracy = decimal, scale = unit))
+   if(unit == "percent") {
+    plot <- plot +
+      ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = decimal))
   }
 
+  if(unit != "percent") {
+    plot <- plot +
+      ggplot2::scale_y_continuous(labels = scales::label_number(accuracy = decimal, scale = unit))
+  }
+
+  if (line_tot == TRUE){
+
+    data.2 <- data %>% dplyr::filter(year > startyear & year < endyear) %>%
+      tidyr::pivot_wider(names_from = variable, values_from = value) %>%
+      dplyr::rowwise() %>%
+      dplyr::mutate(value = sum(dplyr::c_across(series))) %>%
+      dplyr::select(year, value)
+
+    plot <-  plot +
+      ggplot2::geom_line(data = data.2 , aes(x = year, y = value),  size = .4)
+  }
   ifelse(template =="ofce",
 
-         plotseries <- plotseries +  ofce::theme_ofce(base_family = ""),
+         plot <- plot +  ofce::theme_ofce(base_family = ""),
 
-         plotseries <- plotseries +  theme(legend.position = "bottom")
+         plot <- plot +  ggplot2::theme(legend.position = "bottom")
   )
 
-  plotseries <- plotseries + theme(legend.title = element_blank(),
+  plot <- plot + ggplot2::theme(legend.title = element_blank(),
                                    axis.title.y = element_blank() )
 
-  plotseries
+  plot
 }
