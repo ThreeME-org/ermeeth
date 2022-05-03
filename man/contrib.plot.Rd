@@ -2,12 +2,13 @@
 % Please edit documentation in R/1_contrib.plot.R
 \name{contrib.plot}
 \alias{contrib.plot}
-\title{Simple plot}
+\title{contrib.plot}
 \usage{
 contrib.plot(
   data,
-  series,
+  series = NULL,
   label_series = NULL,
+  line_tot = FALSE,
   startyear = NULL,
   endyear = NULL,
   unit = "percent",
@@ -22,6 +23,8 @@ contrib.plot(
 \item{series}{character string, vecteur avec le noms des variables qui seront plottées}
 
 \item{label_series}{character string, vecteur avec le label des variables qui seront plottées}
+
+\item{line_tot}{boolean. Default FALSE . TRUE will display the line for the main variable.}
 
 \item{startyear}{numeric(1), date de début de la période plottée}
 
@@ -39,6 +42,6 @@ contrib.plot(
 ggplot
 }
 \description{
-Créer un graphe de type geom_line à partir d'un vecteur de variables issues d'une base de données
+Créer un graphe de type geom_bar à partir d'un vecteur de variables issues d'une base de données
 D'autres arguments de la fonction permette de choisir le type d'indicateur et de compléter les labels
 }

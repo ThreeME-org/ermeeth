@@ -4,7 +4,15 @@
 \alias{contrib}
 \title{Compute the contributions of component variables to the growth (or diff growth) of an aggregated variable}
 \usage{
-contrib(data, var1, var2, scenar = scenarios, check_digit = 3, neg.value = "M")
+contrib(
+  data,
+  var1,
+  var2,
+  indicator = "rel.diff",
+  scenar = scenarios,
+  check_digit = 3,
+  neg.value = "M"
+)
 }
 \arguments{
 \item{data}{a ThreeMe long form data.frame}
@@ -13,9 +21,11 @@ contrib(data, var1, var2, scenar = scenarios, check_digit = 3, neg.value = "M")
 
 \item{var2}{character vector. component variables of the aggregate variable}
 
+\item{indicator}{character (length 1) the choice of indicator (relative deviation rel.diff, growth rate difference; gr.rel)}
+
 \item{scenar}{name of scenarios (either one unique scenario or one scenario + baseline), must be in the data}
 
-\item{check_digit}{decimal precision of checks}
+\item{check_digit}{numeric (length 1) precision of the check}
 
 \item{neg.value}{component variables which contribution should be substracted i.e. imports on GDP}
 }

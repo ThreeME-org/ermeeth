@@ -11,6 +11,7 @@
 #' @param scenar name of scenarios (either one unique scenario or one scenario + baseline), must be in the data
 #' @param indicator  character (length 1) the choice of indicator (relative deviation rel.diff, growth rate difference; gr.rel)
 #' @param neg.value component variables which contribution should be substracted i.e. imports on GDP
+#' @param check_digit numeric (length 1) precision of the check
 #'
 #' @return a data.frame
 #' @export

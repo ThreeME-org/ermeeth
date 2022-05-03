@@ -14,6 +14,7 @@
 #' @param decimal numeric(1) , choix de la décimale retenue après la virgule
 #' @param titleplot character(1) string , titre du graphique
 #' @param template character(1) string, nom du thème ggplot retenu pour le plot
+#' @param line_tot boolean. Default FALSE . TRUE will display the line for the main variable.
 #'
 #' @return  ggplot
 #' @import ggh4x ggplot2 dplyr tidyr scales
