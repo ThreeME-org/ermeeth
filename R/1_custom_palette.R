@@ -4,11 +4,10 @@ library(colorspace)
 
 
 
-custom.palette <- function(n = NULL,
+custom.palette <- function(n = 6,
                            bridge = TRUE,
                            sub.bridge = FALSE,
-                           type = "sectors")
-{
+                           type = "sectors"){
   # browser()
 
   # Palette of OFCE diverging colors. Base to differentiate sectors
@@ -34,8 +33,7 @@ custom.palette <- function(n = NULL,
 
 
 
-  if (bridge == TRUE)
-  {
+  if (bridge == TRUE){
 
     source("data/bridge_c28_s32.R")
 
@@ -52,7 +50,7 @@ custom.palette <- function(n = NULL,
     }
 
     # Option to get the full set of sectors/commodities (before bridging)
-    if (sub.bridge = TRUE){
+    if (sub.bridge == TRUE){
 
       pal_list <- list()
 
@@ -86,7 +84,8 @@ custom.palette <- function(n = NULL,
       print(pal)
 
     # Option to get the subset of sectors/commodities (after bridging)
-    } else { pal <- pal_base[seq(1,n.brd)]
+    } else {
+      pal <- pal_base[seq(1,n.brd)]
     print(pal)
     }
   }  else {
@@ -98,4 +97,4 @@ custom.palette <- function(n = NULL,
 
 
 
-custom.palette(bridge= FALSE,sub.bridge = FALSE, "sectors")
+custom.palette(n = 6,bridge= FALSE,sub.bridge = FALSE, "sectors")
