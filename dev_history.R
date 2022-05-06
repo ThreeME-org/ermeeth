@@ -16,6 +16,8 @@ usethis::use_package("data.table")
 usethis::use_package("ofce")
 usethis::use_package("utils")
 usethis::use_package("colorspace")
+usethis::use_package("flextable")
+usethis::use_package("officer")
 
 
 devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")

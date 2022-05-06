@@ -161,7 +161,7 @@ table.output <- function(data = data,
   output
 }
 
-
-table.output(data = data, scenario = "oilprice_fra",langue = "en",
-full.table = TRUE, export.doc = FALSE, title = 'Gros test')
+#
+# table.output(data = data, scenario = "oilprice_fra",langue = "en",
+# full.table = TRUE, export.doc = FALSE, title = 'Gros test')
 

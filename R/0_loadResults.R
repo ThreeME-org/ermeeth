@@ -29,6 +29,7 @@
 #' @param bridge_s bridge for sector to be used if aggregation by sector is requested. A bridge is a list of vectors. The names specify the larger aggregation group, and the elements of the vectors are the sector codes that belong in this larger group.
 #' @param names_c a data.frame used only if no aggregation is requested for commodities. One column "code" should contain the codes used in the commodity variables and a column "name" contains the explicit name.
 #' @param names_s a data.frame used only if no aggregation is requested for sectors. One column "code" should contain the codes used in the sector variables and a column "name" contains the explicit name.
+#' @param csv_folder path where to source the csv from simulations
 #'
 #' @importFrom data.table fread
 #' @importFrom stats na.omit

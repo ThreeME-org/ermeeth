@@ -14,7 +14,8 @@ loadResults(
   bridge_c = NULL,
   bridge_s = NULL,
   names_s = NULL,
-  names_c = NULL
+  names_c = NULL,
+  csv_folder = "csv"
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ loadResults(
 \item{names_s}{a data.frame used only if no aggregation is requested for sectors. One column "code" should contain the codes used in the sector variables and a column "name" contains the explicit name.}
 
 \item{names_c}{a data.frame used only if no aggregation is requested for commodities. One column "code" should contain the codes used in the commodity variables and a column "name" contains the explicit name.}
+
+\item{csv_folder}{path where to source the csv from simulations}
 }
 \value{
 A data.frame with the following columns:
