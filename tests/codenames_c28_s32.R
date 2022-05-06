@@ -71,7 +71,14 @@ c('Wind electricity generation','sewi'),
 c('Solar electricity generation','seso'),
 c('Hydroelectric electricity generation','sehy'),
 c('Cogeneration (CHP) electricity generation and other heat supply','sech'),
-c('Electricity - Others','seot')) %>%
+c('Electricity - Others','seot'),
+c('Agriculture','S001'),
+c('Energy intensive industry','S002'),
+c('Other industry','S003'),
+c('Construction','S004'),
+c('Transport','S005'),
+c('Services','S006'),
+c('Fossil based energy','S007'),
+c('Other energy','S008')
+) %>%
   as.data.frame() %>% rename(name = V1,code = V2)
-
-

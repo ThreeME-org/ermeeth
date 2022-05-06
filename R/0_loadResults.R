@@ -51,7 +51,8 @@ loadResults <- function(scenarios,
                         bridge_c = NULL,
                         bridge_s = NULL,
                         names_s = NULL,
-                        names_c = NULL) {
+                        names_c = NULL,
+                        csv_folder = "csv") {
   # To debug the function step by step, activate line below
 
   # browser()
@@ -66,6 +67,13 @@ loadResults <- function(scenarios,
     by_sector <- FALSE
   }
 
+  if(is.null(names_s)){
+    stop(message("Please provide a sector name and code table."))
+  }
+  if(is.null(names_c)){
+    stop(message("Please provide a commodity name and code table."))
+  }
+
   # Ensure that there's no csv extension
   scenarios<- scenarios %>% str_replace("\\.csv$", "")
 
@@ -73,7 +81,7 @@ loadResults <- function(scenarios,
   data_1 <-1:length(scenarios) %>%
 
     lapply(function(i) {
-      res <- data.table::fread(paste0("csv/",scenarios[i],".csv"),data.table = FALSE) %>%
+      res <- data.table::fread(file.path(csv_folder,paste0(scenarios[i],".csv")),data.table = FALSE) %>%
         stats::na.omit %>%
         tidyr::pivot_longer(cols = !V1  ) %>% as.data.frame() %>%
         rename(year = V1, variable = name) %>%
@@ -124,13 +132,16 @@ loadResults <- function(scenarios,
     n_sectors <- length(bridge_s)
     ##Create table with sub sector, sector name and sector id
 
-    bridge_sector_table <- data.frame(sector_id = paste0("S",
-                                                         formatC(1:n_sectors, width = 3, format = "d", flag = "0") ) ,
-                                      sector = names(bridge_s)) %>%
+    bridge_sector_table <- data.frame(sector_id = names(bridge_s) ) %>%
       full_join(bridge_s
-                %>% imap(~data.frame(sector = .y,subsector =.x)) %>%
-                  reduce(rbind), by ="sector" ) %>%
+                %>% imap(~data.frame(sector_id = .y,subsector =.x)) %>%
+                  reduce(rbind), by ="sector_id" ) %>%
       mutate(subsector = toupper(subsector))
+
+    super_sector_names <- names_s %>% filter(code %in% names(bridge_s)) %>%
+      rename(sector_id = code, sector = name)
+
+    bridge_sector_table <- bridge_sector_table %>% left_join(super_sector_names, by = "sector_id")
 
     ## replace for all variables sub sector instead of sector id ,
     data_1$variable <- str_replace_all(data_1$variable,
@@ -296,12 +307,17 @@ loadResults <- function(scenarios,
 
     ##Create table with sub commodity, commodity name and commodity id
 
-    bridge_commodity_table <- data.frame(commodity_id = paste0("C", formatC(1:n_commodities, width = 3, format = "d", flag = "0") ) ,
-                                         commodity = names(bridge_c)) %>%
-      full_join(bridge_c %>%
-                  imap(~data.frame(commodity = .y,subcommodity =.x)) %>% reduce(rbind),
-                by ="commodity" ) %>%
+    bridge_commodity_table <- data.frame(commodity_id = names(bridge_c) ) %>%
+      full_join(bridge_c
+                %>% imap(~data.frame(commodity_id = .y,subcommodity =.x)) %>%
+                  reduce(rbind), by ="commodity_id" ) %>%
       mutate(subcommodity = toupper(subcommodity))
+
+    super_commodity_names <- names_c %>% filter(code %in% names(bridge_c)) %>%
+      rename(commodity_id = code, commodity = name)
+
+    bridge_commodity_table <- bridge_commodity_table %>% left_join(super_commodity_names, by = "commodity_id")
+
 
     ## replace for all variables sub commodity instead of commodity id ,
     data_1$variable <- str_replace_all(data_1$variable,
