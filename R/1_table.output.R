@@ -6,6 +6,7 @@
 #' @param export.doc boolean if TRUE, export a docx into the folder results
 #' @param title character(1) string of character for the title of the table
 #'
+#' @import flextable officer
 #' @return a flextable
 #'
 #' @examples
@@ -16,9 +17,9 @@
 
 table.output <- function(data = data,
                          scenario = NULL,
-                         full.table = TRUE,
                          export.doc = TRUE,
                          langue = NULL,
+                         full.table = TRUE,
                          title = NULL){
 
   # General conditions
@@ -29,7 +30,7 @@ table.output <- function(data = data,
     title = paste0("scenario:", scenario)
   }
   if (is.null(langue)){
-    langue = "fr"
+    langue = "en"
   }
   ## Choice of years to include in the table
   years <- c("2022", "2023","2024","2025","2027", "2050")
@@ -61,6 +62,7 @@ table.output <- function(data = data,
     `colnames<-`(years_label)
 
   if (full.table == TRUE){
+
     #Variable en diff absolue
     var_list.2 <- c("F_L")
     if (langue == "fr"){
@@ -126,7 +128,7 @@ table.output <- function(data = data,
       footnote.tab <- c("(a): In relative deviation wrt baseline")
     }
     j.tab <- 1
-
+}
     ## Flextable
     output <- flextable::flextable(data_table) %>%
       width(width = 2.75, j = 1)
@@ -141,7 +143,6 @@ table.output <- function(data = data,
     output <-  flextable::set_caption(output, caption = title,
                                       style = "Table Caption")
 
-  }
 
   if (export.doc == TRUE){
     ## Export in doc and csv formats
@@ -161,6 +162,6 @@ table.output <- function(data = data,
 }
 
 
-table.output(data = data, scenario = "oilprice_fra",
+table.output(data = data, scenario = "oilprice_fra",langue = "en",
 full.table = TRUE, export.doc = FALSE, title = 'Gros test')
 
