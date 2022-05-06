@@ -131,13 +131,15 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
   ##### Calcuting growth rates
 
   if(growth.rate == TRUE){
-  all.scen <- scenario
-  if(diff == TRUE){all.scen <- unique(c(all.scen,scenario.diff.ref))}
+    all.scen <- scenario
+    if(diff == TRUE){all.scen <- unique(c(all.scen,scenario.diff.ref))}
 
-      data <-data %>%
+    data <-data %>%
       dplyr::filter(variable %in% liste_var) %>%
-      group_by(variable) %>% arrange(variable, year) %>%
-      mutate_at(all.scen,~(.x/dplyr::lag(.x) - 1)) %>% ungroup()
+      dplyr::group_by(variable) %>%
+      dplyr::arrange(variable, year) %>%
+      dplyr::mutate_at(all.scen,~(.x/dplyr::lag(.x) - 1)) %>%
+      dplyr::ungroup()
   }
 
   ##### No diffs
@@ -147,25 +149,27 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 
       dplyr::filter(variable %in% liste_var) %>%
       dplyr::filter(year %in% years_to_plot) %>%
-
-      pivot_longer(cols = all_of(scenario))  %>% mutate(grouping = paste0(variable,"_",name))
+      tidyr::pivot_longer(cols = all_of(scenario))  %>%
+      dplyr::mutate(grouping = paste0(variable,"_",name))
   }else{
 
     ##### With diffs
     if (abs.diff== FALSE){
-    graph_data <- data %>%
+      graph_data <- data %>%
 
-      dplyr::filter(variable %in% liste_var) %>%
-      dplyr::filter(year %in% years_to_plot) %>%
-          mutate_at(.,scenario, ~((.x/get(scenario.diff.ref))-1))  %>%
-      pivot_longer(cols = all_of(scenario))  %>% mutate(grouping = paste0(variable,"_",name))
+        dplyr::filter(variable %in% liste_var) %>%
+        dplyr::filter(year %in% years_to_plot) %>%
+        dplyr::mutate_at(.,scenario, ~((.x/get(scenario.diff.ref))-1))  %>%
+        tidyr::pivot_longer(cols = all_of(scenario))  %>%
+        dplyr::mutate(grouping = paste0(variable,"_",name))
     }else{
       graph_data <- data %>%
 
         dplyr::filter(variable %in% liste_var) %>%
         dplyr::filter(year %in% years_to_plot) %>%
-            mutate_at(.,scenario, ~(.x-get(scenario.diff.ref)))  %>%
-        pivot_longer(cols = all_of(scenario))  %>% mutate(grouping = paste0(variable,"_",name))
+        dplyr::mutate_at(.,scenario, ~(.x-get(scenario.diff.ref)))  %>%
+        tidyr::pivot_longer(cols = all_of(scenario))  %>%
+        dplyr::mutate(grouping = paste0(variable,"_",name))
     }
 
 
@@ -175,8 +179,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 
   graph_data <- as.data.frame(graph_data)
   graph_data$CAT <- graph_data[,tolower(division_type)]
-  graph_data$name <- str_replace_all(graph_data$name,set_names(scenario.names,scenario))
-
+  graph_data$name <- stringr::str_replace_all(graph_data$name, purrr::set_names(scenario.names,scenario))
 
   #### Preparing x axis breaks
   ## calculating the optimal number of ticks to show
@@ -188,7 +191,6 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
     if(n_years <= 35){ algo_x_breaks <- 5 }
     if(n_years <= 20){ algo_x_breaks <- 2 }
     if(n_years <= 10){ algo_x_breaks <- 1 }
-
 
     break_x_sequence <- seq(from = startyear, to =  endyear, by = algo_x_breaks)
 
@@ -202,8 +204,6 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
   }
 
 
-
-
   ########################
   ### 2. Drawing Plots ###
   ########################
@@ -212,49 +212,47 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
   color_gridlines = "gray84"
   ##Differentiate plot arguments according to number of scenario_name
   if(n.scen > 1){
-    res_plot  <- ggplot(data=graph_data,
-                        aes(group= c(grouping),y = value, x = year,color= CAT)) +
-      geom_point(size=0)+
-      geom_line(aes(linetype=name))  +
-
-      labs(linetype = "Scenario" ) +
-
-      scale_linetype_manual(values=c("dashed","solid")) ##order automatically later
+    res_plot  <- ggplot2::ggplot(data=graph_data,
+                                 aes(group= c(grouping),
+                                     y = value, x = year,color= CAT)) +
+      ggplot2::geom_point(size=0)+
+      ggplot2::geom_line(aes(linetype=name))  +
+      ggplot2::labs(linetype = "Scenario" ) +
+      ggplot2::scale_linetype_manual(values=c("dashed","solid")) ##order automatically later
 
   }else{
-    res_plot  <- ggplot(data=graph_data,
-                        aes(group= c(grouping),y = value, x = year,color= CAT)) +
-      geom_point(size=0)+
-      geom_line()
+    res_plot  <- ggplot2::ggplot(data=graph_data,
+                                 aes(group= c(grouping),y = value, x = year,color= CAT)) +
+      ggplot2::geom_point(size=0)+
+      ggplot2::geom_line()
   }
 
   ##Common arguments to both types
 
   res_plot <-  res_plot +
-
-    labs(title = title,
-         color = "" ) +
-    ylab("")+xlab("") +
-    scale_color_brewer(palette = "Dark2")+
-    theme(legend.position = "bottom")
+    ggplot2::labs(title = title,
+                  color = "" ) +
+    ggplot2::ylab("") + ggplot2::xlab("") +
+    ggplot2::scale_color_brewer(palette = "Dark2")+
+    ggplot2::theme(legend.position = "bottom")
 
   if(template =="ofce"){
-    res_plot <- res_plot +  ofce::theme_ofce(base_family = "")
+    res_plot <- res_plot + ofce::theme_ofce(base_family = "")
   }
 
-   ##
+  ##
   if(growth.rate== TRUE & abs.diff == FALSE){
-    res_plot<-res_plot +scale_y_continuous(labels = scales::percent_format())
+    res_plot <- res_plot + ggplot2::scale_y_continuous(labels = scales::percent_format())
   }
   if(growth.rate== TRUE & abs.diff == TRUE){
-    res_plot<-res_plot +scale_y_continuous(labels = scales::percent_format(suffix = ""))
+    res_plot <- res_plot + ggplot2::scale_y_continuous(labels = scales::percent_format(suffix = ""))
   }
   if(growth.rate== FALSE & abs.diff == FALSE & diff == TRUE ){
-    res_plot<-res_plot +scale_y_continuous(labels = scales::percent_format())
+    res_plot <- res_plot + ggplot2::scale_y_continuous(labels = scales::percent_format())
   }
 
   res_plot <- res_plot +
-    scale_x_continuous(breaks = break_x_sequence)+
+    ggplot2::scale_x_continuous(breaks = break_x_sequence) +
 
 
     theme(axis.title.y.right = element_blank(),
@@ -279,10 +277,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
           axis.ticks = element_line(size = 0.5, colour = "grey42")
 
     )
-
-
   res_plot
-
 }
 
 
@@ -328,7 +323,7 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
   if(is.character(group_type)== FALSE){
     stop(message = " Argument group_type must be a character string starting with s for sectors or c for commodities.\n")
   }else{
-    group <- toupper(str_replace(group_type,"^(.).*$","\\1" ))
+    group <- toupper(stringr::str_replace(group_type,"^(.).*$","\\1" ))
   }
 
   if(!group %in% c("S", "C")){
@@ -425,26 +420,24 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
 
       dplyr::filter(variable %in% liste_var) %>%
       dplyr::filter(year %in% years_to_plot) %>%
-
-      pivot_longer(cols = all_of(scenario))
+      tidyr::pivot_longer(cols = all_of(scenario))
   }else{
 
     ##### With diffs
     graph_data <- data %>%
-
       dplyr::filter(variable %in% liste_var) %>%
       dplyr::filter(year %in% years_to_plot)%>%
-      mutate(scen.diff = get(scenario.diff.ref)) %>%
-      mutate_at(.vars =  scenario,~( .x -scen.diff )) %>%
-      select(-scen.diff) %>%
-      pivot_longer(cols = all_of(scenario))
+      dplyr::mutate(scen.diff = get(scenario.diff.ref)) %>%
+      dplyr::mutate_at(.vars =  scenario,~( .x -scen.diff )) %>%
+      dplyr::select(-scen.diff) %>%
+      tidyr::pivot_longer(cols = all_of(scenario))
 
 
   }
 
   graph_data <- as.data.frame(graph_data)
   graph_data$CAT <- graph_data[,tolower(division_type)]
-  graph_data$name <- str_replace_all(graph_data$name,set_names(scenario.names,scenario))
+  graph_data$name <- stringr::str_replace_all(graph_data$name, purrr::set_names(scenario.names,scenario))
 
 
   ########################
@@ -455,34 +448,34 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
   color_gridlines = "gray84"
 
   if (n.scen > 1){
-    graph_data <- graph_data %>% mutate(
-    scen.type = as.numeric(as.factor(name))
-    )
+    graph_data <- graph_data %>%
+      dplyr::mutate(
+        scen.type = as.numeric(as.factor(name))
+      )
 
-    res_plot <-  ggplot(data = graph_data ,aes(x=scen.type)) +
-      geom_bar(aes(fill=factor(CAT), y=value ),
-               position=position_stack(),
-               stat="identity" ) +
+    res_plot <-  ggplot2::ggplot(data = graph_data ,aes(x=scen.type)) +
+      ggplot2::geom_bar(aes(fill=factor(CAT), y=value ),
+                        position=position_stack(),
+                        stat="identity" ) +
 
-      scale_x_continuous(breaks = 1:n.scen,
-                         labels = scenario.names,
+      ggplot2::scale_x_continuous(breaks = 1:n.scen,
+                                  labels = scenario.names,
+                                  sec.axis = dup_axis()) +
 
-                         sec.axis = dup_axis()) +
+      ggplot2::facet_grid(~year, switch="x") +
 
-      facet_grid(~year, switch="x") +
+      ggplot2::theme(panel.spacing.x=unit(0, "lines") ,
+                     panel.spacing = unit(0, "mm"),                       # remove spacing between facets
 
-      theme(panel.spacing.x=unit(0, "lines") ,
-            panel.spacing = unit(0, "mm"),                       # remove spacing between facets
+                     strip.background = element_rect(size = 0.5,colour = "transparent"),
+                     strip.placement = "outside" ,
+                     strip.text.x =element_text(face = "bold")  ,
 
-            strip.background = element_rect(size = 0.5,colour = "transparent"),
-            strip.placement = "outside" ,
-            strip.text.x =element_text(face = "bold")  ,
+                     panel.border = element_rect(colour = color_gridlines,fill = NA,size = 0.5),
+                     axis.text.x.bottom = element_text(face = 'italic'),
 
-            panel.border = element_rect(colour = color_gridlines,fill = NA,size = 0.5),
-            axis.text.x.bottom = element_text(face = 'italic'),
-
-            legend.position = "bottom"
-            )
+                     legend.position = "bottom"
+      )
 
     if(template =="ofce"){
       res_plot <- res_plot +  ofce::theme_ofce(base_family = "")
@@ -491,12 +484,12 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
   }else{
 
     res_plot  <-  ggplot(data = graph_data ,aes(x=year)) +
-      geom_bar(aes(fill=factor(CAT), y=value ),
-               position=position_stack(),
-               stat="identity" ) +
+      ggplot2::geom_bar(aes(fill=factor(CAT), y=value ),
+                        position=position_stack(),
+                        stat="identity" ) +
 
-      scale_x_continuous(breaks = years_to_plot,    # simulate tick marks for left axis
-                         sec.axis = dup_axis()) +
+      ggplot2::scale_x_continuous(breaks = years_to_plot,    # simulate tick marks for left axis
+                                  sec.axis = dup_axis()) +
       theme(panel.border = element_rect(colour = color_outerlines,fill = NA,size = 0.5),
             axis.text.x.bottom = element_text(face = 'bold'),
             legend.position = "bottom")
@@ -510,38 +503,30 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
   res_plot <- res_plot +
     labs(title = title,
          fill = "") +
-    scale_fill_brewer(palette = "Dark2")+ xlab("") +ylab("") +
+    ggplot2::scale_fill_brewer(palette = "Dark2")+ xlab("") +ylab("") +
+    ggplot2::geom_abline(intercept = 0,slope = 0,color = color_outerlines) +
+    ggplot2::scale_y_continuous(labels = function(x){paste(x)},    # simulate tick marks for left axis
+                                sec.axis = dup_axis(breaks = 0)) +
+    ggplot2::theme(axis.title.y.right = element_blank(),
+                   axis.text.y.right = element_blank(),
+                   axis.ticks.y.right = element_blank(),
+                   # axis.text.y = element_text(margin = margin(l = 1)),  # move left axis labels closer to axis
+                   axis.title.x.top = element_blank(),
+                   axis.text.x.top = element_blank(),
+                   axis.ticks.x.top = element_blank(),
+                   axis.ticks.x.bottom = element_blank(),
 
-    geom_abline(intercept = 0,slope = 0,color = color_outerlines) +
+                   axis.line.x.top = element_line(colour = "transparent", size = 0.5),
+                   axis.line.y.right = element_line(colour = "transparent", size = 0.5),
+                   # axis.line.x.bottom = element_line(colour = color_outerlines, size = 0.5),
+                   # axis.line.y.left = element_line(colour = color_outerlines, size = 0.5),
+                   #
+                   panel.grid.major.x = element_blank(),
+                   panel.grid.minor.x = element_blank(),
 
-    scale_y_continuous(labels = function(x){paste(x)},    # simulate tick marks for left axis
-                       sec.axis = dup_axis(breaks = 0)) +
+                   panel.grid.major.y = element_line(colour = color_gridlines ,size = 0.5,linetype = "dashed"),
+                   panel.grid.minor.y = element_line(colour = color_gridlines, size = 0.5,linetype = "dashed")
 
-    theme(axis.title.y.right = element_blank(),
-          axis.text.y.right = element_blank(),
-          axis.ticks.y.right = element_blank(),
-          # axis.text.y = element_text(margin = margin(l = 1)),  # move left axis labels closer to axis
-
-          axis.title.x.top = element_blank(),
-          axis.text.x.top = element_blank(),
-          axis.ticks.x.top = element_blank(),
-          axis.ticks.x.bottom = element_blank(),
-
-          axis.line.x.top = element_line(colour = "transparent", size = 0.5),
-          axis.line.y.right = element_line(colour = "transparent", size = 0.5),
-          # axis.line.x.bottom = element_line(colour = color_outerlines, size = 0.5),
-          # axis.line.y.left = element_line(colour = color_outerlines, size = 0.5),
-          #
-          panel.grid.major.x = element_blank(),
-          panel.grid.minor.x = element_blank(),
-
-          panel.grid.major.y = element_line(colour = color_gridlines ,size = 0.5,linetype = "dashed"),
-          panel.grid.minor.y = element_line(colour = color_gridlines, size = 0.5,linetype = "dashed")
-
-          )
-
-
-
+    )
   res_plot
-
 }
