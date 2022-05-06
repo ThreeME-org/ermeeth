@@ -31,7 +31,6 @@ table.output <- function(data = data,
   if (is.null(langue)){
     langue = "fr"
   }
-
   ## Choice of years to include in the table
   years <- c("2022", "2023","2024","2025","2027", "2050")
   years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5", "long-terme")
@@ -144,7 +143,7 @@ table.output <- function(data = data,
 
   }
 
-  if (export.format == TRUE){
+  if (export.doc == TRUE){
     ## Export in doc and csv formats
     dir.create(path = file.path(getwd(),"results","tables", scenario),recursive = TRUE)
 

@@ -46,10 +46,6 @@ simpleplot(data,c("RDEBT_G_VAL"),label_series = "Public Debt", startyear = start
 simpleplot(data,c("RDEBT_G_VAL"),label_series = "Public Debt", startyear = start_year, endyear = 2050, "diff", titleplot = "Public Account (in GDP points, difference from baseline)" , percent_label  = FALSE,custom_x_breaks = "R")
 ```
 
-```{r test data}
-secteurs <- data %>% filter(grepl("_C\\w{3}$",variable)) %>% select(commodity,variable) %>% mutate(variable = str_extract(variable, "C\\w{3}$")) %>% unique() %>% arrange(variable)
-secteurs
-```
 
 ## Contrib plot
 
