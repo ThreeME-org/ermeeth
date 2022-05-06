@@ -56,48 +56,38 @@ custom.palette <- function(n = NULL,
     n.brd <- length(bridge)
 
     # Option to get the full set of sectors/commodities (before bridging)
-      pal_list <- list()
+    pal_list <- list()
 
-      for (i in 1:length(brd)){
+    for (i in 1:length(brd)){
 
-        n.in <- length(brd[[i]])
+      n.in <- length(brd[[i]])
 
-        if (n.in == 1){
+      if (n.in == 1){
 
-          pal_list <- append(pal_list, pal_base[i])
+        pal_list <- append(pal_list, pal_base[i])
 
-        } else{
+      } else{
 
+        col_hcl <- colorspace::coords(as( colorspace::hex2RGB(pal_base[i], gamma = FALSE), "polarLAB"))
 
-          col_hcl <- colorspace::coords(as( colorspace::hex2RGB(pal_base[i], gamma = FALSE), "polarLAB"))
-
-          pal_out <- colorspace::sequential_hcl(n = n.in +1,
-                                                h = col_hcl[3],
-                                                c = c(col_hcl[2], NA, NA),
-                                                l = c(20, 70),
-                                                # l = c(col_hcl[1]-25,
-                                                #       col_hcl[1] + 25),
-                                                power = 1.2 )
-
-        }
-        pal_list <- append(pal_list,list(pal_out[-length(pal_out)]))
+        pal_out <- colorspace::sequential_hcl(n = n.in +1,
+                                              h = col_hcl[3],
+                                              c = c(col_hcl[2], NA, NA),
+                                            #l = c(20, 70),
+                                               l = c(col_hcl[1]-25,
+                                                     col_hcl[1] + 25),
+                                              power = 1.2 )
       }
-      # Rajouter argument pour lier color & names_brd <- codenames...R/names_commodities
-
-      pal <- unlist(pal_list) #%>% set.names(names_brd) # cagr, csug, c...
-      return(pal)
-
-      # Option to get the subset of sectors/commodities (after bridging)
-    } else {
-      pal <- pal_base[seq(1,n.brd)]
-      return(pal)
+      pal_list <- append(pal_list,list(pal_out[-length(pal_out)]))
     }
-  }  else {
+    # Rajouter argument pour lier color & names_brd <- codenames...R/names_commodities
+
+    pal <- unlist(pal_list) #%>% set.names(names_brd) # cagr, csug, c...
+    return(pal)
+
+    # Option to get the subset of sectors/commodities (after bridging)
+  } else {
     # Option by default to get a palette of n colors
-    return(pal_base[seq(1,n)])
+    #return(pal_base[seq(1,n)])
   }
 }
-
-
-
-
