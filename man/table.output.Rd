@@ -17,7 +17,7 @@ table.output(
 \arguments{
 \item{data}{double(1) a dataframe created with the function loadResults()}
 
-\item{scenario}{character(1) string, vecteur avec le label des variables qui seront trac\u00e9es}
+\item{scenario}{character(1) string, vecteur avec le label des variables qui seront tracées}
 
 \item{export.doc}{boolean if TRUE, export a docx into the folder results}
 

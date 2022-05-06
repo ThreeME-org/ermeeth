@@ -1,7 +1,7 @@
 #' Table.output
 #'
 #' @param data double(1) a dataframe created with the function loadResults()
-#' @param scenario character(1) string, vecteur avec le label des variables qui seront trac\u00e9es
+#' @param scenario character(1) string, vecteur avec le label des variables qui seront tracées
 #' @param full.table boolean if TRUE, include other macroeconomic indicators ,TRUE by default
 #' @param export.doc boolean if TRUE, export a docx into the folder results
 #' @param title character(1) string of character for the title of the table
