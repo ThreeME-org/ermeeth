@@ -5,6 +5,8 @@
 #' @param full.table boolean if TRUE, include other macroeconomic indicators ,TRUE by default
 #' @param export.doc boolean if TRUE, export a docx into the folder results
 #' @param title character(1) string of character for the title of the table
+#' @param langue character(1) string to specify the language of comments c('en', 'fr)
+#' @param results.folder character(1): pathfile to export the results. By defaut the program folder
 #'
 #' @import flextable officer
 #' @return a flextable
@@ -20,7 +22,8 @@ table.output <- function(data = data,
                          export.doc = TRUE,
                          langue = NULL,
                          full.table = TRUE,
-                         title = NULL){
+                         title = NULL,
+                         results.folder = NULL){
 
   # General conditions
   if (is.null(scenario)){
@@ -31,6 +34,9 @@ table.output <- function(data = data,
   }
   if (is.null(langue)){
     langue = "en"
+  }
+  if (is.null(results.folder)){
+    results.folder <- (getwd())
   }
   ## Choice of years to include in the table
   years <- c("2022", "2023","2024","2025","2027", "2050")
@@ -146,22 +152,15 @@ table.output <- function(data = data,
 
   if (export.doc == TRUE){
     ## Export in doc and csv formats
-    dir.create(path = file.path(getwd(),"results","tables", scenario),recursive = TRUE)
-
     sect_properties <- officer::prop_section(page_size = page_size(orient = "landscape",
                                                                    width = 12.3, height = 11.7),
                                              type = "continuous",
                                              page_margins = page_mar())
 
-    flextable::save_as_docx(output, path = file.path(getwd(),"results","tables",scenario ,paste0(scenario,".docx")),
+    flextable::save_as_docx(output, path = file.path(results.folder, paste0(scenario,".docx")),
                             pr_section = sect_properties)
 
-    utils::write.table(data_table, file.path(getwd(),"results","tables", scenario,paste0(scenario,".csv")))
+    utils::write.table(data_table, file.path(results.folder, paste0(scenario,".csv")))
   }
   output
 }
-
-
-table.output(data = data, scenario = "oilprice_fra",langue = "en",
-full.table = TRUE, export.doc = FALSE, title = 'Gros test')
-
