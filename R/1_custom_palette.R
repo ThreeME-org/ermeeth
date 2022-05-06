@@ -88,6 +88,7 @@ custom.palette <- function(n = NULL,
     # Option to get the subset of sectors/commodities (after bridging)
   } else {
     # Option by default to get a palette of n colors
-    #return(pal_base[seq(1,n)])
+    return(pal_base[seq(1,n)])
   }
 }
+
