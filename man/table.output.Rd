@@ -10,19 +10,24 @@ table.output(
   export.doc = TRUE,
   langue = NULL,
   full.table = TRUE,
-  title = NULL
+  title = NULL,
+  results.folder = NULL
 )
 }
 \arguments{
 \item{data}{double(1) a dataframe created with the function loadResults()}
 
-\item{scenario}{character(1) string, vecteur avec le label des variables qui seront tracées}
+\item{scenario}{character(1) string, vecteur avec le label des variables qui seront trac\u00e9es}
 
 \item{export.doc}{boolean if TRUE, export a docx into the folder results}
+
+\item{langue}{character(1) string to specify the language of comments c('en', 'fr)}
 
 \item{full.table}{boolean if TRUE, include other macroeconomic indicators ,TRUE by default}
 
 \item{title}{character(1) string of character for the title of the table}
+
+\item{results.folder}{character(1): pathfile to export the results. By defaut the program folder}
 }
 \value{
 a flextable

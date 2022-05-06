@@ -1,7 +1,7 @@
 #' Table.output
 #'
 #' @param data double(1) a dataframe created with the function loadResults()
-#' @param scenario character(1) string, vecteur avec le label des variables qui seront tracées
+#' @param scenario character(1) string, vecteur avec le label des variables qui seront trac\u00e9es
 #' @param full.table boolean if TRUE, include other macroeconomic indicators ,TRUE by default
 #' @param export.doc boolean if TRUE, export a docx into the folder results
 #' @param title character(1) string of character for the title of the table
@@ -48,9 +48,9 @@ table.output <- function(data = data,
                   "PVA","PCH","PY" ,"PX","PM",
                   "DISPINC_BT_VAL", "W", "RSAV_H_VAL")
   if (langue == "fr"){
-    var_label.1 <- c("PIB (a)","Consommation des ménages (a)","Investissement (a)","Exportations (a)", "Importations (a)",
-                     "Prix de VA (a)","Prix à la consommation (a)", "Prix à la production (a)", "Prix des exportations (a)", "Prix des importations (a)",
-                     "Revenu des ménages en valeur (a)", "Salaire (a)", "Taux d'épargne des ménages (a)")
+    var_label.1 <- c("PIB (a)","Consommation des m\u00e9nages (a)","Investissement (a)","Exportations (a)", "Importations (a)",
+                     "Prix de VA (a)","Prix \u00e0 la consommation (a)", "Prix \u00e0 la production (a)", "Prix des exportations (a)", "Prix des importations (a)",
+                     "Revenu des m\u00e9nages en valeur (a)", "Salaire (a)", "Taux d'\u00e9pargne des m\u00e9nages (a)")
   }
   if (langue == "en"){
     var_label.1 <- c("GDP (a)","Households consumption (a)","Investment (a)","Exports (a)", "Imports (a)",
@@ -90,8 +90,8 @@ table.output <- function(data = data,
     #Variable en pt de PIB
     var_list.3 <- c( "RBAL_TRADE_VAL", "RBAL_G_TOT_VAL", "RSAV_H_VAL", "MARKUP", "UNR")
     if (langue == "fr"){
-      var_label.3 <- c("Balance commerciale (c)","Solde Public (c)","Taux d'épargne des ménages (d)",
-                       "Taux de marge des entreprises (d)", "Taux de chômage (d)")
+      var_label.3 <- c("Balance commerciale (c)","Solde Public (c)","Taux d'\u00e9pargne des m\u00e9nages (d)",
+                       "Taux de marge des entreprises (d)", "Taux de ch\u00f4mage (d)")
     }
     if (langue == "en"){
       var_label.3 <- c("Trade balance (c)","government balance (c)","Households saving rate (d)",
@@ -112,8 +112,8 @@ table.output <- function(data = data,
 
     # Footnote string
     if (langue == "fr"){
-      footnote.tab <- c("(a): En deviation relative par rapport au baseline",
-                        "(b): En deviation absolue par rapport au baseline",
+      footnote.tab <- c("(a): En d\u00e9viation relative par rapport au baseline",
+                        "(b): En d\u00e9viation absolue par rapport au baseline",
                         "(c): en points de pourcentage du PIB",
                         "(d): en pourcentage")
     }
@@ -164,3 +164,4 @@ table.output <- function(data = data,
   }
   output
 }
+# table.output(data = data, scenario = "oilprice_fra",full.table = TRUE,langue = "fr", export.doc = FALSE, title = 'Gros test')

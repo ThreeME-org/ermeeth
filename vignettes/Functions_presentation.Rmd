@@ -21,6 +21,8 @@ library(ggplot2)
 library(tidyr)
 library(ofce)
 library(stringr)
+library(flextable)
+library(officer)
 library(colorspace)
 ```
 

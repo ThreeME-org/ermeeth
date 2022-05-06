@@ -31,7 +31,7 @@
 #' @param names_s a data.frame used only if no aggregation is requested for sectors. One column "code" should contain the codes used in the sector variables and a column "name" contains the explicit name.
 #' @param csv_folder path where to source the csv from simulations
 #'
-#' @importFrom data.table fread
+#' @import data.table
 #' @importFrom stats na.omit
 #'
 #' @import dplyr
@@ -82,8 +82,8 @@ loadResults <- function(scenarios,
   data_1 <-1:length(scenarios) %>%
 
     lapply(function(i) {
-      res <- data.table::fread(file.path(csv_folder,paste0(scenarios[i],".csv")),data.table = FALSE) %>%
-        stats::na.omit %>%
+      res <- data.table::fread(input = file.path(csv_folder,paste0(scenarios[i],".csv")),data.table = FALSE) %>%
+        stats::na.omit() %>%
         tidyr::pivot_longer(cols = !V1  ) %>% as.data.frame() %>%
         rename(year = V1, variable = name) %>%
         mutate(scenario = ifelse(str_sub(variable, -1, -1) == '0','baseline',scenarios[i])           ,
@@ -548,4 +548,17 @@ loadResults <- function(scenarios,
 
   return <- data_1
 }
-
+#
+# source("tests/bridge_c28_s32.R")
+# source("tests/codenames_c28_s32.R")
+# library(tidyverse)
+# library(data.table)
+#
+# data_full <- loadResults(scenarios = "gasprice_fra",
+#                          by_commodity = FALSE,
+#                          by_sector = FALSE,
+#                          bridge_c = bridge_commodities  ,
+#                          bridge_s = bridge_sectors ,
+#                          names_s = names_sectors,
+#                          names_c = names_commodities,
+#                          csv_folder = "tests")
