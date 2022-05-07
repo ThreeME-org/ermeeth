@@ -1,29 +1,37 @@
+# source("tests/bridge_c28_s32.R")
+# source("tests/codenames_c28_s32.R")
+# subgroups <- bridge_sectors
+# name_subgroups = names_sectors
+# palette_base = NULL
 
 #' custom_palette
 #'
 #' @param n numeric(1) A number of colors to pick
-#' @param bridge If not null, ThreeME bridge to be loaded takes precedent over n
-#' @param sub.bridge If TRUE, the complete list of sectors is chosen when defined by aggregated sectors, by default FALSE
+#' @param bridge_group If not null, ThreeME bridge to be loaded takes precedent over n
 #' @param palette_base If not null, a vector of colors to based the palette
 #'
 #' @return a vector of colors (hex code)
 #' @export
-#' @import colorspace
+#' @import colorspace purrr
 #' @examples
 #' custom.palette(n = 6)
 custom.palette <- function(n = NULL,
-                           bridge = NULL,
-                           sub.bridge = FALSE,
+                           bridge_group = NULL,
                            palette_base = NULL){
 
-  if (is.null(bridge) & is.null(n)){
-    stop(message = " Pleeeease, specifiy at least a number n or a bridge (ex:bridge_sectors) .\n")
+  if (is.null(bridge_group) & is.null(n)){
+    stop(message = " Pleeeease, specifiy at least a number n or a brudge (ex:bridge_sectors) .\n")
   }
 
-  if (!is.null(bridge) & !is.null(n)){
+  if (!is.null(bridge_group) & !is.null(n)){
     cat("Droping n and retaining bridge option .\n")
-    n <- NULL
   }
+
+
+  if (!is.null(bridge_group) ){
+    n <- length(bridge_group)
+  }
+
 
   if (is.null(palette_base)){
     # Palette of OFCE diverging colors. Base to differentiate sectors
@@ -50,45 +58,54 @@ custom.palette <- function(n = NULL,
     pal_base <- palette_base
   }
 
+  if(length(pal_base) < n){
+    multiplier <- trunc(n/length(pal_base) )
+    pal_base <- c(pal_base,rep(pal_base,multiplier))
+  }
 
-  if (!is.null(bridge)){
-    brd <- bridge
-    n.brd <- length(bridge)
+  if (!is.null(bridge_group)){
+    pal_group <- purrr::set_names(pal_base[1:length(bridge_group)],names(bridge_group))
+    brd <- purrr::set_names(names(bridge_group)) %>%
+      map(~list(subgroup = bridge_group[[.x]], base_col = pal_group[.x]))
+
+    # n.brd <- length(subgroups)
+
 
     # Option to get the full set of sectors/commodities (before bridging)
-    pal_list <- list()
 
-    for (i in 1:length(brd)){
+     colors_subgroup <- function(base_colour, n_subgroup, names= NULL){
+       if (n_subgroup == 1){
+         pal_out <- base_colour
+       }else {
+         col_hcl <- colorspace::coords(as( colorspace::hex2RGB(base_colour, gamma = FALSE), "polarLAB"))
+         pal_out <- colorspace::sequential_hcl(n = n_subgroup +1,
+                                             h = col_hcl[3],
+                                             c = c(col_hcl[2], NA, NA),
+                                             #l = c(20, 70),
+                                             l = c(col_hcl[1]-25,
+                                                   col_hcl[1] + 25),
+                                             power = 1.2 )
+        pal_out <- pal_out[1:n_subgroup]
+       }
 
-      n.in <- length(brd[[i]])
+       names(pal_out) = names
+       pal_out
+     }
 
-      if (n.in == 1){
 
-        pal_list <- append(pal_list, pal_base[i])
+     pal_subgroup <-  names(bridge_group)  %>%
+       map(~colors_subgroup(brd[[.x]]$base_col, length(brd[[.x]]$subgroup), brd[[.x]]$subgroup )) %>%
+       reduce(c)
 
-      } else{
+     pal_all_groups <- c(pal_subgroup,pal_group)
 
-        col_hcl <- colorspace::coords(as( colorspace::hex2RGB(pal_base[i], gamma = FALSE), "polarLAB"))
-
-        pal_out <- colorspace::sequential_hcl(n = n.in +1,
-                                              h = col_hcl[3],
-                                              c = c(col_hcl[2], NA, NA),
-                                            #l = c(20, 70),
-                                               l = c(col_hcl[1]-25,
-                                                     col_hcl[1] + 25),
-                                              power = 1.2 )
-      }
-      pal_list <- append(pal_list,list(pal_out[-length(pal_out)]))
-    }
-    # Rajouter argument pour lier color & names_brd <- codenames...R/names_commodities
-
-    pal <- unlist(pal_list) #%>% set.names(names_brd) # cagr, csug, c...
-    return(pal)
-
-    # Option to get the subset of sectors/commodities (after bridging)
-  } else {
-    # Option by default to get a palette of n colors
+       # Option to get a named palette by group and subgroup
+     return(pal_all_groups)
+     }else {
+       # Option by default to get a palette of n colors
     return(pal_base[seq(1,n)])
   }
 }
+
+
 

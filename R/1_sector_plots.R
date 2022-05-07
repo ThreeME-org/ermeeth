@@ -313,7 +313,11 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
                             startyear = NULL, endyear = NULL,
                             scenario.diff.ref = "baseline",
                             template = template_default,
-                            corner_text = "in Millions"){
+                            corner_text = "in Millions",
+                            bridge4palette_sectors = bridge_sectors,
+                            names4palette_sectors = names_sectors,
+                            bridge4palette_commodity = bridge_sectors,
+                            names4palette_commodity = names_sectors ){
 
   #########################
   ### 0. Running Checks ###
@@ -447,6 +451,45 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
 
   color_gridlines = "gray84"
 
+  #### Creating the color palette
+  if(group== "S"){
+    data_sectors <-unique(data %>% dplyr::select(sector) %>% dplyr::filter(!is.na(sector)) ) %>% unlist() %>% unname()
+    n_sector<-length(data_sectors)
+
+    if(!is.null(bridge4palette_sectors) & !is.null(names4palette_sectors)){
+      palette <- custom.palette(bridge_group = bridge4palette_sectors )
+
+      names(palette)<- toupper(names(palette)) %>% str_replace_all(set_names(names4palette_sectors$name,toupper(names4palette_sectors$code)))
+
+      palette <-palette[data_sectors]
+
+    }else{
+
+      palette <- custom.palette(n = n_sector) %>% purrr::set_names(data_sectors,.)
+
+    }
+  }
+
+  if(group== "C"){
+    data_commodities <-unique(data %>% dplyr::select(commodity) %>% dplyr::filter(!is.na(commodity)) ) %>% unlist() %>% unname()
+    n_commodity<-length(data_commodities)
+
+
+    if(!is.null(bridge4palette_commodities) & !is.null(names4palette_commodities)){
+      palette <- custom.palette(bridge_group = bridge4palette_commodities )
+
+      names(palette)<- toupper(names(palette)) %>% str_replace_all(set_names(names4palette_commodities$name,toupper(names4palette_commodities$code)))
+
+      palette <-palette[data_commodities]
+    }else{
+
+      palette <- custom.palette(n = n_commodity) %>% purrr::set_names(data_commodities,.)
+
+    }
+  }
+
+
+
   if (n.scen > 1){
     graph_data <- graph_data %>%
       dplyr::mutate(
@@ -503,7 +546,8 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
   res_plot <- res_plot +
     labs(title = title,
          fill = "") +
-    ggplot2::scale_fill_brewer(palette = "Dark2")+ xlab("") +ylab("") +
+    ggplot2::scale_fill_manual(tolower(division_type), values =  palette)+
+    xlab("") +ylab("") +
     ggplot2::geom_abline(intercept = 0,slope = 0,color = color_outerlines) +
     ggplot2::scale_y_continuous(labels = function(x){paste(x)},    # simulate tick marks for left axis
                                 sec.axis = dup_axis(breaks = 0)) +

@@ -4,19 +4,12 @@
 \alias{custom.palette}
 \title{custom_palette}
 \usage{
-custom.palette(
-  n = NULL,
-  bridge = NULL,
-  sub.bridge = FALSE,
-  palette_base = NULL
-)
+custom.palette(n = NULL, bridge_group = NULL, palette_base = NULL)
 }
 \arguments{
 \item{n}{numeric(1) A number of colors to pick}
 
-\item{bridge}{If not null, ThreeME bridge to be loaded takes precedent over n}
-
-\item{sub.bridge}{If TRUE, the complete list of sectors is chosen when defined by aggregated sectors, by default FALSE}
+\item{bridge_group}{If not null, ThreeME bridge to be loaded takes precedent over n}
 
 \item{palette_base}{If not null, a vector of colors to based the palette}
 }

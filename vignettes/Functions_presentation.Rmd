@@ -32,6 +32,8 @@ scenario_name <- "oilprice_fra"
 template_default <-  "ofce"
 start_year = 2020
 end_year = 2050
+source("../inst/bridge_c28_s32.R")
+source("../tests/codenames_c28_s32.R")
 ```
 
 # Plot functions
