@@ -30,35 +30,32 @@ contrib.plot <- function(data,
                          decimal = 0.1,
                          titleplot = "",
                          template = template_default) {
-
   # To debug the function step by step, activate line below
   # browser()
-
-  # series <- as.list(series)
 
   ## Format of the output plot
   format_img <- c("svg")  # Choose format: "png", "svg"
 
-  # Palette de 5 couleurs en attendant d'en rajouter dans celles OFCE
-  pal <- c("#fbc572", "#fb8072","#68a6c5","#466963", "#6d3535")
-
   if (is.null(series)){
-    series = data$variable %>% unique()
+    series <-  data[["variable"]] %>% unique()
   }
 
   if (is.null(label_series)){
-    label_series =  series
+    label_series <-   series
   }
 
   if (is.null(startyear)){startyear  =  min(data$year)}
   if (is.null(endyear)){endyear  =  max(data$year)}
 
+  ## Data filtering
   data <- data %>% dplyr::filter(year > startyear & year < endyear)
 
+  ## Plot making
   plot <- ggplot2::ggplot() +
     ggplot2::geom_bar(data = data , aes(x = year, y = value, fill = variable),
              stat= "identity", width = 0.9, position = position_stack(reverse = TRUE)) +
-    ggplot2::scale_fill_manual(values = pal[1:length(series)], limits = series,
+    ggplot2::scale_fill_manual(values = custom.palette(length(series)),
+                               limits = series,
                       labels = label_series)  +
     ggplot2::labs(x = "", title = titleplot)
 
@@ -74,15 +71,17 @@ contrib.plot <- function(data,
   }
 
   if (line_tot == TRUE){
-
-    data.2 <- data %>% dplyr::filter(year > startyear & year < endyear) %>%
+  # Data for ploting the line
+    data.2 <- data %>%
+      dplyr::filter(year > startyear & year < endyear) %>%
       tidyr::pivot_wider(names_from = variable, values_from = value) %>%
       dplyr::rowwise() %>%
       dplyr::mutate(value = sum(dplyr::c_across(series))) %>%
       dplyr::select(year, value)
 
     plot <-  plot +
-      ggplot2::geom_line(data = data.2 , aes(x = year, y = value),  size = .4)
+      ggplot2::geom_line(data = data.2 , aes(x = year, y = value), colour = "#606060", size = .5) +
+      ggplot2::geom_point(data = data.2 , aes(x = year, y = value), colour = "#202020", size = .6)
   }
   ifelse(template =="ofce",
 
