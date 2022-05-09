@@ -57,7 +57,7 @@ contrib <- function(data,
     tidyr::pivot_wider(names_from = variable,
                        values_from = baseline) %>%
     dplyr::mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
-    select(year, contains("w"))
+    dplyr::select(year, contains("w"))
 
   if (neg.value %in% var2){
     data.w_baseline  <- data.w_baseline %>% dplyr::mutate_at(str_c(neg.value,"_w") , ~((-1) *.x))
@@ -158,7 +158,7 @@ contrib <- function(data,
           dplyr::select(year, variable, value) %>%
           tidyr::pivot_wider(names_from = variable, values_from = value)
 
-        df <- (dplyr::select(data.gr_baseline, year, var2)[-1] * data.w_baseline[-1] ) -  (dplyr::select(data.gr_sc, year, var2)[-1] * data.w_baseline[-1] )
+        df <-  (dplyr::select(data.gr_sc, year, var2)[-1] * data.w_baseline[-1]) - (dplyr::select(data.gr_baseline, year, var2)[-1] * data.w_baseline[-1])
 
 
         data.contrib <-  cbind("year" = data.gr_baseline[1], df) %>% as.data.frame() %>%

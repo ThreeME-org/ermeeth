@@ -68,7 +68,7 @@ contrib.plot(data_plot, series = GDP_comp,
              titleplot = "Contributions to GDP growth (in relative deviation from baseline)")
 
 # For a selected scenario, contributions to yearly growth rate (in pp)
-data_plot <-  contrib(data,"GDP", GDP_comp, scenar = c("baseline",scenario_name), indicator = "gr.diff")
+data_plot <-  contrib(data,"GDP", GDP_comp, scenar = c(scenario_name, "baseline"), indicator = "gr.diff")
 
 contrib.plot(data_plot, series = GDP_comp, 
              label_series = GDP_comp_label,
@@ -77,7 +77,7 @@ contrib.plot(data_plot, series = GDP_comp,
              titleplot = "Contributions to GDP growth deviation (in difference in pp from baseline)")
 
 # For a selected scenario, contributions to yearly growth rate (in pp)
-data_plot <-  contrib(data,"GDP", GDP_comp, scenar = c( "oilprice_fra","baseline"), indicator = "gr.diff")
+data_plot <-  contrib(data,"GDP", GDP_comp, scenar = c( "oilprice_fra"), indicator = "gr.diff")
 
 contrib.plot(data_plot, series = GDP_comp, 
              label_series = GDP_comp_label,
