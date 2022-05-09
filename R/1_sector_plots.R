@@ -316,8 +316,8 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
                             corner_text = "in Millions",
                             bridge4palette_sectors = bridge_sectors,
                             names4palette_sectors = names_sectors,
-                            bridge4palette_commodity = bridge_sectors,
-                            names4palette_commodity = names_sectors ){
+                            bridge4palette_commodity = bridge_commodities,
+                            names4palette_commodity = names_commodities ){
 
   #########################
   ### 0. Running Checks ###

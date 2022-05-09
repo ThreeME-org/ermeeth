@@ -107,8 +107,10 @@ data_CO2 <- data %>% filter(year %in% (start_year:end_year)) %>% filter(grepl("^
   group_by(year,sector,variable) %>% 
   summarise_at(all_of(c("baseline",scenario_name)), sum) %>% ungroup()
 
+
 stacked_sc_plot(data_CO2,"EMS_CO2",interval = 5, diff = TRUE, title = "CO2 emissions by sector (in difference from baseline)")
 
+stacked_sc_plot(data,"Y",interval = 5, diff = TRUE, title = "CO2 emissions by sector (in difference from baseline)",bridge4palette_sectors = bridge_sectors)
 ```
 
 ### Sector curve plots
