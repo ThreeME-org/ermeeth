@@ -29,6 +29,7 @@ library(colorspace)
 
 ```{r dataload}
 data <- oilprice_fra
+data_agg <- oilprice_fra_agg
 scenario_name <- "oilprice_fra"
 template_default <-  "ofce"
 start_year = 2020
@@ -97,6 +98,37 @@ contrib.sub.plot(data_plot, template = "ofce", startyear = 2020, endyear = 2050,
 
 
 ```
+## Colour test
+
+```{r colour test}
+
+all_subsectors <- bridge_sectors %>% unlist()
+all_sectors <- names(bridge_sectors)
+all_years <- c(min(data$year):max(data$year))
+
+data_test_subsectors <- all_subsectors %>%
+  purrr::map(~(data.frame(year = all_years, VAR_= 100 ) %>% rename(!!paste0("VAR_",toupper(.x)) := VAR_ ))) %>%
+  reduce(left_join,by="year") %>%
+  tidyr::pivot_longer(cols = !year) %>% rename(baseline = value , variable = name) %>%
+  mutate( !!scenario_name := 2*baseline , commodity = NA, 
+          sector = str_replace_all(tolower(str_extract(variable,"S\\w{3}$")), set_names(names_sectors$name,names_sectors$code) ) ) 
+  
+
+stacked_sc_plot(data_test_subsectors,"VAR",interval = 5, diff = TRUE, title = "Testing the colours",bridge4palette_sectors = bridge_sectors)
+
+
+
+data_test_sectors <- all_sectors %>%
+  purrr::map(~(data.frame(year = all_years, VAR_= 100 ) %>% rename(!!paste0("VAR_",toupper(.x)) := VAR_ ))) %>%
+  reduce(left_join,by="year") %>%
+  tidyr::pivot_longer(cols = !year) %>% rename(baseline = value , variable = name) %>%
+  mutate( !!scenario_name := 2*baseline , commodity = NA, 
+          sector = str_replace_all((str_extract(variable,"S\\w{3}$")), set_names(names_sectors$name,names_sectors$code) ) ) 
+  
+
+stacked_sc_plot(data_test_sectors,"VAR",interval = 5, diff = TRUE, title = "Testing the colours",bridge4palette_sectors = bridge_sectors)
+
+```
 
 ## Sector plots
 
@@ -113,18 +145,6 @@ stacked_sc_plot(data_CO2,"EMS_CO2",interval = 5, diff = TRUE, title = "CO2 emiss
 
 stacked_sc_plot(data,"Y",interval = 5, diff = TRUE, title = "CO2 emissions by sector (in difference from baseline)",bridge4palette_sectors = bridge_sectors)
 
-all_subsectors <- bridge_sectors %>% unlist()
-all_years <- c(min(data$year):max(data$year))
-
-data_test_sectors <- all_subsectors %>%
-  purrr::map(~(data.frame(year = all_years, VAR_= 100 ) %>% rename(!!paste0("VAR_",toupper(.x)) := VAR_ ))) %>%
-  reduce(left_join,by="year") %>%
-  tidyr::pivot_longer(cols = !year) %>% rename(baseline = value , variable = name) %>%
-  mutate( !!scenario_name := 2*baseline , commodity = NA, 
-          sector = str_replace_all(tolower(str_extract(variable,"S\\w{3}$")), set_names(names_sectors$name,names_sectors$code) ) ) 
-  
-
-stacked_sc_plot(data_test_sectors,"VAR",interval = 5, diff = TRUE, title = "Testing the colours",bridge4palette_sectors = bridge_sectors)
 ```
 
 ### Sector curve plots
