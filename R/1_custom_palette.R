@@ -68,7 +68,6 @@ custom.palette <- function(n = NULL,
     brd <- purrr::set_names(names(bridge_group)) %>%
       map(~list(subgroup = bridge_group[[.x]], base_col = pal_group[.x]))
 
-    # n.brd <- length(subgroups)
 
 
     # Option to get the full set of sectors/commodities (before bridging)

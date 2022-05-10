@@ -501,7 +501,7 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
       )
 
     res_plot <-  ggplot2::ggplot(data = graph_data ,aes(x=scen.type)) +
-      ggplot2::geom_bar(aes(fill=factor(CAT), y=value ),
+      ggplot2::geom_bar(aes(fill=factor(CAT, levels = names(palette[CAT])), y=value ),
                         position=position_stack(),
                         stat="identity" ) +
 

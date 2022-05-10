@@ -20,6 +20,7 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(ofce)
+library(purrr)
 library(stringr)
 library(flextable)
 library(officer)
@@ -111,6 +112,19 @@ data_CO2 <- data %>% filter(year %in% (start_year:end_year)) %>% filter(grepl("^
 stacked_sc_plot(data_CO2,"EMS_CO2",interval = 5, diff = TRUE, title = "CO2 emissions by sector (in difference from baseline)")
 
 stacked_sc_plot(data,"Y",interval = 5, diff = TRUE, title = "CO2 emissions by sector (in difference from baseline)",bridge4palette_sectors = bridge_sectors)
+
+all_subsectors <- bridge_sectors %>% unlist()
+all_years <- c(min(data$year):max(data$year))
+
+data_test_sectors <- all_subsectors %>%
+  purrr::map(~(data.frame(year = all_years, VAR_= 100 ) %>% rename(!!paste0("VAR_",toupper(.x)) := VAR_ ))) %>%
+  reduce(left_join,by="year") %>%
+  tidyr::pivot_longer(cols = !year) %>% rename(baseline = value , variable = name) %>%
+  mutate( !!scenario_name := 2*baseline , commodity = NA, 
+          sector = str_replace_all(tolower(str_extract(variable,"S\\w{3}$")), set_names(names_sectors$name,names_sectors$code) ) ) 
+  
+
+stacked_sc_plot(data_test_sectors,"VAR",interval = 5, diff = TRUE, title = "Testing the colours",bridge4palette_sectors = bridge_sectors)
 ```
 
 ### Sector curve plots
