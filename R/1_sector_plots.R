@@ -299,6 +299,10 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 #' @param interval interval of years to plot
 #' @param corner_text y-axis legend to appear in top left corner
 #' @param scenario.diff.ref Name of the reference scenario from which to compute the difference. Default is "baseline"
+#' @param bridge4palette_sectors Sector bridge to use to get colour gradient
+#' @param names4palette_sectors Sector names vs codes table
+#' @param bridge4palette_commodity Commodity bridge to use to get colour gradient
+#' @param names4palette_commodity Commodity names vs codes table
 #'
 #' @import ggplot2 dplyr tidyr ofce purrr scales
 #'

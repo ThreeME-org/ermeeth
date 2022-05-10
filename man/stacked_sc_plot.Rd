@@ -17,7 +17,11 @@ stacked_sc_plot(
   endyear = NULL,
   scenario.diff.ref = "baseline",
   template = template_default,
-  corner_text = "in Millions"
+  corner_text = "in Millions",
+  bridge4palette_sectors = bridge_sectors,
+  names4palette_sectors = names_sectors,
+  bridge4palette_commodity = bridge_commodities,
+  names4palette_commodity = names_commodities
 )
 }
 \arguments{
@@ -46,6 +50,14 @@ stacked_sc_plot(
 \item{template}{Theme to use (OFCE or nothing)}
 
 \item{corner_text}{y-axis legend to appear in top left corner}
+
+\item{bridge4palette_sectors}{Sector bridge to use to get colour gradient}
+
+\item{names4palette_sectors}{Sector names vs codes table}
+
+\item{bridge4palette_commodity}{Commodity bridge to use to get colour gradient}
+
+\item{names4palette_commodity}{Commodity names vs codes table}
 }
 \value{
 a ggplot
