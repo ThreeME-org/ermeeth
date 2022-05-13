@@ -550,7 +550,7 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
   res_plot <- res_plot +
     labs(title = title,
          fill = "") +
-    ggplot2::scale_fill_manual(tolower(division_type), values =  palette)+
+    ggplot2::scale_fill_manual( values =  palette)+
     xlab("") +ylab("") +
     ggplot2::geom_abline(intercept = 0,slope = 0,color = color_outerlines) +
     ggplot2::scale_y_continuous(labels = function(x){paste(x)},    # simulate tick marks for left axis

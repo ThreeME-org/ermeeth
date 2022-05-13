@@ -111,7 +111,9 @@ data_test_subsectors <- all_subsectors %>%
   reduce(left_join,by="year") %>%
   tidyr::pivot_longer(cols = !year) %>% rename(baseline = value , variable = name) %>%
   mutate( !!scenario_name := 2*baseline , commodity = NA, 
-          sector = str_replace_all(tolower(str_extract(variable,"S\\w{3}$")), set_names(names_sectors$name,names_sectors$code) ) ) 
+          sector = str_replace_all(tolower(str_extract(variable,"S\\w{3}$")),
+                                   set_names(names_sectors$name,names_sectors$code) ) 
+          ) 
   
 
 stacked_sc_plot(data_test_subsectors,"VAR",interval = 5, diff = TRUE, title = "Testing the colours",bridge4palette_sectors = bridge_sectors)
@@ -123,7 +125,9 @@ data_test_sectors <- all_sectors %>%
   reduce(left_join,by="year") %>%
   tidyr::pivot_longer(cols = !year) %>% rename(baseline = value , variable = name) %>%
   mutate( !!scenario_name := 2*baseline , commodity = NA, 
-          sector = str_replace_all((str_extract(variable,"S\\w{3}$")), set_names(names_sectors$name,names_sectors$code) ) ) 
+          sector = str_replace_all((str_extract(variable,"S\\w{3}$")),
+                                   set_names(names_sectors$name,names_sectors$code) ) 
+          ) 
   
 
 stacked_sc_plot(data_test_sectors,"VAR",interval = 5, diff = TRUE, title = "Testing the colours",bridge4palette_sectors = bridge_sectors)
