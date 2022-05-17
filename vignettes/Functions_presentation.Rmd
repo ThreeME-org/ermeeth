@@ -28,8 +28,9 @@ library(colorspace)
 ```
 
 ```{r dataload}
-data <- oilprice_fra
-data_agg <- oilprice_fra_agg
+
+data <- readRDS("../inst/oilprice_fra_c28_s32.rds")
+data_agg <- readRDS("../inst/oilprice_fra_c28_s32_commodities_sectors.rds")
 scenario_name <- "oilprice_fra"
 template_default <-  "ofce"
 start_year = 2020

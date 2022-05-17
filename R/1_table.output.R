@@ -10,7 +10,7 @@
 #'
 #' @import flextable officer
 #' @return a flextable
-#'
+#' @export
 #' @examples
 #' \dontrun{
 #' table.output(data = data, scenario = "oilprice_fra",
