@@ -42,7 +42,7 @@ source("../inst/codenames_c28_s32.R")
 # Plot functions
 
 ## Simple plots 
-```{r Simple Plot}
+```{r Simple Plot, fig.height = 4, fig.width=7}
 label_macro <- c("Gross domestic Production", "Households consumption", "Investment", "Public spendings")
 simpleplot(data,c("GDP", "CH", "I", "G"), label_macro, startyear =  start_year,endyear =  end_year, titleplot = "GDP and its components  (in difference from baseline)")
 
@@ -58,7 +58,7 @@ simpleplot(data,c("RDEBT_G_VAL"),label_series = "Public Debt", startyear = start
 
 ### General contrib plot
 
-```{r contrib plot}
+```{r contrib plot, fig.height = 4, fig.width=7}
 GDP_comp <- c( "CH","X","M", "I", "G")
 GDP_comp_label <- c( "Households consumption","Exports","Imports", "Investment", "Public spending")
 
@@ -91,17 +91,16 @@ contrib.plot(data_plot, series = GDP_comp,
 ```
 
 ### Sector contrib plots
-```{r sector contrib}
-data_plot <- contrib.sub(data,var1 =  "Y",
-                         group_type = "sector", scenar = c("baseline", scenario_name))
+```{r sector contrib, fig.height = 4, fig.width=7}
+data_plot <- contrib.sub(data_agg, var1 =  "Y",
+                         group_type = "sector", scenar = c("baseline", "oilprice_fra"))
 
-contrib.sub.plot(data_plot, template = "ofce", startyear = 2020, endyear = 2050, line_tot =  TRUE, titleplot = "Total production and sectorial decomposition  (in difference from baseline)")
-
-
+contrib.sub.plot(data_plot, template = "ofce", startyear = 2020, endyear = 2050, line_tot =  TRUE,
+                 titleplot = "Total production and sectorial decomposition (in difference from baseline)")
 ```
-## Colour test
 
-```{r colour test}
+## Colour test
+```{r colour test, fig.height = 4, fig.width=7}
 
 all_subsectors <- bridge_sectors %>% unlist()
 all_sectors <- names(bridge_sectors)
@@ -139,7 +138,7 @@ stacked_sc_plot(data_test_sectors,"VAR",interval = 5, diff = TRUE, title = "Test
 
 ### sector bar plots
 
-```{r sector bar plots}
+```{r sector bar plots, fig.height = 4, fig.width=7}
 data_CO2 <- data %>% filter(year %in% (start_year:end_year)) %>% filter(grepl("^EMS_.+_CO2_S.*$",variable)) %>% 
   mutate(variable = str_remove(variable,"_(CI|MAT|Y)")) %>% 
   group_by(year,sector,variable) %>% 
@@ -154,9 +153,20 @@ stacked_sc_plot(data,"Y",interval = 5, diff = TRUE, title = "CO2 emissions by se
 
 ### Sector curve plots
 
-```{r curve sector plots}
+```{r curve sector plots, fig.height = 4, fig.width=7}
 curve_sc_plot(data,"Y", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE,startyear = start_year,endyear = 2030, title = "Production by sector (in difference from baseline)")
 
 ```
 
 
+### Tables for main results
+```{r table.output, fig.height = 10 , fig.width = 7}
+# For a short format with main aggregate values
+table.output(data = data, scenario = "oilprice_fra",full.table = TRUE,
+             langue = "en", export.doc = FALSE)
+
+# Or a longer format and with the option to choose the language
+table.output(data = data, scenario = "oilprice_fra",full.table = FALSE,
+             langue = "fr", export.doc = FALSE)
+
+```
