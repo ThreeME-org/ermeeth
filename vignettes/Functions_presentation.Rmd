@@ -159,4 +159,9 @@ curve_sc_plot(data,"Y", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE,startye
 
 ```
 
+### interpolation functions
+
+```{r interpol}
+
+```
 
