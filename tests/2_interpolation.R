@@ -137,4 +137,4 @@ interpolation_series <- function(date_vector  = NULL,
 
 }
 
-interpolation_series(date_vector = c(2015,2025,2035),value_vector = c(54,90,67), first.date = 2012,last.date = 2050,showplot = TRUE)
+
