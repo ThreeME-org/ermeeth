@@ -1,13 +1,13 @@
 ---
 title: "ThreeME Standard results"
-subtitle: "Scénario: `r params$scenario_name`"
+subtitle: "Scenario: `r params$scenario_name`"
 author: "ThreeME team"
 date: "`r format(Sys.Date(), '%d %B %y')`"
 output: slidy_presentation
 params:
   startyear: 2020
   endyear: 2050
-  scenario_name: oilprice_fra
+  scenario_name: carbontax_lux
   classification: c28_s32
   template_default: ofce
 ---
@@ -36,10 +36,16 @@ template_default <- params$template_default
 
 
 
-
 ```{r Required packages, message=FALSE, warning=FALSE}
 
+# Load functions
 source("src/functions.R")
+
+```
+
+
+```{r load data and bridges}
+
 data_full<-readRDS(file = paste0("databases/",scenario_name,"_",classification,".rds"))
 ### loading the sector and commodity aggregated database 
 data_sector <- readRDS(file = paste0("databases/",scenario_name,"_",classification,"_commodities_sectors.rds"))
@@ -47,9 +53,15 @@ data_sector <- readRDS(file = paste0("databases/",scenario_name,"_",classificati
 
 source("bridges/bridge_c28_s32.R")
 source("bridges/codenames_c28_s32.R")
+
+
 ```
 
+
+
 ---
+
+# Result summary
 
 ```{r Table macro, results ='asis'}
 
@@ -59,12 +71,49 @@ table <- ermeeth::table.output(data = data_sector, scenario = scenario_name,
 
 table
 
+# to do: 
+# - Unité pas claire unclear: %, unit?
+# - manque des indicateurs:  taux de chomage
+# - Légend (a) inutile car toute les même: seulement pour les exceptions
+# - long term en anglais
+# - a 2nd tables with the missing indicators
+
+
 ```
 
----
+
+
+
+
+# Macroeconomic results: GDP and its components
+
+```{r Graph GDP,  fig.height = 6, fig.width = 14}
+label_macro <- c("Gross domestic product", "Households consumption", "Investment", "Public spending")
+A <- simpleplot(data_full,c("GDP", "CH", "I", "G"), label_macro, startyear, endyear, titleplot = "GDP and its components  (in difference from baseline)")
+
+B <- simpleplot(data_full,c("X", "M"),label_series = c("Exports", "Imports"), startyear, endyear, titleplot = "External trade  (in difference from baseline)")
+
+
+macro <- ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+## Save image on disk for further use (ready to be activated)
+# ggsave("macro.svg", device = svg, width = 32,  height = 16, units = c("cm"))
+
+
+## See the graph in Mark-down
+macro
+
+
+```
+
+
 
 # Contribution to growth (in deviation)
-```{r contrib Graphs, fig.height = 6, fig.width=10}
+```{r contrib Graphs, fig.height = 6, fig.width=12}
 GDP_comp <- c( "CH","X","M", "I", "G","DS")
 GDP_comp_label <- c( "Households consumption","Exports","Imports", "Investment", "Public spending","Stock variation")
 
@@ -73,152 +122,12 @@ data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_
 contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
              startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
 
-```
----
 
-# Contribution to growth (in yearly growth rate)
-```{r Graph Macro Growth contrib, fig.height = 6, fig.width=10}
-label_macro <- c("Gross domestic product", "Households consumption", "Investment", "Public spending")
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline", "oilprice_fra"), indicator = "gr.diff")
-
-contrib.plot(data_plot, series = GDP_comp, 
-             label_series = GDP_comp_label,
-             line_tot = TRUE,
-             startyear = 2020,
-             titleplot = "Contributions to GDP growth rate (in pp)")
-```
----
-
-# Growth rate
-```{r Graph Macro Growth rate, fig.height = 6, fig.width=10}
-A <- simpleplot(data_full,c("GDP", "CH", "I", "G"), label_macro, startyear, endyear, "gr", titleplot = "GDP and its components (growth rates)")
-
-B <- simpleplot(data_full,c("X", "M"), c("Exports", "Imports"), startyear, endyear, "gr", titleplot = "External trade (growth rates)")
-
-ggarrange(A,B,
-          labels = c("(a)", "(b)"),
-          hjust = -0.5, vjust = 1.5,
-          ncol = 2, nrow = 1,
-          widths = 2,  heights = 1)
-
-```
----
-
-
-# Effects on the production and the value added (2)
-```{r ProdVA2, fig.height = 6, fig.width=10}
-B <- curve_sc_plot(data_sector,"Y", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Production by sector (in difference from baseline)")
-
-C <- curve_sc_plot(data_sector,"VA",diff=TRUE,growth.rate = FALSE,abs.diff = FALSE,title = " Added value by sector (in difference from baseline)")
-
-ggarrange(B,C,
-          labels = c("(a)", "(b)"),
-          hjust = -0.5, vjust = 1.5,
-          ncol = 1, nrow = 2,
-          widths = 2,  heights = 1)
-
-
+# To do: graphique faux!!!  
 ```
 
----
 
-# Energy and Emissions
-
-Energy
-
-Emissions
 
 ---
 
 
-## Effects on energy prices
-```{r demande en produits energetiques, fig.height = 6, fig.width = 10}
-
-energy_price <- simpleplot(data_full,c("PQ_CGAS", "PQ_CCOI"), c("Gas prices","Crude oil prices"), startyear, endyear, titleplot = " Shock on gas and oil prices (in difference from baseline)")
-energy_price_bis <- simpleplot(data_full,c("PQ_CGAS", "PQ_CCOI"), c("Gas prices","Crude oil prices"), startyear, endyear, titleplot = " Shock on gas and oil prices (levels)",transformation = "level", unit=1)
-
-energy_demand <- simpleplot(data_full,c("Q_CGAS", "Q_CCOI"), c("Gas","Crude oil"), startyear, endyear, titleplot = " Demand for gas and oil (in difference from baseline)")
-energy_demand_bis <- simpleplot(data_full,c("Q_CGAS", "Q_CCOI"), c("Gas","Crude oil"), startyear, endyear, titleplot = " Demand on gas and oil (levels)",transformation = "level", unit=1)
-
-ggarrange(energy_price,energy_price_bis,energy_demand,energy_demand_bis,
-          labels = c("(a)", "(b)",'(c)',"(d)"),
-          hjust = -0.5, vjust = 1.5,
-          ncol = 2, nrow = 2,
-          widths = 2,  heights = 1)
-
-```
-
----
-
-
-# Sectoral results
-
-In contribution to total deviation (1)
-
-For each sector
-
-Economy composition
-
----
-
-## In contribution to total deviation (1)
-```{r Prod 1, fig.height = 6, fig.width=10}
-
-data_plot <- contrib.sub(data_sector,var1 =  "Y",
-                         group_type = "sector", scenar = c("baseline", scenario_name))
-
-g1 <- contrib.sub.plot(data_plot,template = "ofce", startyear = 2020, endyear = 2050, line_tot =  TRUE,
-                       titleplot = "Total production and sectorial decomposition  (in difference from baseline)")
-
-data_plot <- contrib.sub(data_sector, var1 =  "VA",
-                         group_type = "sector", scenar = c("baseline", scenario_name))
-
-g2 <- contrib.sub.plot(data_plot, template = "ofce", startyear = 2020, endyear = 2050, line_tot =  TRUE,
-                       titleplot = "Total Value Added and sectorial decomposition  (in difference from baseline)")
-
-ggarrange(g1, g2,
-          hjust = -0.5, vjust = 1.5,
-          ncol = 1, nrow = 2,
-          widths = 1,  heights = 2)
-
-```
-
----
-
-## In contribution to total deviation (2)
-```{r VA 1, fig.height = 6, fig.width=10}
-
-data_plot <- contrib.sub(data_sector, var1 =  "I",
-                         group_type = "sector", scenar = c("baseline", scenario_name))
-
-g1 <- contrib.sub.plot(data_plot, template = "ofce", startyear = 2020, endyear = 2050, line_tot =  TRUE,
-                       titleplot = "Total Value Added and sectorial decomposition  (in difference from baseline)")
-
-data_plot <- contrib.sub(data_sector,var1 =  "F_L",
-                         group_type = "sector", scenar = c("baseline", scenario_name))
-
-g2 <- contrib.sub.plot(data_plot, template = "ofce", startyear = 2020, endyear = 2050, line_tot =  TRUE,
-                       titleplot = "Total Labor  (in difference from baseline)")
-
-ggarrange(g1, g2,
-          hjust = -0.5, vjust = 1.5,
-          ncol = 1, nrow = 2,
-          widths = 1,  heights = 2)
-
-```
-
----
-
-## Mettre des geom_bat plot par secteur
-```{r sec bar, fig.height = 3, fig.width=7}
-
-```
-
----
-
-## treemap de l'économie
-```{r treemap , fig.height = 3, fig.width=7}
-
-```
-
----
