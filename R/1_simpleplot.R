@@ -128,7 +128,8 @@ simpleplot <- function(data,
 
   plotseries <- plotseries + theme(legend.title = element_blank(),
                                    axis.title.y = element_blank() ,
-                                   axis.ticks = element_line(size = 0.5, colour = "grey42") )
+                                   axis.ticks = element_line(size = 0.5, colour = "grey42"),
+                                   legend.position="bottom")
 
   plotseries
 }

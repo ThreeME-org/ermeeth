@@ -40,19 +40,19 @@ table.output <- function(data = data,
   }
   ## Choice of years to include in the table
   years <- c("2022", "2023","2024","2025","2027", "2050")
-  years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5", "long-terme")
-
 
   # Variable in relative deviation
   var_list.1 <- c("GDP","CH","I", "X", "M",
                   "PVA","PCH","PY" ,"PX","PM",
                   "DISPINC_BT_VAL", "W", "RSAV_H_VAL")
   if (langue == "fr"){
+    years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5", "long terme")
     var_label.1 <- c("PIB (a)","Consommation des m\u00e9nages (a)","Investissement (a)","Exportations (a)", "Importations (a)",
                      "Prix de VA (a)","Prix \u00e0 la consommation (a)", "Prix \u00e0 la production (a)", "Prix des exportations (a)", "Prix des importations (a)",
                      "Revenu des m\u00e9nages en valeur (a)", "Salaire (a)", "Taux d'\u00e9pargne des m\u00e9nages (a)")
   }
   if (langue == "en"){
+    years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5", "long-term")
     var_label.1 <- c("GDP (a)","Households consumption (a)","Investment (a)","Exports (a)", "Imports (a)",
                      "Price of VA (a)","Consumption price (a)", "Production price (a)", "Export price (a)", "Import price (a)",
                      "Households disposable income (a)", "Nominal wages (a)", "Households saving rate (a)")
