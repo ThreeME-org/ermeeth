@@ -31,7 +31,7 @@
 #' @param names_s a data.frame used only if no aggregation is requested for sectors. One column "code" should contain the codes used in the sector variables and a column "name" contains the explicit name.
 #' @param csv_folder path where to source the csv from simulations
 #'
-#' @import data.table
+#' @importFrom data.table fread
 #' @importFrom stats na.omit
 #'
 #' @import dplyr
