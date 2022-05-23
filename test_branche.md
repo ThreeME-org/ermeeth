@@ -3,7 +3,7 @@
 ## Utilisation du Github
 
 
-Github pour avoir un fichier R Markdown collaboratif
+Frederic
 
 La connection entre Github et RMarkdwon peut être assez intéressante pour créer un fichier PDF final comprenant une partie texte et une partie graphique (potentiellement certains lignes de code) de manière harmonieuse. Si la question se pose un moment de reformater le document final sous Latex, RMarkdwon peut créer un fichier .tex, comprenant les graphiques et du texte. 
 
