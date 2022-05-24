@@ -76,15 +76,13 @@ contrib.sub.plot <- function(data,
       scale_y_continuous(labels = scales::label_number(accuracy = decimal, scale = unit))
   }
 
-  ifelse(template =="ofce",
+  if(template =="ofce"){
 
-         plotseries <- plotseries +  ofce::theme_ofce(base_family = ""),
-
-         plotseries <- plotseries +  theme(legend.position = "bottom")
-  )
+         plotseries <- plotseries +  ofce::theme_ofce(base_family = "")}
 
   plotseries <- plotseries + theme(legend.title = element_blank(),
-                                   axis.title.y = element_blank() )
+                                   axis.title.y = element_blank(),
+                                   legend.position = "bottom")
 
   plotseries
 }
