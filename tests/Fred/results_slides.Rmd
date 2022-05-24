@@ -59,8 +59,6 @@ source(paste0("bridges/codenames_",classification,".R"))
 
 ```
 
-
-
 ---
 
 # Result summary
@@ -77,15 +75,12 @@ table
 # - Unité pas claire unclear: %, unit?
 # - manque des indicateurs:  taux de chomage
 # - Légend (a) inutile car toute les même: seulement pour les exceptions
-# - long term en anglais
 # - a 2nd tables with the missing indicators
 
 
 ```
 
-
-
-
+---
 
 # Macroeconomic results: GDP and its components
 
@@ -113,7 +108,26 @@ macro
 ```
 
 
-# Contribution to growth (in deviation)
+---
+
+# GDP and its components (Growth rate)
+```{r Graph Macro Growth rate, fig.height = 6, fig.width=14}
+
+A <- simpleplot(data_full,c("GDP", "CH", "I", "G"), label_macro, startyear, endyear, "gr", titleplot = "GDP and its components (growth rates)")
+
+B <- simpleplot(data_full,c("X", "M"), c("Exports", "Imports"), startyear, endyear, "gr", titleplot = "External trade (growth rates)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
+---
+
+# Contribution to the GDP change relative to the baseline
 ```{r contrib Graphs, fig.height=6, fig.width=12}
 
 GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
@@ -122,14 +136,14 @@ GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Pu
 data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name))
 
 contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
-             startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+             startyear = 2020, titleplot = "Contributions to GDP change (in difference from baseline)", line_tot = TRUE)
 
 
 
 ```
 
 
-```{r Contrib OLD}
+```{r Contrib OLD, eval=FALSE, include=FALSE}
 
 GDP_comp <- c( "CH","X","M", "I", "G","DS")
 GDP_comp_label <- c( "Households consumption","Exports","Imports", "Investment", "Public spending","Stock variation")
@@ -205,9 +219,98 @@ selection_wide2bis <- scenarios %>% map(~selection_wide %>%
 
 ```
 
+---
 
+
+# Employment
+
+```{r Employment, fig.height = 6, fig.width=14}
+
+A <- simpleplot(data_full,"F_L", label_series = "Labor", startyear, endyear, decimal = 1, titleplot = "Employment (in difference from baseline)")
+B <- simpleplot(data_full,"F_L", label_series = "Labor", startyear, endyear, "diff", unit = 1000, decimal = 1, titleplot = "Employment (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
+---
+
+
+# Unemployment
+
+```{r Unemployment, fig.height = 6, fig.width=14}
+
+C <- simpleplot(data_full,"UNR", label_series = "Unemployment", startyear, endyear,"diff", unit = 100, titleplot = "Unemployment rate (in difference from baseline)")
+D <- simpleplot(data_full,"UNR", label_series = "Unemployment rate (dashed line = baseline)", startyear, endyear, "level", titleplot = "Unemployment rate  (level)")
+
+ggarrange(C,D,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
+# Prices and wages 
+
+```{r Graph Prices, fig.height = 6, fig.width=14}
+label_prices <- c("Consumption", "Production", "Value added","Imports", "Exports")
+A <- simpleplot(data_full,c("PCH", "PY", "PVA", "PM", "PX"),label_prices, startyear, endyear, titleplot = "Prices (in difference from baseline)")
+B <- simpleplot(data_full,"W", label_series = "wage", startyear, endyear, titleplot = "Gross nominal wages (in difference from baseline)")
+
+prix_salaires <- ggarrange(A,B,
+                           labels = c("(a)", "(b)"),
+                           hjust =-0.5, vjust = 1.5,
+                           ncol = 2, nrow = 1,
+                           widths = 2,  heights = 1)
+prix_salaires
+```
 
 
 ---
+
+# Sectoral results: Production and the value added
+
+```{r ProdVA2, fig.height = 6, fig.width=14}
+
+B <- curve_sc_plot(data_sector,"Y", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Production by sector (in difference from baseline)")
+
+C <- curve_sc_plot(data_sector,"VA",diff=TRUE,growth.rate = FALSE,abs.diff = FALSE,title = " Added value by sector (in difference from baseline)")
+
+ggarrange(B,C,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+
+---
+
+# Sectoral employment
+
+```{r Sectoral eployment, eval=FALSE, fig.height=6, fig.width=14, include=FALSE}
+
+C <- simpleplot(data_full,"UNR", label_series = "Unemployment", startyear, endyear,"diff", unit = 100, titleplot = "Unemployment rate (in difference from baseline)")
+D <- simpleplot(data_full,"F_L", label_series = "Labor", startyear, endyear, "diff", unit = 1000, decimal = 1, titleplot = "Employment (in difference from baseline)")
+
+E<- curve_sc_plot(data_sector,"F_L",diff=TRUE,abs.diff = TRUE,title = "Employment by sector (in difference from baseline)")
+G <- simpleplot(data_full,"UNR","Unemployment rate", startyear, endyear, "level", titleplot = "Unemployment rate ")
+ggarrange(C,D,G,E,
+labels = c("(a)", "(b)", "(c)", "(d)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 2,
+widths = 2,  heights = 1)
+
+```
+
+
+
 
 
