@@ -1,23 +1,23 @@
-bridge_sectors <-list( 
-  "Agriculture" = c("sagr", "sfor"),
-  "Energy intensive industry" = c("sveh", "spap",	"sche", "spla", "sgla"),
-  "Other industry" = c("sfoo", "sigo", "scgo"),
-  "Construction" = c("scon"),
-  "Transport" = c("srai",	"sroa",	"swat",	"sair"),
-  "Services" = c("spri", "sfin", "spub"),
-  "Fossil based energy" = c("smin", "soil", "sgas", "seoi",	"sega", "seco"),
-  "Other energy" = c("senu", "sewi", "seso",	"sehy",	"seot")
+bridge_sectors <-list(
+  "S001" = c("sagr", "sfor"),
+  "S002" = c("sveh", "spap",	"sche", "spla", "sgla"),
+  "S003" = c("sfoo", "sigo", "scgo"),
+  "S004" = c("scon"),
+  "S005" = c("srai",	"sroa",	"swat",	"sair"),
+  "S006" = c("spri", "sfin", "spub"),
+  "S007" = c("smin", "soil", "sgas", "seoi",	"sega", "seco"),
+  "S008" = c("senu", "sewi", "seso",	"sehy",	"seot")
 )
 
 
 bridge_commodities <- list(
-  "Agriculture" = c("cagr", "cfor"),
-  "Energy intensive industry" = c("cveh", "cpap",	"cche", "cpla", "cmet","cgla"),
-  "Other industry" = c("cfoo", "cigo", "ccgo"),
-  "Construction" = c("ccon"),
-  "Transport" = c("crai",	"croa",	"cwat",	"cair"),
-  "Services" = c("cpri", "cfin", "cpub"),
-  "Fossil based energy" = c("cmin", "ccoa", "ccoi", "cfut", "cgas"),
-  "Other energy" = c("cele")
+  "C001" = c("cagr", "cfor"),
+  "C002" = c("cveh", "cpap",	"cche", "cpla", "cmet","cgla"),
+  "C003" = c("cfoo", "cigo", "ccgo"),
+  "C004" = c("ccon"),
+  "C005" = c("crai",	"croa",	"cwat",	"cair"),
+  "C006" = c("cpri", "cfin", "cpub"),
+  "C007" = c("cmin", "ccoa", "ccoi", "cfut", "cgas"),
+  "C008" = c("cele")
 )
 
