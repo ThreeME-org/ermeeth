@@ -32,7 +32,11 @@
 #' @param csv_folder path where to source the csv from simulations
 #' @param aggregation_rules_path path where to find the aggregation rules table
 #'
+<<<<<<< HEAD
 #' @importFrom data.table dcast fread
+=======
+#' @importFrom data.table fread
+>>>>>>> 36a3ff56d7badb3b9c0df6303463e2a60a746354
 #' @importFrom stats na.omit
 #'
 #' @import dplyr
