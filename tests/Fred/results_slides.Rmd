@@ -88,7 +88,7 @@ table
 label_macro <- c("Gross domestic product", "Households consumption", "Investment", "Public spending")
 A <- simpleplot(data_full,c("GDP", "CH", "I", "G"), label_macro, startyear, endyear, titleplot = "GDP and its components  (in difference from baseline)")
 
-B <- simpleplot(data_full,c("X", "M"),label_series = c("Exports", "Imports"), startyear, endyear, titleplot = "External trade  (in difference from baseline)")
+B <- simpleplot(data_full,c("X", "M", "BAL_TRADE"),label_series = c("Exports", "Imports", "Trade balance"), startyear, endyear, titleplot = "External trade  (in difference from baseline)")
 
 
 macro <- ggarrange(A,B,
@@ -125,8 +125,6 @@ widths = 2,  heights = 1)
 
 ```
 
----
-
 # Contribution to the GDP change relative to the baseline
 ```{r contrib Graphs, fig.height=6, fig.width=12}
 
@@ -137,6 +135,103 @@ data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_
 
 contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
              startyear = 2020, titleplot = "Contributions to GDP change (in difference from baseline)", line_tot = TRUE)
+
+
+
+```
+
+
+```{r contrib Graphs PAUL, eval=FALSE, fig.height=6, fig.width=12, include=FALSE}
+#filter(data_full, variable == "BAL_TRADE")
+#157883.7 - 131631.8
+#M 131631.8
+#X 157883.7 
+#BAL 26747.98
+GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
+GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff")
+contrib.plot(data_plot, series = GDP_comp,
+             startyear = 2020,
+             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+GDP_comp <- c( "CH","X","M", "I", "G","DS")
+GDP_comp_label <- c( "Households consumption","Exports", "Imports", "Investment", "Public spending","Stock variation")
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline"),
+                      indicator = "gr.diff", neg.value = "M")
+contrib.plot(data_plot, series = GDP_comp,
+             startyear = 2020,
+             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+```
+
+
+```{r contrib Graphs_example, eval=FALSE, fig.height=6, fig.width=12, include=FALSE}
+
+
+GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
+GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
+
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff")
+
+contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
+             startyear = 2020, titleplot = "Contributions to GDP change (in difference from baseline)", line_tot = TRUE)
+
+contrib.plot(data_plot, series = GDP_comp,
+             startyear = 2020,
+             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+
+GDP_comp <- c( "CH","X","M", "I", "G","DS")
+GDP_comp_label <- c( "Households consumption","Exports", "Imports", "Investment", "Public spending","Stock variation")
+
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline"),
+                      indicator = "gr.diff", neg.value = "M")
+
+contrib.plot(data_plot, series = GDP_comp,
+             startyear = 2020,
+             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+
+
+
+
+#filter(data_full, variable == "BAL_TRADE")
+
+
+#157883.7 - 131631.8
+#M 131631.8
+#X 157883.7 
+#BAL 26747.98
+
+
+
+data_plot <-  contrib(data_full,"BAL_TRADE", c("X", "M"), scenar = c("baseline",scenario_name),
+                      indicator = "rel.diff", neg.value = "M")
+
+contrib.plot(data_plot, series = c("X", "M"),
+             startyear = 2020,
+             titleplot = "Contributions to trade surplus (in difference from baseline)", line_tot = TRUE)
+
+
+## GDP 1
+
+data_plot <-  contrib(data_full,"CH", c("CHD", "CHM"), scenar = c("baseline",scenario_name), indicator = "share")
+
+contrib.plot(data_plot, series = c("CHD", "CHM"),
+             startyear = 2020,
+             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+
+GDP_comp <- c( "CH","X", "M", "I", "G","DS")
+GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
+
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "M")
+
+contrib.plot(data_plot, series = GDP_comp,
+             startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+
+GDP_comp <- c( "X", "M")
+GDP_comp_label <- c("Exports", "Imports")
+
+data_plot <-  contrib(data_full,"BAL_TRADE", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "M")
+
+contrib.plot(data_plot, series = GDP_comp,
+             startyear = 2020, titleplot = "Contributions to Balance of trade gowth (in difference from baseline)", line_tot = TRUE)
 
 
 
