@@ -24,7 +24,7 @@ contrib <- function(data,
                     indicator = "rel.diff",
                     scenar = scenarios,
                     check_digit = 3,
-                    neg.value = "M" )
+                    neg.value = NULL )
 {
 
   if (is.null(scenar)){
@@ -59,7 +59,7 @@ contrib <- function(data,
     dplyr::mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
     dplyr::select(year, contains("w"))
 
-  if (neg.value %in% var2){
+  if (!is.null(neg.value)){
     data.w_baseline  <- data.w_baseline %>% dplyr::mutate_at(str_c(neg.value,"_w") , ~((-1) *.x))
   }
 
@@ -72,6 +72,7 @@ contrib <- function(data,
     data.contrib.2 <- data.contrib.1
 
   } else {
+
     shock_scenario <- setdiff(scenar,"baseline")
 
 
@@ -94,10 +95,10 @@ contrib <- function(data,
   #Calcul des contributions a base de mutate_at
 
 
-  if(indicator == "rel.diff" & indicator != "gr.diff"){
+  if(indicator == "rel.diff" & indicator != "gr.diff" & indicator != "share"){
 
     # Imports en négatif
-    if (neg.value %in% var2){
+    if (!is.null(neg.value)){
       data.contrib.1 <- data.contrib.1 %>% dplyr::mutate_at(neg.value , ~((-1) *.x))
       data.w_baseline  <- data.w_baseline %>% dplyr::mutate_at(str_c(neg.value,"_w") , ~((-1) *.x))
     }
@@ -116,7 +117,7 @@ contrib <- function(data,
 
 
     # Variation for var 2 variables
-    data.contrib.3 <- data.contrib.2 %>% select(-GDP,year, var2)
+    data.contrib.3 <- data.contrib.2 %>% select(-var1,year, var2)
 
     data.contrib <-  (data.contrib.3[-1] * data.w_baseline[-1]) %>%
       cbind("year" = data.contrib.3[1], .) %>% as.data.frame() %>%
@@ -125,7 +126,7 @@ contrib <- function(data,
   }
   else {
 
-    if(indicator == "gr.diff") {
+    if(indicator == "gr.diff"  & indicator != "share") {
 
       if (length(scenar) == 1) {
         # Taux de croissance annuel pour chaque variable et période (scenar)
@@ -147,7 +148,7 @@ contrib <- function(data,
         data.gr_baseline <- data.in %>%
           dplyr::group_by(variable) %>%
           dplyr::mutate(lag.value = baseline - dplyr::lag(baseline, n = 1, default = NA),
-                 value = ((lag.value  / baseline))) %>%
+                        value = ((lag.value  / baseline))) %>%
           dplyr::select(year, variable, value) %>%
           tidyr::pivot_wider(names_from = variable, values_from = value)
 
@@ -167,9 +168,22 @@ contrib <- function(data,
       weight_check <-  data.w_baseline %>% dplyr::filter(year == max(year)) %>% dplyr::select(-year) %>% rowSums()
 
     } else {
-      data.contrib <- data.contrib.1 %>% as.data.frame() %>% dplyr::select(-GDP,year, var2) %>%
-        `colnames<-`(c("year",var2)) %>%
-        tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
+      if(indicator == "share"){
+
+        data.contrib <- data.in  %>%
+          dplyr::select(variable, year, baseline) %>%
+          tidyr::pivot_wider(names_from = variable,
+                             values_from = baseline) %>%
+          dplyr::mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
+          dplyr::select(year, contains("w")) %>%
+          `colnames<-`(c("year",var2)) %>%
+          tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
+
+      } else{
+        data.contrib <- data.contrib.1 %>% as.data.frame() %>% dplyr::select(-var1,year, var2) %>%
+          `colnames<-`(c("year",var2)) %>%
+          tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
+      }
     }
   }
 
