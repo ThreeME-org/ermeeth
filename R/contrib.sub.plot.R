@@ -15,6 +15,7 @@
 #'
 #' @return un ggplot
 #' @import ggh4x ggplot2 dplyr tidyr scales ofce colorspace
+#' @importFrom scales percent label_number percent_format
 #'
 #' @export
 contrib.sub.plot <- function(data,
