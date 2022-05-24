@@ -233,8 +233,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
     ggplot2::labs(title = title,
                   color = "" ) +
     ggplot2::ylab("") + ggplot2::xlab("") +
-    ggplot2::scale_color_brewer(palette = "Dark2")+
-    ggplot2::theme(legend.position = "bottom")
+    ggplot2::scale_color_brewer(palette = "Dark2")
 
   if(template =="ofce"){
     res_plot <- res_plot + ofce::theme_ofce(base_family = "")
@@ -277,6 +276,9 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
           axis.ticks = element_line(size = 0.5, colour = "grey42")
 
     )
+
+  res_plot <- res_plot + ggplot2::theme(legend.position = "bottom")
+
   res_plot
 }
 
