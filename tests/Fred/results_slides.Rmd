@@ -8,7 +8,7 @@ params:
   startyear: 2020
   endyear: 2050
   scenario_name: carbontax_lux
-  classification: c28_s32
+  classification: c25_s29
   template_default: ofce
 ---
 
@@ -41,6 +41,7 @@ template_default <- params$template_default
 # Load functions
 source("src/functions.R")
 
+
 ```
 
 
@@ -51,8 +52,9 @@ data_full<-readRDS(file = paste0("databases/",scenario_name,"_",classification,"
 data_sector <- readRDS(file = paste0("databases/",scenario_name,"_",classification,"_commodities_sectors.rds"))
 
 
-source("bridges/bridge_c28_s32.R")
-source("bridges/codenames_c28_s32.R")
+source(paste0("bridges/bridge_",classification,".R"))
+source(paste0("bridges/codenames_",classification,".R"))
+
 
 
 ```
@@ -111,9 +113,24 @@ macro
 ```
 
 
-
 # Contribution to growth (in deviation)
-```{r contrib Graphs, fig.height = 6, fig.width=12}
+```{r contrib Graphs, fig.height=6, fig.width=12}
+
+GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
+GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
+
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name))
+
+contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
+             startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+
+
+
+```
+
+
+```{r Contrib OLD}
+
 GDP_comp <- c( "CH","X","M", "I", "G","DS")
 GDP_comp_label <- c( "Households consumption","Exports","Imports", "Investment", "Public spending","Stock variation")
 
@@ -124,7 +141,70 @@ contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
 
 
 # To do: graphique faux!!!  
+
+
 ```
+
+```{r Contrib Trade Balance, eval=FALSE, include=FALSE}
+
+## BUG: Function contrib:
+## - GDP hard codé  ligne 119 et 170
+## - Il ne faut pas mettre M par default en négatif car pb si on ne veux pas que M soit négatif
+
+
+GDP_comp <- c("X","M")
+GDP_comp_label <- c("Exports","Imports")
+
+data_plot <-  contrib(data_full,"BAL_TRADE", GDP_comp, scenar = c("baseline",scenario_name))
+
+contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
+             startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+
+
+
+
+
+```
+
+
+
+```{r Test format DF, eval=FALSE, include=FALSE}
+
+scenarios <- c("carbontax_lux","baseline")
+
+selection <- data_full %>% dplyr::filter(variable %in%  c("GDP","CH", "G", "I", "DS"))
+  
+  
+  
+selection_wide  <- selection %>% 
+                                        tidyr::pivot_wider(
+                                        id_cols = year ,
+                                        names_from = variable, 
+                                        names_sep = "." ,
+                                        values_from = c(carbontax_lux,baseline) )  
+selection_wide2 <- selection_wide  %>%
+
+                                     mutate(carbontax_lux.CH_G = carbontax_lux.CH + carbontax_lux.G,
+                                            baseline.CH_G = baseline.CH + baseline.G,
+                                            carbontax_lux.I_DS = carbontax_lux.I + carbontax_lux.DS,
+                                            baseline.I_DS = baseline.I + baseline.DS
+                                            
+                                            )
+  
+
+
+selection_wide2bis <- scenarios %>% map(~selection_wide %>% 
+                                     mutate(!!paste0(.x,".","CH_G") := get(paste0(.x,".","CH")) + get(paste0(.x,".","G"))
+                                            ) %>%
+                                     select(year, all_of(setdiff(names(.),names(selection_wide))))
+                                   ) %>% 
+  reduce(full_join) %>% full_join(selection_wide)
+
+
+
+
+```
+
 
 
 
