@@ -30,13 +30,14 @@
 #' @param names_c a data.frame used only if no aggregation is requested for commodities. One column "code" should contain the codes used in the commodity variables and a column "name" contains the explicit name.
 #' @param names_s a data.frame used only if no aggregation is requested for sectors. One column "code" should contain the codes used in the sector variables and a column "name" contains the explicit name.
 #' @param csv_folder path where to source the csv from simulations
+#' @param aggregation_rules_path path where to find the aggregation rules table
 #'
-#' @import data.table
+#' @importFrom data.table dcast fread
 #' @importFrom stats na.omit
 #'
 #' @import dplyr
 #' @import tidyr stringr
-#' @import purrr
+#' @importFrom purrr imap map map_df reduce set_names
 #'
 #' @return A data.frame with the following columns:
 #'  - variable: name of the ThreeME variable for which the result is reported in a given row
@@ -53,7 +54,8 @@ loadResults <- function(scenarios,
                         bridge_s = NULL,
                         names_s = NULL,
                         names_c = NULL,
-                        csv_folder = "csv") {
+                        csv_folder = "csv",
+                        aggregation_rules_path = file.path("bridges","aggregation_rules.xlsx")) {
   # To debug the function step by step, activate line below
 
   # browser()
@@ -97,7 +99,7 @@ loadResults <- function(scenarios,
     }) %>%
     rbindlist %>%
 
-    dcast(variable + year ~ scenario) %>% as.data.frame()
+    data.table::dcast(variable + year ~ scenario) %>% as.data.frame()
 
   scenarios_var <- names(data_1 %>% select(-variable,-year))
 
@@ -173,7 +175,7 @@ loadResults <- function(scenarios,
 
 
     ## Load aggregation rules
-    ag_rule_sector <- read_excel("bridges/aggregation_rules.xlsx",sheet = "sectors") %>%
+    ag_rule_sector <- read_excel(aggregation_rules_path,sheet = "sectors") %>%
       mutate(check1 = sum + mean + weighted_mean)
 
     # Checks
@@ -271,13 +273,13 @@ loadResults <- function(scenarios,
       rename_at(paste0(scenarios_var,".y"),~str_replace(.x,"\\.y$",".totw"))
 
     data_sector_w_mean <- cbind(data_sector_w_mean,
-                                map_df(set_names(scenarios_var,paste0(scenarios_var,".weight")) ,
+                                purrr::map_df(set_names(scenarios_var,paste0(scenarios_var,".weight")) ,
                                        ~data_sector_w_mean[,paste0(.x,".subw")]/data_sector_w_mean[,paste0(.x,".totw")])) %>%
       select(-ends_with(".totw"),-ends_with(".subw"),-variable_root,-subsector,-sector,-weight_var)
 
 
     data_sector_w_mean <- cbind(data_sector_w_mean,
-                                map_df(set_names(scenarios_var,paste0(scenarios_var,".weighted")) ,
+                                purrr::map_df(set_names(scenarios_var,paste0(scenarios_var,".weighted")) ,
                                        ~data_sector_w_mean[,.x]*data_sector_w_mean[,paste0(.x,".weight")])) %>% select(-all_of(scenarios_var),-ends_with(".weight")) %>%
       rename_at(paste0(scenarios_var,".weighted"),~str_remove(.x,"\\.weighted$"))
 
@@ -310,8 +312,8 @@ loadResults <- function(scenarios,
 
     bridge_commodity_table <- data.frame(commodity_id = names(bridge_c) ) %>%
       full_join(bridge_c
-                %>% imap(~data.frame(commodity_id = .y,subcommodity =.x)) %>%
-                  reduce(rbind), by ="commodity_id" ) %>%
+                %>% purrr::imap(~data.frame(commodity_id = .y,subcommodity =.x)) %>%
+                  purrr::reduce(rbind), by ="commodity_id" ) %>%
       mutate(subcommodity = toupper(subcommodity))
 
     super_commodity_names <- names_c %>% filter(code %in% names(bridge_c)) %>%
@@ -407,7 +409,7 @@ loadResults <- function(scenarios,
     ##data_commodity one commodity
     data_commodity_one <- data_commodity %>% dplyr::filter(is.na(subcommodity2))
 
-    ag_rule_commodity <- read_excel("bridges/aggregation_rules.xlsx",sheet = "commodities") %>%
+    ag_rule_commodity <- read_excel(aggregation_rules_path,sheet = "commodities") %>%
       mutate(mean = as.numeric(gsub("\\s+","",mean)),
              check1 = sum + mean + weighted_mean)
 

@@ -17,7 +17,8 @@
 #' @param line_tot boolean. Default FALSE . TRUE will display the line for the main variable.
 #'
 #' @return  ggplot
-#' @import ggh4x ggplot2 dplyr tidyr scales
+#' @import ggh4x ggplot2 dplyr tidyr
+#' @importFrom scales percent label_number
 #' @export
 
 contrib.plot <- function(data,

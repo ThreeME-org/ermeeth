@@ -21,6 +21,7 @@
 #'
 #' @return un ggplot
 #' @import ggh4x ggplot2 dplyr ofce tidyr
+#' @importFrom scales percent label_number percent_format
 #'
 #' @export
 simpleplot <- function(data,
