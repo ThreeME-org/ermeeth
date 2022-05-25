@@ -54,25 +54,25 @@ contrib.plot <- function(data,
   ## Plot making
   plot <- ggplot2::ggplot() +
     ggplot2::geom_bar(data = data , aes(x = year, y = value, fill = variable),
-             stat= "identity", width = 0.9, position = position_stack(reverse = TRUE)) +
+                      stat= "identity", width = 0.9, position = position_stack(reverse = TRUE)) +
     ggplot2::scale_fill_manual(values = custom.palette(length(series)),
                                limits = series,
-                      labels = label_series)  +
+                               labels = label_series) +
     ggplot2::labs(x = "", title = titleplot)
 
 
-   if(unit == "percent") {
+  if(unit == "percent") {
     plot <- plot +
       ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = decimal))
   }
 
   if(unit != "percent") {
     plot <- plot +
-      ggplot2::scale_y_continuous(labels = scales::label_number(accuracy = decimal, scale = unit))
+      ggplot2::scale_y_continuous(labels = scales::label_number(accuracy = decimal, scale = 1/as.numeric(unit)))
   }
 
   if (line_tot == TRUE){
-  # Data for ploting the line
+    # Data for ploting the line
     data.2 <- data %>%
       dplyr::filter(year > startyear & year < endyear) %>%
       tidyr::pivot_wider(names_from = variable, values_from = value) %>%
@@ -92,7 +92,7 @@ contrib.plot <- function(data,
   )
 
   plot <- plot + ggplot2::theme(legend.title = element_blank(),
-                                   axis.title.y = element_blank() )
+                                axis.title.y = element_blank() )
 
   plot
 }
