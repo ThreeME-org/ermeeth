@@ -70,7 +70,7 @@ wide_data <- function(data ,
   }else{
     variables_not_found <- dplyr::setdiff(variables,all_variables)
     if (length(variables_not_found)>0 ){
-      message(paste("Variable(s)", variables_not_found, "could not be found, they will be ignored."))
+      message(paste("Variable(s)", paste0(variables_not_found,collapse = ", "), "could not be found, they will be ignored."))
     }
     if(length(variables_not_found) == length(variables)){
       stop(message="Could not find any of the variables specified.")

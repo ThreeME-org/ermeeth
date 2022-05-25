@@ -18,7 +18,6 @@ usethis::use_package("utils")
 usethis::use_package("colorspace")
 usethis::use_package("flextable")
 usethis::use_package("officer")
-usethis::
 
 devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")
 CheckLazyDataCompression <- function(pkg){

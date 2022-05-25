@@ -174,3 +174,28 @@ table.output(data = data, scenario = "oilprice_fra",full.table = FALSE,
              langue = "fr", export.doc = FALSE)
 
 ```
+
+
+### long to wide and wide to long
+
+```{r long and wide data}
+
+threeme_wide_df <- data_agg %>% wide_data(variables = c(variables_like(.,"^Y_",FALSE),"GDP") , 
+                                            out_format = "dataframe") 
+
+threeme_wide_list <- data_agg %>% wide_data(variables = c(variables_like(.,"^Y_",FALSE),"GDP") , 
+                                            out_format = "list") 
+
+threeme_wide_list2 <- data_agg %>% 
+  wide_data(variables = c("WAGES","GDP","Y_S001","Y_S002","Y_C001","Y_C002","Y_C001_S002","Y_C002_S002") , out_format = "list") %>% 
+  map(~.x %>% mutate(
+    ratio = WAGES/GDP,
+    part_S001 = Y_S001 / GDP
+  )
+      )
+
+new_threeme1 <- threeme_wide_list2 %>% long_data()
+new_threeme2 <- threeme_wide_list2 %>% long_data(sector_names_table = NULL, 
+                                                 commodity_names_table = NULL)
+```
+

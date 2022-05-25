@@ -141,13 +141,13 @@ loadResults <- function(scenarios,
                   reduce(rbind), by ="sector_id" ) %>%
       mutate(subsector = toupper(subsector))
 
-    super_sector_names <- names_s %>% filter(code %in% names(bridge_s)) %>%
+    super_sector_names <- names_s %>% dplyr::filter(code %in% names(bridge_s)) %>%
       rename(sector_id = code, sector = name)
 
-    bridge_sector_table <- bridge_sector_table %>% left_join(super_sector_names, by = "sector_id")
+    bridge_sector_table <- bridge_sector_table %>% dplyr::left_join(super_sector_names, by = "sector_id")
 
     ## replace for all variables sub sector instead of sector id ,
-    data_1$variable <- str_replace_all(data_1$variable,
+    data_1$variable <- stringr::str_replace_all(data_1$variable,
                                        purrr::set_names(bridge_sector_table$sector_id,
                                                         paste0(bridge_sector_table$subsector,"$")
                                        ) )
