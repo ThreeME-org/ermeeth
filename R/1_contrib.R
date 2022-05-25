@@ -24,7 +24,7 @@ contrib <- function(data,
                     indicator = "rel.diff",
                     scenar = scenarios,
                     check_digit = 3,
-                    neg.value = "M" )
+                    neg.value = NULL )
 {
 
   if (is.null(scenar)){
@@ -59,7 +59,7 @@ contrib <- function(data,
     dplyr::mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
     dplyr::select(year, contains("w"))
 
-  if (neg.value %in% var2){
+  if (!is.null(neg.value)){
     data.w_baseline  <- data.w_baseline %>% dplyr::mutate_at(str_c(neg.value,"_w") , ~((-1) *.x))
   }
 
@@ -72,6 +72,7 @@ contrib <- function(data,
     data.contrib.2 <- data.contrib.1
 
   } else {
+
     shock_scenario <- setdiff(scenar,"baseline")
 
 
@@ -84,49 +85,46 @@ contrib <- function(data,
     ## Diff relative
     data.contrib.2 <- data.in %>%  dplyr::mutate(scenario = .[,str_c(shock_scenario)] / .[,"baseline"] -1) %>%
       dplyr::select(variable, year, scenario) %>%
-      pivot_wider(names_from = variable,
-                  values_from = scenario)
+      tidyr::pivot_wider(names_from = variable,
+                         values_from = scenario)
   }
-
 
 
 
   #Calcul des contributions a base de mutate_at
 
 
-  if(indicator == "rel.diff" & indicator != "gr.diff"){
+  if(indicator == "rel.diff" & indicator != "gr.diff" & indicator != "share"){
 
     # Imports en négatif
-    if (neg.value %in% var2){
+    if (!is.null(neg.value)){
       data.contrib.1 <- data.contrib.1 %>% dplyr::mutate_at(neg.value , ~((-1) *.x))
-      data.w_baseline  <- data.w_baseline %>% dplyr::mutate_at(str_c(neg.value,"_w") , ~((-1) *.x))
     }
 
-    data.contrib <- data.contrib.1 %>%
+    # Check on the weights
+    weight_check <-  data.contrib.1 %>%
       dplyr:: mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
       dplyr::select(year, contains("w")) %>%
       as.data.frame() %>% `colnames<-`(c("year",var2)) %>%
-      tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
-
-    # Check on the weights
-    weight_check <-  data.contrib %>%
+      tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)  %>%
       tidyr::pivot_wider(names_from = variable, values_from = value) %>%
       dplyr::filter(year == max(year)) %>%
       dplyr::select(-year) %>% rowSums()
 
 
     # Variation for var 2 variables
-    data.contrib.3 <- data.contrib.2 %>%
-      dplyr::select(-all_of(var1), year, all_of(var2))
+    data.contrib.3 <- data.contrib.2 %>% dplyr::select(-all_of(var1))
 
-    data.contrib <-  (data.contrib.3[-1] * data.w_baseline[-1]) %>%
-      cbind("year" = data.contrib.3[1], .) %>% as.data.frame() %>%
+    data.contrib <-  (dplyr::select(data.contrib.3, year, all_of(var2))[-1] * dplyr::select(data.w_baseline,year, all_of(str_c(var2,"_w")))[-1]) %>%
+      cbind("year" = data.contrib.2[1], .) %>% as.data.frame() %>%
       tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
+
+
 
   }
   else {
 
-    if(indicator == "gr.diff") {
+    if(indicator == "gr.diff"  & indicator != "share") {
 
       if (length(scenar) == 1) {
         # Taux de croissance annuel pour chaque variable et période (scenar)
@@ -137,7 +135,7 @@ contrib <- function(data,
           dplyr::select(year, variable, value) %>%
           tidyr::pivot_wider(names_from = variable, values_from = value)
 
-        df <-  (dplyr::select(data.gr_sc, year, var2)[-1] * data.w_baseline[-1] )
+        df <-  (dplyr::select(data.gr_sc, year, all_of(var2))[-1] * data.w_baseline[-1] )
 
         data.contrib <-  cbind("year" = data.gr_sc[1], df) %>% as.data.frame() %>%
           tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
@@ -148,7 +146,7 @@ contrib <- function(data,
         data.gr_baseline <- data.in %>%
           dplyr::group_by(variable) %>%
           dplyr::mutate(lag.value = baseline - dplyr::lag(baseline, n = 1, default = NA),
-                 value = ((lag.value  / baseline))) %>%
+                        value = ((lag.value  / baseline))) %>%
           dplyr::select(year, variable, value) %>%
           tidyr::pivot_wider(names_from = variable, values_from = value)
 
@@ -159,19 +157,37 @@ contrib <- function(data,
           dplyr::select(year, variable, value) %>%
           tidyr::pivot_wider(names_from = variable, values_from = value)
 
-        df <-  (dplyr::select(data.gr_sc, year, var2)[-1] * data.w_baseline[-1]) - (dplyr::select(data.gr_baseline, year, var2)[-1] * data.w_baseline[-1])
+        df <-  (dplyr::select(data.gr_sc, year, all_of(var2))[-1] * data.w_baseline[-1]) - (dplyr::select(data.gr_baseline, year, all_of(var2))[-1] * data.w_baseline[-1])
 
 
         data.contrib <-  cbind("year" = data.gr_baseline[1], df) %>% as.data.frame() %>%
           tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
       }
+
       weight_check <-  data.w_baseline %>% dplyr::filter(year == max(year)) %>% dplyr::select(-year) %>% rowSums()
 
     } else {
-      data.contrib <- data.contrib.1 %>% as.data.frame() %>% dplyr::select(-all_of(var1),year, all_of(var2)) %>%
-        `colnames<-`(c("year",var2)) %>%
-        tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
+      if(indicator == "share"){
+
+        data.contrib <- data.in  %>%
+          dplyr::select(variable, year, baseline) %>%
+          tidyr::pivot_wider(names_from = variable,
+                             values_from = baseline) %>%
+          dplyr::mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
+          dplyr::select(year, contains("w")) %>%
+          `colnames<-`(c("year",var2)) %>%
+          tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
+
+
+      } else{
+        data.contrib <- data.contrib.1 %>% as.data.frame() %>% dplyr::select(-var1,year, var2) %>%
+          `colnames<-`(c("year",var2)) %>%
+          tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
+      }
+      weight_check <-  data.w_baseline %>% dplyr::filter(year == max(year)) %>% dplyr::select(-year) %>% rowSums()
+
     }
+
   }
 
 
