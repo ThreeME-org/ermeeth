@@ -178,7 +178,23 @@ table.output(data = data, scenario = "oilprice_fra",full.table = FALSE,
 
 ### long to wide and wide to long
 
+La fonction variables_like() permet de selectionner un groupe de variables dans une base de donnees threeme format long en utilisant un regex
+
+```{r variables_like} 
+variables_like(data = data , ##la base de donnee format long
+               test = "^ADJUST", # le regex à tester
+               view = FALSE ) # pour produire un vecteur de variables et ne pas afficher les résultats
+```
+                
+La fonction wide_data permet de passer du format long ThreeMe au format wide pour permettre d'effectuer des calculs sur les variables. Il est très vivement recommandé de specifier un sous-ensemble de variables d'intérêt plutôt que de transformer la totalité de la base.
+
 ```{r long and wide data}
+ex <- wide_data(data_agg, ## La base ThreeMe format long
+          scenarios = c("baseline","oilprice_fra") ,## les scenarios (par défaut prend baseline et scenario_name)
+          variables = c("GDP","WAGES"),
+          out_format = "list" # list pour ressortir une liste de databases, dataframe pour sortir un dataframe
+          )
+
 
 threeme_wide_df <- data_agg %>% wide_data(variables = c(variables_like(.,"^Y_",FALSE),"GDP") , 
                                             out_format = "dataframe") 
@@ -187,15 +203,37 @@ threeme_wide_list <- data_agg %>% wide_data(variables = c(variables_like(.,"^Y_"
                                             out_format = "list") 
 
 threeme_wide_list2 <- data_agg %>% 
-  wide_data(variables = c("WAGES","GDP","Y_S001","Y_S002","Y_C001","Y_C002","Y_C001_S002","Y_C002_S002") , out_format = "list") %>% 
+  wide_data(variables = c("WAGES","GDP","Y_S001","Y_S002","Y_C001","Y_C002","Y_C001_S002","Y_C002_S002") ,
+            out_format = "list") %>% 
   map(~.x %>% mutate(
     ratio = WAGES/GDP,
     part_S001 = Y_S001 / GDP
-  )
-      )
+  ))
 
 new_threeme1 <- threeme_wide_list2 %>% long_data()
+
+#When no name table is available
 new_threeme2 <- threeme_wide_list2 %>% long_data(sector_names_table = NULL, 
                                                  commodity_names_table = NULL)
+
+threeme_wide_list <- data_agg %>% wide_data(out_format = "list") # (avec toutes les variables)
+
+```
+
+exemple pour ajouter quelques variables à la base complete
+
+```{r long_wide_mutate_long}
+
+data_mod <- data_agg %>% 
+  wide_data(variables = c("M","GDP") , out_format = "list") %>%  ## 1. passe en wide (faut avoir tous les scénarios sinon on  ne pourra pas recoller)
+  map(~.x %>%  ## 2. calcul des indicateurs
+        mutate(
+          part_M = M/GDP) ) %>% 
+  long_data() %>% ## 3. repasse en wide
+  rbind(data_agg) %>% ## 4. on recolle à la base
+  unique() ## 5. on enleve les doublons
+
+
+
 ```
 
