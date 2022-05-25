@@ -307,7 +307,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 #' @param bridge4palette_commodity Commodity bridge to use to get colour gradient
 #' @param names4palette_commodity Commodity names vs codes table
 #'
-#' @import ggplot2 dplyr tidyr ofce scales
+#' @import ggplot2 dplyr tidyr ofce
 #' @importFrom scales percent label_number percent_format
 #' @importFrom purrr map set_names
 #'
