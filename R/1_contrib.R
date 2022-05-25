@@ -116,7 +116,8 @@ contrib <- function(data,
 
 
     # Variation for var 2 variables
-    data.contrib.3 <- data.contrib.2 %>% select(-GDP,year, var2)
+    data.contrib.3 <- data.contrib.2 %>%
+      dplyr::select(-all_of(var1), year, all_of(var2))
 
     data.contrib <-  (data.contrib.3[-1] * data.w_baseline[-1]) %>%
       cbind("year" = data.contrib.3[1], .) %>% as.data.frame() %>%
@@ -167,7 +168,7 @@ contrib <- function(data,
       weight_check <-  data.w_baseline %>% dplyr::filter(year == max(year)) %>% dplyr::select(-year) %>% rowSums()
 
     } else {
-      data.contrib <- data.contrib.1 %>% as.data.frame() %>% dplyr::select(-GDP,year, var2) %>%
+      data.contrib <- data.contrib.1 %>% as.data.frame() %>% dplyr::select(-all_of(var1),year, all_of(var2)) %>%
         `colnames<-`(c("year",var2)) %>%
         tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
     }
