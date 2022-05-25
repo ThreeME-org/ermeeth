@@ -1,6 +1,6 @@
-### wide_data_3me
-# library(tidyverse)
-#
+## wide_data_3me
+
+
 # data <- readRDS("tests/oilprice_fra_c28_s32.rds")
 # scenario_name <- "oilprice_fra"
 # classification <- "c28_s32"
@@ -11,10 +11,17 @@
 # all_variables <- unique(data$variable)
 # my_variables<- sample(all_variables, size = 10000)
 #
-# plop <- wide_data(data = data, variables = variables)
+# plop <- wide_data(data = data,
+#                   scenarios = scenarios,
+#                   variables = variables,
+#                   out_format = "list")
+
+#
 # ploplist <- wide_data(data = data, variables = variables,out_format = "list")
+# ploplist2 <- wide_data(data = data, variables = variables,out_format = "list")
 #
-#
+# coountry_scenar <- list(FR= ploplist,DE = ploplist2)
+# new <- ploplist %>% map(~.x %>%  mutate(ratio = GDP/WAGES))
 
 
 # variables <- c("SALAIRE")
@@ -83,6 +90,9 @@ wide_data <- function(data ,
     message("Have you checked your emails or Slack messages? \n")
   }
 
+  if(length(variables) >= 15000){
+    message("Maybe select less variables next time... \n")
+  }
 
   ## checking out_format
   if(is.null(out_format)){out_format == "list"}
