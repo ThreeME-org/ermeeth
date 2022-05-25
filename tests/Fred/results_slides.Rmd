@@ -1,9 +1,11 @@
 ---
 title: "ThreeME Standard results"
-subtitle: "Scenario: `r params$scenario_name`"
 author: "ThreeME team"
 date: "`r format(Sys.Date(), '%d %B %y')`"
-output: slidy_presentation
+output:
+  ioslides_presentation: default
+  slidy_presentation: default
+subtitle: 'Scenario: `r params$scenario_name`'
 params:
   startyear: 2020
   endyear: 2050
@@ -66,18 +68,18 @@ source(paste0("bridges/codenames_",classification,".R"))
 ```{r Table macro, results ='asis'}
 
 table <- ermeeth::table.output(data = data_sector, scenario = scenario_name, 
-             full.table = FALSE, export.doc = FALSE, langue = "en",
+             full.table = TRUE, export.doc = FALSE, langue = "en",
              title = 'Macroeconomic main results')
 
 table
 
-# to do: 
-# - Unité pas claire unclear: %, unit?
+# to do:
+# - Unité pas claire unclear: %, unit? 
 # - manque des indicateurs:  taux de chomage
 # - Légend (a) inutile car toute les même: seulement pour les exceptions
 # - a 2nd tables with the missing indicators
 
-
+# Si tu mais option full.table = TRUE,  tes commentaires tombent à l'eau (sauf celui long term éventuellement)
 ```
 
 ---
@@ -165,13 +167,32 @@ widths = 2,  heights = 1)
 GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
 GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
 data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff")
+
 contrib.plot(data_plot, series = GDP_comp,
              startyear = 2020,
              titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+
+
+
+
+GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
+GDP_comp_label <- c( "Households consumption","Trade Balance", "Investment", "Public spending","Stock variation")
+
+
+data_plot <-  contrib(data_full,"GDP",GDP_comp, scenar = c("baseline",scenario_name),
+                      indicator = "rel.diff")
+
+contrib.plot(data_plot, series = GDP_comp,
+             startyear = 2020,
+             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+
+
 GDP_comp <- c( "CH","X","M", "I", "G","DS")
+
 GDP_comp_label <- c( "Households consumption","Exports", "Imports", "Investment", "Public spending","Stock variation")
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline"),
-                      indicator = "gr.diff", neg.value = "M")
+
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name),
+                      indicator = "rel.diff", neg.value = "M")
 contrib.plot(data_plot, series = GDP_comp,
              startyear = 2020,
              titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
@@ -184,7 +205,7 @@ contrib.plot(data_plot, series = GDP_comp,
 GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
 GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
 
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff")
+data_plot <-  contrib(data_full,"GDP",GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff")
 
 contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
              startyear = 2020, titleplot = "Contributions to GDP change (in difference from baseline)", line_tot = TRUE)
@@ -193,11 +214,20 @@ contrib.plot(data_plot, series = GDP_comp,
              startyear = 2020,
              titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
 
-GDP_comp <- c( "CH","X","M", "I", "G","DS")
-GDP_comp_label <- c( "Households consumption","Exports", "Imports", "Investment", "Public spending","Stock variation")
 
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline"),
-                      indicator = "gr.diff", neg.value = "M")
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = scenario_name,
+                      indicator = "gr.diff")
+
+contrib.plot(data_plot, series = GDP_comp,
+             startyear = 2020,
+             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+
+
+
+
+
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = scenario_name,
+                      indicator = "gr.diff")
 
 contrib.plot(data_plot, series = GDP_comp,
              startyear = 2020,
@@ -235,7 +265,8 @@ contrib.plot(data_plot, series = c("CHD", "CHM"),
 GDP_comp <- c( "CH","X", "M", "I", "G","DS")
 GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
 
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "M")
+data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name),
+                       indicator = "rel.diff", neg.value = "M")
 
 contrib.plot(data_plot, series = GDP_comp,
              startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
@@ -279,7 +310,7 @@ contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
 GDP_comp <- c("X","M")
 GDP_comp_label <- c("Exports","Imports")
 
-data_plot <-  contrib(data_full,"BAL_TRADE", GDP_comp, scenar = c("baseline",scenario_name))
+data_plot <-  contrib(data_full,"BAL_TRADE", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "M")
 
 contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
              startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
