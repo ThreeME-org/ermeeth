@@ -17,7 +17,7 @@ variables_like <- function(data,test,view = TRUE){
       View(VariableShow)
     }else
     {
-      VariableShow
+      VariableShow$variable
     }
 
 }

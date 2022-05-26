@@ -11,7 +11,7 @@ contrib(
   indicator = "rel.diff",
   scenar = scenarios,
   check_digit = 3,
-  neg.value = "M"
+  neg.value = NULL
 )
 }
 \arguments{

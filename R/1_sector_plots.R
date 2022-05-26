@@ -21,7 +21,10 @@
 #' @param abs.diff If plot is in difference TRUE will plot absolute difference, FALSE (default) will plot relative difference
 #' @param custom_x_breaks integer(1) permet de choisir manuellement les ticks des années à afficher. Si NULL (défaut) alors utilise l'algorithme de la fonction. Si "R" : algorithme par défaut de R sera utilisé
 #'
-#' @import ggplot2 dplyr tidyr ofce purrr scales
+#' @import ggplot2 dplyr tidyr ofce
+#'
+#' @importFrom scales percent label_number percent_format
+#' @importFrom purrr map set_names
 #'
 #' @return a ggplot
 #' @export
@@ -306,7 +309,9 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 #' @param bridge4palette_commodity Commodity bridge to use to get colour gradient
 #' @param names4palette_commodity Commodity names vs codes table
 #'
-#' @import ggplot2 dplyr tidyr ofce purrr scales
+#' @import ggplot2 dplyr tidyr ofce
+#' @importFrom scales percent label_number percent_format
+#' @importFrom purrr map set_names
 #'
 #' @return a ggplot
 #' @export

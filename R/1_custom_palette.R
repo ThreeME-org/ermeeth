@@ -12,7 +12,8 @@
 #'
 #' @return a vector of colors (hex code)
 #' @export
-#' @import colorspace purrr
+#' @import colorspace
+#' @importFrom purrr map set_names
 #' @examples
 #' custom.palette(n = 6)
 custom.palette <- function(n = NULL,
@@ -66,7 +67,7 @@ custom.palette <- function(n = NULL,
   if (!is.null(bridge_group)){
     pal_group <- purrr::set_names(pal_base[1:length(bridge_group)],names(bridge_group))
     brd <- purrr::set_names(names(bridge_group)) %>%
-      map(~list(subgroup = bridge_group[[.x]], base_col = pal_group[.x]))
+      purrr::map(~list(subgroup = bridge_group[[.x]], base_col = pal_group[.x]))
 
 
 

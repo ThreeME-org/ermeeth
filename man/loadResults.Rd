@@ -15,7 +15,8 @@ loadResults(
   bridge_s = NULL,
   names_s = NULL,
   names_c = NULL,
-  csv_folder = "csv"
+  csv_folder = "csv",
+  aggregation_rules_path = file.path("bridges", "aggregation_rules.xlsx")
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ loadResults(
 \item{names_c}{a data.frame used only if no aggregation is requested for commodities. One column "code" should contain the codes used in the commodity variables and a column "name" contains the explicit name.}
 
 \item{csv_folder}{path where to source the csv from simulations}
+
+\item{aggregation_rules_path}{path where to find the aggregation rules table}
 }
 \value{
 A data.frame with the following columns:

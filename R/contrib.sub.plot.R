@@ -14,7 +14,8 @@
 #' @param template character(1) string, nom du thème ggplot retenu pour le plot
 #'
 #' @return un ggplot
-#' @import ggh4x ggplot2 dplyr tidyr scales ofce colorspace
+#' @import ggh4x ggplot2 dplyr tidyr ofce colorspace
+#' @importFrom scales percent label_number percent_format
 #'
 #' @export
 contrib.sub.plot <- function(data,
