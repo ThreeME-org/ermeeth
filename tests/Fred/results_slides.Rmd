@@ -10,7 +10,7 @@ subtitle: 'Scenario: `r params$scenario_name`'
 params:
   startyear: 2020
   endyear: 2050
-  scenario_name: carbontax_lux
+  scenario_name: enerprice_lux
   classification: c25_s29
   template_default: ofce
 ---
@@ -128,8 +128,8 @@ widths = 2,  heights = 1)
 
 ```
 
-# Contribution to the GDP change relative to the baseline
-```{r contrib Graphs, fig.height=6, fig.width=14}
+# Contribution to the GDP change relative to the baseline (expenditure approach)
+```{r contrib GDP expenduture, fig.height=6, fig.width=14}
 
 contrib_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
 contrib_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
@@ -157,6 +157,41 @@ widths = 2,  heights = 1)
 
 
 ```
+
+
+
+# Contribution to the GDP change relative to the baseline (income approch)
+```{r contrib GDP income, fig.height=6, fig.width=14}
+
+contrib_comp <- c( "VA", "NTAXC")
+contrib_comp_label <- c( "Value-Added","Net taxes on products")
+
+data_plot <-  contrib(data_full,"GDP", contrib_comp, scenar = c("baseline",scenario_name))
+
+A <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+             startyear = startyear, titleplot = "Contributions to change in GDP (in difference from baseline)", line_tot = TRUE)
+
+# GDP4   = 		  GOS + 		 WAGES + 		 RSC + NTAXS 	  + 		 NTAXC
+# contrib_comp <- c("GOS", "WAGES", "RSC", "NTAXS")
+# contrib_comp_label <- c("Gross operating surplus", "Aggregate gross wages", "Employers social security contribution", "Net taxes on the production")
+# 
+# data_plot <-  contrib(data_full,"VA", contrib_comp, scenar = c("baseline",scenario_name))
+# 
+# B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+#              startyear = startyear, titleplot = "Contributions to change in value-added (in difference from baseline)", line_tot = TRUE)
+
+B <-A
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+
+```
+
 
 
 ```{r contrib Graphs PAUL, eval=FALSE, fig.height=6, fig.width=12, include=FALSE}
