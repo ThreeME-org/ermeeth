@@ -43,8 +43,7 @@ contrib.sub.plot <- function(data,
   series <- unique(data.1$variable)
 
   # Palette de n couleurs (nombre de secteurs distingués)
-  pal <- colorspace::sequential_hcl(n = length(series), h = c(-80, 78), c = c(60, 75, 55), l = c(40, 91), power = c(0.8, 1), register = )
-
+  pal <- custom.palette(n = length(series)) %>% purrr::set_names(.,series)
 
 
    if (is.null(label_series)){
@@ -59,7 +58,7 @@ contrib.sub.plot <- function(data,
     geom_bar(data = data.1 , aes(x = year, y = value, fill = variable),
              stat= "identity", width = 0.9, position = position_stack(reverse = TRUE)) +
     scale_y_continuous(labels = scales::percent_format(accuracy = decimal)) +
-    scale_fill_manual(values = pal[1:length(series)], limits = series,
+    scale_fill_manual(values = pal, limits = series,
                       labels = label_series)  +
     labs(x = "", title = titleplot)
 
