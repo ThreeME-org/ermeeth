@@ -37,7 +37,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
                           scenario.names = NULL,
                           startyear = NULL, endyear = NULL,
                           template = template_default,
-                          scenario.diff.ref = "baseline", growth.rate = FALSE,abs.diff = FALSE,
+                          scenario.diff.ref = "baseline", growth.rate = FALSE, abs.diff = FALSE,
                           custom_x_breaks = NULL){
 
   #########################
