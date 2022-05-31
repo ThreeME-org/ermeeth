@@ -170,9 +170,9 @@ contrib <- function(data,
       if(indicator == "share"){
 
         data.contrib <- data.in  %>%
-          dplyr::select(variable, year, baseline) %>%
+          dplyr::select(variable, year, scenar) %>%
           tidyr::pivot_wider(names_from = variable,
-                             values_from = baseline) %>%
+                             values_from = scenar) %>%
           dplyr::mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
           dplyr::select(year, contains("w")) %>%
           `colnames<-`(c("year",var2)) %>%
