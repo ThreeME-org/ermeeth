@@ -40,7 +40,7 @@ contrib.sub.plot <- function(data,
                             !is.na(label),
                             abs(value) > 0.00001)
 
-  series <- unique(data.1$variable)
+  series <- unique(data.1$variable) %>% sort
 
   # Palette de n couleurs (nombre de secteurs distingués)
   pal <- custom.palette(n = length(series)) %>% purrr::set_names(.,series)

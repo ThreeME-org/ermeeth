@@ -613,7 +613,7 @@ widths = 2,  heights = 1)
 
 ##################
 
-A <- curve_sc_plot(data_sector,"EMS_CI_CO2", group_type = "commodity", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
+A <- curve_sc_plot(data_sector,"EMS_CI_CO2", group_type = "sector", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
 
 data_plot <- contrib.sub(data_sector,var1 =  "EMS_CI_CO2",
 group_type = "S", scenar = c("baseline", scenario_name))
