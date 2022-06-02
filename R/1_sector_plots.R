@@ -265,7 +265,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
     ggplot2::ylab("") + ggplot2::xlab("") +
     #ggplot2::scale_color_brewer(palette = "Dark2")
     #ggplot2::scale_color_brewer(palette = "Dark2")
-    ggplot2::scale_color_manual(values = palette, limits = ser, label = label)
+    ggplot2::scale_color_manual(values = palette, limits = series, label = label)
 
   if(template =="ofce"){
     res_plot <- res_plot + ofce::theme_ofce(base_family = "")
