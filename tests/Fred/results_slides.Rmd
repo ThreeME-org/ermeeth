@@ -133,7 +133,7 @@ widths = 2,  heights = 1)
 # Contribution to the GDP change relative to the baseline (expenditure approach)
 ```{r contrib GDP expenduture, fig.height=6, fig.width=14}
 new_indicators <- data_full %>% 
-  wide_data(variables = c("M","X", "CH", "I", "G","DS", "GDP", "BAL_TRADE") , out_format = "list") %>%  ## 1. passe en wide
+  wide_data(variables = c("M","X", "CH", "I", "G","DS", "GDP") , out_format = "list") %>%  ## 1. passe en wide
   map(~.x %>%           ## 2. calcul des indicateurs
         mutate(
           BAL_TRADE = X - M,
