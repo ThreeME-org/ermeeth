@@ -106,6 +106,6 @@ long_data <- function(data,
                                         ) ) )  }
 
 
-return(long_data )
+return(long_data %>% as.data.frame() )
 
 }

@@ -196,7 +196,8 @@ ex <- wide_data(data_agg, ## La base ThreeMe format long
           )
 
 
-threeme_wide_df <- data_agg %>% wide_data(variables = c(variables_like(.,"^Y_",FALSE),"GDP") , 
+threeme_wide_df <- data_agg %>% wide_data(variables = c(variables_like(.,"^Y_",FALSE),
+                                                        "GDP") , 
                                             out_format = "dataframe") 
 
 threeme_wide_list <- data_agg %>% wide_data(variables = c(variables_like(.,"^Y_",FALSE),"GDP") , 
@@ -216,7 +217,9 @@ new_threeme1 <- threeme_wide_list2 %>% long_data()
 new_threeme2 <- threeme_wide_list2 %>% long_data(sector_names_table = NULL, 
                                                  commodity_names_table = NULL)
 
-threeme_wide_list <- data_agg %>% wide_data(out_format = "list") 
+threeme_wide_list <- data_agg %>% wide_data(out_format = "list") # (avec toutes les variables)
+# threeme_wide_listbis <- data %>% wide_data(out_format = "list") # (avec toutes les variables)
+
 
 ```
 
@@ -225,7 +228,9 @@ exemple pour ajouter quelques variables à la base complete
 ```{r long_wide_mutate_long}
 
 data_mod <- data_agg %>% 
-  wide_data(variables = c("M","GDP") , out_format = "list") %>%  ## 1. passe en wide
+
+  wide_data(variables = c("M","GDP") , out_format = "list") %>%  ## 1. passe en wide (faut avoir tous les scénarios sinon on  ne pourra pas recoller)
+
   map(~.x %>%  ## 2. calcul des indicateurs
         mutate(
           part_M = M/GDP) ) %>% 
