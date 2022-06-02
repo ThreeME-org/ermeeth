@@ -10,8 +10,9 @@ subtitle: 'Scenario: `r params$scenario_name`'
 params:
   startyear: 2020
   endyear: 2050
-  scenario_name: enerprice_lux
-  classification: c25_s29
+  scenario_name: carbontax_lux
+  
+  classification: c25_s26
   template_default: ofce
 ---
 
@@ -57,6 +58,7 @@ data_sector <- readRDS(file = paste0("databases/",scenario_name,"_",classificati
 
 source(paste0("bridges/bridge_",classification,".R"))
 source(paste0("bridges/codenames_",classification,".R"))
+
 
 
 
@@ -130,20 +132,32 @@ widths = 2,  heights = 1)
 
 # Contribution to the GDP change relative to the baseline (expenditure approach)
 ```{r contrib GDP expenduture, fig.height=6, fig.width=14}
+new_indicators <- data_full %>% 
+  wide_data(variables = c("M","X", "CH", "I", "G","DS", "GDP", "BAL_TRADE") , out_format = "list") %>%  ## 1. passe en wide
+  map(~.x %>%           ## 2. calcul des indicateurs
+        mutate(
+          BAL_TRADE = X - M,
+          CH_G = CH + G,
+          I_DS = I + DS)
+      
+      ) %>% 
+  long_data() %>% as.data.frame()
 
-contrib_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
-contrib_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
 
-data_plot <-  contrib(data_full,"GDP", contrib_comp, scenar = c("baseline",scenario_name))
+contrib_comp <- c( "CH_G", "I_DS", "BAL_TRADE")
+contrib_comp_label <- c( "Final consumption", "Investment", "Trade balance")
+
+data_plot <-  contrib(new_indicators,"GDP", contrib_comp, scenar = c("baseline",scenario_name))
 
 A <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
-             startyear = 2020, titleplot = "Contributions to change in GDP (in difference from baseline)", line_tot = TRUE)
+             startyear = startyear, titleplot = "Contributions to change in GDP (in difference from baseline)", line_tot = TRUE)
+
 
 
 contrib_comp <- c( "X", "M")
 contrib_comp_label <- c("Exports", "Imports")
 
-data_plot <-  contrib(data_full,"BAL_TRADE", contrib_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "M")
+data_plot <-  contrib(new_indicators,"BAL_TRADE", contrib_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "M")
 
 B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
              startyear = startyear, titleplot = "Contributions to change in trade balance (in difference from baseline)", line_tot = TRUE)
@@ -174,7 +188,7 @@ A <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_l
 # GDP4   = 		  GOS + 		 WAGES + 		 RSC + NTAXS 	  + 		 NTAXC
 # contrib_comp <- c("GOS", "WAGES", "RSC", "NTAXS")
 # contrib_comp_label <- c("Gross operating surplus", "Aggregate gross wages", "Employers social security contribution", "Net taxes on the production")
-# 
+
 # data_plot <-  contrib(data_full,"VA", contrib_comp, scenar = c("baseline",scenario_name))
 # 
 # B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
