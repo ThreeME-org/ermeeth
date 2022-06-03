@@ -419,11 +419,11 @@ widths = 2,  heights = 1)
 
 
 
----
+```{r GHG emissions per source, eval=FALSE, fig.height=6, fig.width=14, include=FALSE}
+
+# ---
 
 # GHG emissions: decomposition per source
-
-```{r GHG emissions per source, eval=FALSE, fig.height=6, fig.width=14, include=FALSE}
 
 variables_selection = c("EMS_CI", "EMS_CH")
 new_indicators <- data_sector %>% 
