@@ -56,7 +56,7 @@ contrib <- function(data,
     dplyr::select(variable, year, baseline) %>%
     tidyr::pivot_wider(names_from = variable,
                        values_from = baseline) %>%
-    dplyr::mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
+    dplyr::mutate_at(.funs = list(weight = ~./get(var1)), .vars = var2) %>%
     dplyr::select(year, contains("_weight"))
 
   if (!is.null(neg.value)){
@@ -103,7 +103,7 @@ contrib <- function(data,
 
     # Check on the weights
     weight_check<-  data.contrib.1 %>%
-      dplyr:: mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
+      dplyr:: mutate_at(.funs = list(weight = ~./get(var1)), .vars = var2) %>%
       dplyr::select(year, contains("_weight")) %>%
       as.data.frame() %>% `colnames<-`(c("year",var2))  %>%
       tidyr::pivot_longer(names_to = "variable", values_to = "value", -year)  %>%
@@ -164,7 +164,9 @@ contrib <- function(data,
           tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
       }
 
-      weight_check <-  data.w_baseline %>% dplyr::filter(year == max(year)) %>% dplyr::select(-year) %>% rowSums()
+      weight_check <-  data.w_baseline %>%
+        dplyr::filter(year == max(year)) %>%
+        dplyr::select(-year) %>% rowSums()
 
     } else {
       if(indicator == "share"){
@@ -173,18 +175,21 @@ contrib <- function(data,
           dplyr::select(variable, year, scenar) %>%
           tidyr::pivot_wider(names_from = variable,
                              values_from = scenar) %>%
-          dplyr::mutate_at(.funs = list(w = ~./get(var1)), .vars = var2) %>%
+          dplyr::mutate_at(.funs = list(weight = ~./get(var1)), .vars = var2) %>%
           dplyr::select(year, contains("_weight")) %>%
           `colnames<-`(c("year",var2)) %>%
           tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
 
 
       } else{
-        data.contrib <- data.contrib.1 %>% as.data.frame() %>% dplyr::select(-var1,year, var2) %>%
+        data.contrib <- data.contrib.1 %>% as.data.frame() %>%
+          dplyr::select(-var1,year, var2) %>%
           `colnames<-`(c("year",var2)) %>%
           tidyr::pivot_longer(names_to = "variable", values_to = "value", - year)
       }
-      weight_check <-  data.w_baseline %>% dplyr::filter(year == max(year)) %>% dplyr::select(-year) %>% rowSums()
+      weight_check <-  data.w_baseline %>%
+        dplyr::filter(year == max(year)) %>%
+        dplyr::select(-year) %>% rowSums()
 
     }
 
