@@ -251,7 +251,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
       ggplot2::scale_linetype_manual(values=c("dashed","solid")) ##order automatically later
 
   }else{
-    res_plot  <- ggplot2::ggplot(data=graph_data,
+    res_plot  <- ggplot2::ggplot(data = graph_data,
                                  aes(group= c(grouping),y = value, x = year,color= CAT)) +
       ggplot2::geom_point(size=0)+
       ggplot2::geom_line()
@@ -263,9 +263,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
     ggplot2::labs(title = title,
                   color = "" ) +
     ggplot2::ylab("") + ggplot2::xlab("") +
-    #ggplot2::scale_color_brewer(palette = "Dark2")
-    #ggplot2::scale_color_brewer(palette = "Dark2")
-    ggplot2::scale_color_manual(values = palette, limits = series, label = label)
+    ggplot2::scale_color_manual(values = palette, limits = label)
 
   if(template =="ofce"){
     res_plot <- res_plot + ofce::theme_ofce(base_family = "")
