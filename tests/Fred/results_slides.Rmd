@@ -268,167 +268,6 @@ data_plot <-  contrib(new_indicators,"VA", contrib_comp, scenar = c("baseline",s
 ```
 
 
-```{r contrib Graphs_example, eval=FALSE, fig.height=6, fig.width=12, include=FALSE}
-
-
-GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
-GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
-
-data_plot <-  contrib(data_full,"GDP",GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff")
-
-contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
-             startyear = 2020, titleplot = "Contributions to GDP change (in difference from baseline)", line_tot = TRUE)
-
-contrib.plot(data_plot, series = GDP_comp,
-             startyear = 2020,
-             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
-
-
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = scenario_name,
-                      indicator = "gr.diff")
-
-contrib.plot(data_plot, series = GDP_comp,
-             startyear = 2020,
-             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
-
-
-
-
-
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = scenario_name,
-                      indicator = "gr.diff")
-
-contrib.plot(data_plot, series = GDP_comp,
-             startyear = 2020,
-             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
-
-
-
-
-#filter(data_full, variable == "BAL_TRADE")
-
-
-#157883.7 - 131631.8
-#M 131631.8
-#X 157883.7 
-#BAL 26747.98
-
-
-
-data_plot <-  contrib(data_full,"BAL_TRADE", c("X", "M"), scenar = c("baseline",scenario_name),
-                      indicator = "rel.diff", neg.value = "M")
-
-contrib.plot(data_plot, series = c("X", "M"),
-             startyear = 2020,
-             titleplot = "Contributions to trade surplus (in difference from baseline)", line_tot = TRUE)
-
-
-## GDP 1
-
-data_plot <-  contrib(data_full,"CH", c("CHD", "CHM"), scenar = c("baseline",scenario_name), indicator = "share")
-
-contrib.plot(data_plot, series = c("CHD", "CHM"),
-             startyear = 2020,
-             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
-
-GDP_comp <- c( "CH","X", "M", "I", "G","DS")
-GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
-
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name),
-                       indicator = "rel.diff", neg.value = "M")
-
-contrib.plot(data_plot, series = GDP_comp,
-             startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
-
-GDP_comp <- c( "X", "M")
-GDP_comp_label <- c("Exports", "Imports")
-
-data_plot <-  contrib(data_full,"BAL_TRADE", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "M")
-
-contrib.plot(data_plot, series = GDP_comp,
-             startyear = 2020, titleplot = "Contributions to Balance of trade gowth (in difference from baseline)", line_tot = TRUE)
-
-
-
-```
-
-
-```{r Contrib OLD, eval=FALSE, include=FALSE}
-
-GDP_comp <- c( "CH","X","M", "I", "G","DS")
-GDP_comp_label <- c( "Households consumption","Exports","Imports", "Investment", "Public spending","Stock variation")
-
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name))
-
-contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
-             startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
-
-
-# To do: graphique faux!!!  
-
-
-```
-
-```{r Contrib Trade Balance, eval=FALSE, include=FALSE}
-
-## BUG: Function contrib:
-## - GDP hard codé  ligne 119 et 170
-## - Il ne faut pas mettre M par default en négatif car pb si on ne veux pas que M soit négatif
-
-
-GDP_comp <- c("X","M")
-GDP_comp_label <- c("Exports","Imports")
-
-data_plot <-  contrib(data_full,"BAL_TRADE", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "M")
-
-contrib.plot(data_plot, series = GDP_comp,label_series = GDP_comp_label,
-             startyear = 2020, titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
-
-
-
-
-
-```
-
-
-
-```{r Test format DF, eval=FALSE, include=FALSE}
-
-scenarios <- c("carbontax_lux","baseline")
-
-selection <- data_full %>% dplyr::filter(variable %in%  c("GDP","CH", "G", "I", "DS"))
-  
-  
-  
-selection_wide  <- selection %>% 
-                                        tidyr::pivot_wider(
-                                        id_cols = year ,
-                                        names_from = variable, 
-                                        names_sep = "." ,
-                                        values_from = c(carbontax_lux,baseline) )  
-selection_wide2 <- selection_wide  %>%
-
-                                     mutate(carbontax_lux.CH_G = carbontax_lux.CH + carbontax_lux.G,
-                                            baseline.CH_G = baseline.CH + baseline.G,
-                                            carbontax_lux.I_DS = carbontax_lux.I + carbontax_lux.DS,
-                                            baseline.I_DS = baseline.I + baseline.DS
-                                            
-                                            )
-  
-
-
-selection_wide2bis <- scenarios %>% map(~selection_wide %>% 
-                                     mutate(!!paste0(.x,".","CH_G") := get(paste0(.x,".","CH")) + get(paste0(.x,".","G"))
-                                            ) %>%
-                                     select(year, all_of(setdiff(names(.),names(selection_wide))))
-                                   ) %>% 
-  reduce(full_join) %>% full_join(selection_wide)
-
-
-
-
-```
-
 ---
 
 # Value-added and its components
@@ -443,7 +282,7 @@ contrib_comp_label <- c("Production", "Intermediary consumption")
 data_plot <-  contrib(data_full,"VA", contrib_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "CI")
 
 B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
-             startyear = 2020, titleplot = "Contributions to changes in Value-Added (in difference from baseline)", line_tot = TRUE)
+             startyear = startyear, titleplot = "Contributions to changes in Value-Added (in difference from baseline)", line_tot = TRUE)
 
 ggarrange(A,B,
 labels = c("(a)", "(b)"),
@@ -606,19 +445,36 @@ widths = 2,  heights = 1)
 # GHG emissions: decomposition per driver
 
 ```{r GHG emissions, fig.height = 6, fig.width=14}
+variables_selection = c("EMS_CI", "EMS_Y", "EMS_MAT", "EMS_CH", "EMS")
 
-# Calculer EMS_PROD = EMS_MAT  + EMS_Y   
+new_indicators <- data_full %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~.x %>%          
+        mutate(
+          EMS_PROD = EMS_MAT  + EMS_Y)
+      
+      ) %>% 
+  long_data()
 
-contrib_comp <- c("EMS_CI", "EMS_Y", "EMS_CH")
-contrib_comp_label <- c("Intermediary consumption", "Production", "Household's final consumption")
 
 
-A <- simpleplot(data_full,c(c("EMS"),contrib_comp), c(c("Total GHG emssions |   Related to ..."),contrib_comp_label), startyear, endyear, titleplot = "GHG emissions and its components (in difference from baseline)")
+contrib_comp <- c("EMS_CI", "EMS_PROD", "EMS_CH")
+contrib_comp_label <- c("Intermediary consumption", "Production process", "Household's final consumption")
 
-data_plot <-  contrib(data_full,"EMS", contrib_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff")
+#A <- simpleplot(new_indicators,c(c("EMS"),contrib_comp), c(c("Total GHG emssions |   Related to ..."),contrib_comp_label), startyear, endyear, titleplot = "GHG emissions and its components (in difference from baseline)")
+
+A <- simpleplot(new_indicators,contrib_comp, contrib_comp_label, startyear, endyear, titleplot = "GHG emissions and its components (in difference from baseline)")
+
+
+
+data_plot <-  contrib(new_indicators, "EMS", contrib_comp, scenar = c("baseline",scenario_name))
 
 B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
              startyear = startyear, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)", line_tot = TRUE)
+
+
 
 ggarrange(A,B,
 labels = c("(a)", "(b)"),
