@@ -520,7 +520,7 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
 
       names(palette)<- toupper(names(palette)) %>% str_replace_all(set_names(names4palette_commodities$name,toupper(names4palette_commodities$code)))
 
-      palette <-palette[sdata_commodities]
+      palette <-palette[data_commodities]
     }else{
 
       palette <- custom.palette(n = n_commodity) %>% purrr::set_names(data_commodities,.)
