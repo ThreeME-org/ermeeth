@@ -132,17 +132,19 @@ widths = 2,  heights = 1)
 
 # Contribution to the GDP change relative to the baseline (expenditure approach)
 ```{r contrib GDP expenduture, fig.height=6, fig.width=14}
+variables_selection = c("M","X", "CH", "I", "G","DS", "GDP")
 new_indicators <- data_full %>% 
-  wide_data(variables = c("M","X", "CH", "I", "G","DS", "GDP") , out_format = "list") %>%  ## 1. passe en wide
-  map(~.x %>%           ## 2. calcul des indicateurs
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~.x %>%          
         mutate(
           BAL_TRADE = X - M,
           CH_G = CH + G,
           I_DS = I + DS)
       
       ) %>% 
-  long_data() %>% as.data.frame()
-
+  long_data()
 
 contrib_comp <- c( "CH_G", "I_DS", "BAL_TRADE")
 contrib_comp_label <- c( "Final consumption", "Investment", "Trade balance")
@@ -151,8 +153,6 @@ data_plot <-  contrib(new_indicators,"GDP", contrib_comp, scenar = c("baseline",
 
 A <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
              startyear = startyear, titleplot = "Contributions to change in GDP (in difference from baseline)", line_tot = TRUE)
-
-
 
 contrib_comp <- c( "X", "M")
 contrib_comp_label <- c("Exports", "Imports")
@@ -184,17 +184,20 @@ data_plot <-  contrib(data_full,"GDP", contrib_comp, scenar = c("baseline",scena
 
 A <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
              startyear = startyear, titleplot = "Contributions to change in GDP (in difference from baseline)", line_tot = TRUE)
+A
+
 
 # GDP4   = 		  GOS + 		 WAGES + 		 RSC + NTAXS 	  + 		 NTAXC
 # contrib_comp <- c("GOS", "WAGES", "RSC", "NTAXS")
 # contrib_comp_label <- c("Gross operating surplus", "Aggregate gross wages", "Employers social security contribution", "Net taxes on the production")
-
+# 
 # data_plot <-  contrib(data_full,"VA", contrib_comp, scenar = c("baseline",scenario_name))
 # 
 # B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
 #              startyear = startyear, titleplot = "Contributions to change in value-added (in difference from baseline)", line_tot = TRUE)
 
 B <-A
+
 
 ggarrange(A,B,
 labels = c("(a)", "(b)"),
@@ -207,45 +210,61 @@ widths = 2,  heights = 1)
 ```
 
 
-
-```{r contrib Graphs PAUL, eval=FALSE, fig.height=6, fig.width=12, include=FALSE}
-#filter(data_full, variable == "BAL_TRADE")
-#157883.7 - 131631.8
-#M 131631.8
-#X 157883.7 
-#BAL 26747.98
-GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
-GDP_comp_label <- c( "Households consumption","Trade balance", "Investment", "Public spending","Stock variation")
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff")
-
-contrib.plot(data_plot, series = GDP_comp,
-             startyear = 2020,
-             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+```{r PAUL: contrib BUG WAGES, eval=FALSE, fig.height=6, fig.width=12, include=FALSE}
 
 
+variables_selection = c("GOS", "WAGES", "RSC", "NTAXS") 
+
+#  En faisant la transformation : VA = GOS + RSC + NTAXS, Ca marche 
+new_indicators <- data_full %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~.x %>%          
+        mutate(
+          # VA = GOS + WAGES + RSC + NTAXS
+          VA = GOS + RSC + NTAXS
+          # VA = WAGES + RSC + NTAXS          
+          )
+      
+      ) %>% 
+  long_data()
+
+contrib_comp <- c("GOS", "RSC", "NTAXS")
+contrib_comp_label <- c("GOS","Employers social security contribution", "Net taxes on the production")
+
+data_plot <-  contrib(new_indicators,"VA", contrib_comp, scenar = c("baseline",scenario_name))
+
+A <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+             startyear = startyear, titleplot = "Contributions to change in GDP (in difference from baseline)", line_tot = TRUE)
+A
 
 
-GDP_comp <- c( "CH","BAL_TRADE", "I", "G","DS")
-GDP_comp_label <- c( "Households consumption","Trade Balance", "Investment", "Public spending","Stock variation")
+# En remplaçant GOS par WAGES (ques est dans la base), ça plante:
+
+new_indicators <- data_full %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~.x %>%          
+        mutate(
+          # VA = GOS + WAGES + RSC + NTAXS
+          # VA = GOS + RSC + NTAXS
+          VA = WAGES + RSC + NTAXS          
+          )
+      
+      ) %>% 
+  long_data()
+
+contrib_comp <- c("WAGES", "RSC", "NTAXS")
+contrib_comp_label <- c("Wages","Employers social security contribution", "Net taxes on the production")
 
 
-data_plot <-  contrib(data_full,"GDP",GDP_comp, scenar = c("baseline",scenario_name),
-                      indicator = "rel.diff")
-
-contrib.plot(data_plot, series = GDP_comp,
-             startyear = 2020,
-             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
+# Plante Ici!!!!
+data_plot <-  contrib(new_indicators,"VA", contrib_comp, scenar = c("baseline",scenario_name))
 
 
-GDP_comp <- c( "CH","X","M", "I", "G","DS")
 
-GDP_comp_label <- c( "Households consumption","Exports", "Imports", "Investment", "Public spending","Stock variation")
-
-data_plot <-  contrib(data_full,"GDP", GDP_comp, scenar = c("baseline",scenario_name),
-                      indicator = "rel.diff", neg.value = "M")
-contrib.plot(data_plot, series = GDP_comp,
-             startyear = 2020,
-             titleplot = "Contributions to GDP gowth (in difference from baseline)", line_tot = TRUE)
 ```
 
 
