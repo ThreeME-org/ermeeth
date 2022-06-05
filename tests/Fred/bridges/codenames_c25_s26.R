@@ -24,7 +24,19 @@ c('Coal and coal products','ccoa'),
 c('Crude oil','ccoi'),
 c('Oil-derived fuels','cfut'),
 c('Natural gas','cgas'),
-c('Electricity','cele')) %>% 
+c('Electricity','cele'),
+c('Heat','chea'),
+c('Biomass','cbio'),
+c('Other energy','cote'),
+c('Agriculture','C001'),
+c('Energy intensive industry','C002'),
+c('Other industry','C003'),
+c('Construction','C004'),
+c('Transport','C005'),
+c('Services','C006'),
+c('Fossil based energy','C007'),
+c('Other energy','C008')
+) %>%
   as.data.frame() %>% rename(name = V1,code = V2)
 
 ### Sectors: s26
@@ -54,7 +66,16 @@ c('Gas-fired electricity generation','sega'),
 c('Wind electricity generation','sewi'),
 c('Solar electricity generation','seso'),
 c('Hydroelectric electricity generation','sehy'),
-c('Electricity - Others','seot')) %>% 
+c('Electricity - Others','seot'),
+c('Agriculture','S001'),
+c('Energy intensive industry','S002'),
+c('Other industry','S003'),
+c('Construction','S004'),
+c('Transport','S005'),
+c('Services','S006'),
+c('Fossil based energy','S007'),
+c('Other energy','S008')
+) %>%
   as.data.frame() %>% rename(name = V1,code = V2)
 
 
