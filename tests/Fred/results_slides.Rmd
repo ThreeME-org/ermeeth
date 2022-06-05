@@ -472,7 +472,7 @@ new_indicators <- new_indicators_bis %>%
       ) %>% 
   long_data()
 
-A <- curve_sc_plot(new_indicators,"EMS_CI_CH", group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
+A <- curve_sc_plot(new_indicators,"EMS_CI_CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
 
 data_plot <- contrib.sub(new_indicators,var1 =  "EMS_CI_CH",
 group_type = "C", scenar = c("baseline", scenario_name))
