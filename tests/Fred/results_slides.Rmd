@@ -302,7 +302,7 @@ prix_salaires
 
 ```{r Prod_Sect, fig.height = 6, fig.width=14}
 
-A <- curve_sc_plot(data_sector,"Y", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Production of sectors (in difference from baseline)")
+A <- curve_sc_plot(data_sector,"Y", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Production of sectors (in difference from baseline)")
 
 data_plot <- contrib.sub(data_sector,var1 =  "Y",
 group_type = "sector", scenar = c("baseline", scenario_name))
@@ -327,7 +327,7 @@ widths = 2,  heights = 1)
 
 ```{r VA_Sect, fig.height = 6, fig.width=14}
 
-A <- curve_sc_plot(data_sector,"VA", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Value-added of sectors (in difference from baseline)")
+A <- curve_sc_plot(data_sector,"VA", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Value-added of sectors (in difference from baseline)")
 
 data_plot <- contrib.sub(data_sector,var1 =  "VA",
 group_type = "sector", scenar = c("baseline", scenario_name))
@@ -349,7 +349,7 @@ widths = 2,  heights = 1)
 
 ```{r employment_Sect, fig.height = 6, fig.width=14}
 
-A <- curve_sc_plot(data_sector,"F_L", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Employment of sectors (in difference from baseline)")
+A <- curve_sc_plot(data_sector,"F_L", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Employment of sectors (in difference from baseline)")
 
 data_plot <- contrib.sub(data_sector,var1 =  "F_L",
 group_type = "sector", scenar = c("baseline", scenario_name))
@@ -372,7 +372,7 @@ widths = 2,  heights = 1)
 
 ```{r INV_Sect, fig.height = 6, fig.width=14}
 
-A <- curve_sc_plot(data_sector,"I", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Investment of sectors (in difference from baseline)")
+A <- curve_sc_plot(data_sector,"I", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Investment of sectors (in difference from baseline)")
 
 data_plot <- contrib.sub(data_sector,var1 =  "I",
 group_type = "sector", scenar = c("baseline", scenario_name))
