@@ -430,7 +430,6 @@ widths = 2,  heights = 1)
 
 ```
 
-
 ---
 
 # GHG emissions: decomposition per source
@@ -443,33 +442,37 @@ variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
 
 new_indicators_bis <- data_sector %>%  dplyr::filter(variable %in% variables_selection) 
 
-
-new_indicators <- new_indicators_bis %>% 
-  # 1. Put in Wide format
-  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
-  # 2. Calculate indicators
-  map(~.x %>%          
-        mutate(
+calcul_indic <- function(data){
+  res <- data %>%      mutate(
+  
           EMS_CI_CH = EMS_CI + EMS_CH,
           EMS_CI_CH_C001 = EMS_CI_C001 + EMS_CH_C001,
-          EMS_CI_CH_C002 = EMS_CI_C002 + EMS_CH_C002, 
+          EMS_CI_CH_C002 = EMS_CI_C002 + EMS_CH_C002,
           EMS_CI_CH_C003 = EMS_CI_C003 + EMS_CH_C003,
-          
+
           # EMS_CI_C004 = 0,
           # EMS_CH_C004 = 0,
           # EMS_CI_CH_C004 = EMS_CI_C004 + EMS_CH_C004,
-          # 
+          #
           # EMS_CI_C005 = 0,
           # EMS_CH_C005 = 0,
           # EMS_CI_CH_C005 = EMS_CI_C005 + EMS_CH_C005,
-          # 
+          #
           # EMS_CI_C006 = 0,
           # EMS_CH_C006 = 0,
           # EMS_CI_CH_C006 = EMS_CI_C006 + EMS_CH_C006,
           EMS_CI_CH_C007 = EMS_CI_C007 + EMS_CH_C007,
           EMS_CI_CH_C008 = EMS_CI_C008 + EMS_CH_C008
                                                           )
-      ) %>% 
+    
+  
+}
+
+new_indicators <- new_indicators_bis %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~calcul_indic(.x)) %>% 
   long_data()
 
 A <- curve_sc_plot(new_indicators,"EMS_CI_CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
@@ -486,6 +489,88 @@ ncol = 2, nrow = 1,
 widths = 2,  heights = 1)
 
 ```
+
+
+
+
+```{r GHG emissions per source Test For Loop, eval=FALSE, fig.height=6, fig.width=14, include=FALSE}
+
+# for(i in c(1, 2, 3)) {
+#   print("i")
+# }
+
+
+ # for (i in 1:10) {
+ #       print("A") 
+ # }
+
+  # for (i in 1:1) {
+  #     res <-mutate(res,
+              #   EMS_CI_CH_C00[[i]] = EMS_CI_C00[[i]] + EMS_CH_C00[[i]])
+  #   # paste0("EMS_CI_CH_C00",i) =  paste0("EMS_CI_C00",i) +  paste0("EMS_CH_C00",i)
+  #   
+  #   
+  # }  
+#   
+
+variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
+                             variables_like(data_sector,"^EMS_CH_C0",FALSE),   
+                             "EMS_CI", "EMS_CH"  )
+
+new_indicators_bis <- data_sector %>%  dplyr::filter(variable %in% variables_selection) 
+
+new_indicators <- new_indicators_bis %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list")
+
+
+
+calcul_indic <- function(data){
+   res <- data
+   res <-mutate(res,     
+          EMS_CI_CH = EMS_CI + EMS_CH)
+
+  res <-mutate(res,     
+          EMS_CI_CH_C001 = EMS_CI_C001 + EMS_CH_C001)
+
+#  for (index in 1:1) {
+
+    res <-mutate(res,
+            EMS_CI_CH_C002 = EMS_CI_C002 + EMS_CH_C002)
+#  }
+
+    
+  
+}
+
+
+rm(new_indicators3)
+new_indicators3 <- new_indicators %>% map(~calcul_indic(.x)) #%>% long_data()
+view(new_indicators3)
+
+
+new_indicators <- new_indicators_bis %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~calcul_indic(.x)) %>% 
+  long_data()
+
+A <- curve_sc_plot(new_indicators,"EMS_CI_CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
+
+data_plot <- contrib.sub(new_indicators,var1 =  "EMS_CI_CH",
+group_type = "C", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
 
 
 
@@ -512,5 +597,18 @@ widths = 2,  heights = 1)
 
 ```
 
+```{r Look at data, eval=FALSE, include=FALSE}
+
+
+variables_selection <-   c(  variables_like(data_full,"^Y_S",FALSE),
+                             # variables_like(data_full,"^EMS_CH_C0",FALSE),   
+                             "Y"  )
+
+indicators <- data_full %>%  dplyr::filter(variable %in% variables_selection, year  %in%  2019) 
+
+view(indicators)
+
+
+```
 
 
