@@ -663,3 +663,54 @@ saveWorkbook(wb,"ThreeME_Indicators.xlsx",overwrite = TRUE)
 
 
 
+
+```{r Key indicators2, eval=FALSE, include=FALSE}
+# variables_selection <-   c(  variables_like(data_full,"^Y_",FALSE),
+#                              "Y", "EMS_CH"  )
+
+
+
+## Create Workbook object and add worksheets
+wb <- createWorkbook()
+
+## Add worksheets
+addWorksheet(wb, "Indicators")
+
+type <- "S"
+
+paste0("variables.", type)
+
+variables.S <- c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL")
+paste0("variables.", type) <- c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL")
+
+
+startCol <- 1
+for (var in variables.S) {
+
+list_sectors <- names_sectors %>% dplyr::filter(!grepl("^S00",code))
+
+variables_selection <-   c(paste0(var,"_", list_sectors$code),var) %>% toupper()
+
+
+indicators <- data_full %>% select(variable, year, baseline, sector) %>%  dplyr::filter(variable %in% variables_selection, year %in% 2019) %>% 
+                        arrange(match(sector, c(list_sectors$name,NA))) %>% 
+                        select(- year, - sector)
+
+## Add data in worksheets
+writeData(wb, "Indicators", indicators, startCol = startCol  , startRow = 1)
+
+startCol <- startCol + 2
+}
+
+
+
+## Save workbook
+saveWorkbook(wb,"ThreeME_Indicators.xlsx",overwrite = TRUE)
+
+
+
+```
+
+
+
+
