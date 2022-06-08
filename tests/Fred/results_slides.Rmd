@@ -527,26 +527,43 @@ new_indicators <- new_indicators_bis %>%
 
 calcul_indic <- function(data){
    res <- data
-   res <-mutate(res,     
+   res <- mutate(res,     
           EMS_CI_CH = EMS_CI + EMS_CH)
 
-  res <-mutate(res,     
+   res <- mutate(res,     
           EMS_CI_CH_C001 = EMS_CI_C001 + EMS_CH_C001)
 
-#  for (index in 1:1) {
+ for (index in c(1:1)){
 
-    res <-mutate(res,
+    res <- mutate(res,
             EMS_CI_CH_C002 = EMS_CI_C002 + EMS_CH_C002)
-#  }
+ }
 
     
   
 }
 
+data <- new_indicators$baseline
+
+existing_commodities_CI <- names(data)[grep(pattern = "^EMS_CI_C\\d{3}$" , x= names(data))] %>%  str_extract("C\\d{3}$")
+existing_commodities_CH <- names(data)[grep(pattern = "^EMS_CH_C\\d{3}$" , x= names(data))] %>%  str_extract("C\\d{3}$")
+
+
+
+
+data_res <- commodities %>% map(~mutate_if(data,
+                                           exists(paste0(EMS_CI_,.x))
+                                        var_test = ifelse ))
+
+ 
+
+  for (index in 1:1) {
+print("a")
+  }
 
 rm(new_indicators3)
 new_indicators3 <- new_indicators %>% map(~calcul_indic(.x)) #%>% long_data()
-view(new_indicators3)
+View(new_indicators3)
 
 
 new_indicators <- new_indicators_bis %>% 
@@ -681,8 +698,14 @@ type <- "S"
 paste0("variables.", type)
 
 variables.S <- c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL")
-paste0("variables.", type) <- c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL")
+!paste0("variables.", type) := c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL")
+assign(x=paste0("variables.", type), value = c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL"))
 
+ma_variables_list <- list(c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL") , 
+                          c("CI", "VA" )) %>% 
+  purrr::set_names(paste0("variables.", c("a","b"))) 
+
+list2env(ma_variables_list, envir = )
 
 startCol <- 1
 for (var in variables.S) {
