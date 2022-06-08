@@ -3,8 +3,10 @@ load("tests/newindicators.rda")
 
 data_base <- new_indicators
 
-variables_selection <-   c(  variables_like(data_base,"^EMS_CI_C0",FALSE),
-                             variables_like(data_base,"^EMS_CH_C0",FALSE),
+
+
+variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
+                             variables_like(data_sector,"^EMS_CH_C0",FALSE),
                              "^EMS_CI$", "^EMS_CH$"  )
 
 calcul_indic <- function(data){
