@@ -672,8 +672,8 @@ compute_EMS_safe_short <- function(commodity, data){
                       )
 
  res <- mutate(data,
-                  !!paste0("EMS_",commodity) := rowSums(across(all_of(var_to_sum))) ) %>%
-      select(year,all_of(paste0("EMS_",commodity) ) )
+                  !!paste0("EMS_CI_CH_",commodity) := rowSums(across(all_of(var_to_sum))) ) %>%
+      select(year,all_of(paste0("EMS_CI_CH_",commodity) ) )
 
   return(res)
 }
