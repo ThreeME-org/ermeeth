@@ -23,3 +23,33 @@ variables_like <- function(data,test,view = TRUE){
 }
 
 # variables_like(data, "^EMS_CI")
+
+
+
+
+#' Theoreme de pythagore
+#' @description Cette fonction calcul l'hypothénuse d'un triangle rectangle
+#'
+#' @param a numeric (length 1), the first side of the triangle. Default 1
+#' @param b numeric (length 1), the second side of the triangle. Default 1
+#' @param fr_format afficher format francais
+#'
+#' @return character length 1 , hypothenuse
+#' @export
+#'
+#' @importFrom stringr str_replace
+#'
+#' @examples
+#' pythagore(a = 4, b = 3)
+pythagore <- function(a = 1,b = 5, fr_format = FALSE){
+
+c <- (a^2 + b^2)^(1/2)
+
+if(fr_format == TRUE){c %>% as.character() %>% stringr::str_replace("\\.",",")}else{
+  c %>% as.character()
+}
+
+
+}
+
+# pythagore()

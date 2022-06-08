@@ -1,3 +1,7 @@
+library(devtools)
+library(roxygen2)
+
+
 usethis::use_build_ignore("dev_history.r")
 usethis::use_build_ignore("tests")
 usethis::use_vignette("Functions_presentation")
@@ -20,6 +24,11 @@ usethis::use_package("flextable")
 usethis::use_package("officer")
 
 devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")
+
+## Retrouver les fichiers du inst
+system.file("bridge_c28_s32.R",package = "ermeeth")
+system.file("models",package = "tresthor")
+
 CheckLazyDataCompression <- function(pkg){
   pkg_name <- sub("_.*", "", pkg)
   lib <- tempfile(); dir.create(lib)
@@ -34,3 +43,8 @@ CheckLazyDataCompression <- function(pkg){
   ceiling(res/1024)
 }
 CheckLazyDataCompression("ermeeth")
+
+
+## Creer la doc du package
+rm(list= ls())
+roxygen2::roxygenise()
