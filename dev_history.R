@@ -23,7 +23,8 @@ usethis::use_package("colorspace")
 usethis::use_package("flextable")
 usethis::use_package("officer")
 
-devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")
+# devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")
+devtools::build(path = "../ThreeME_V3/R_ThreeME/src/")
 
 ## Retrouver les fichiers du inst
 system.file("bridge_c28_s32.R",package = "ermeeth")
