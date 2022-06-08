@@ -1,0 +1,739 @@
+---
+title: "ThreeME Standard results"
+author: "ThreeME team"
+date: "`r format(Sys.Date(), '%d %B %y')`"
+output: slidy_presentation
+# output:
+#   ioslides_presentation: default
+#   slidy_presentation: default
+subtitle: 'Scenario: `r params$scenario_name`'
+params:
+  startyear: 2020
+  endyear: 2050
+  scenario_name: carbontax_lux
+  
+  classification: c25_s26
+  template_default: ofce
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  results = "hide"
+)
+```
+
+
+```{r Plots default options}
+
+
+startyear <- params$startyear
+endyear <- params$endyear
+scenario_name <- params$scenario_name
+classification <- params$classification
+template_default <- params$template_default
+
+```
+
+
+
+```{r Required packages, message=FALSE, warning=FALSE}
+
+# Load functions
+source("src/functions.R")
+
+
+```
+
+
+
+
+```{r Create database function, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+
+# Create the database for further processing
+source("src/0_create_databases.R")
+
+```
+
+
+
+
+
+```{r load data and bridges}
+
+data_full<-readRDS(file = paste0("databases/",scenario_name,"_",classification,".rds"))
+### loading the sector and commodity aggregated database 
+data_sector <- readRDS(file = paste0("databases/",scenario_name,"_",classification,"_commodities_sectors.rds"))
+
+
+source(paste0("bridges/bridge_",classification,".R"))
+source(paste0("bridges/codenames_",classification,".R"))
+
+
+
+
+```
+
+---
+
+# Result summary
+
+```{r Table macro, results ='asis'}
+
+table <- ermeeth::table.output(data = data_sector, scenario = scenario_name, 
+             full.table = TRUE, export.doc = FALSE, langue = "en",
+             title = 'Macroeconomic main results')
+
+table
+
+# to do:
+# - Unité pas claire unclear: %, unit? 
+# - manque des indicateurs:  taux de chomage
+# - Légend (a) inutile car toute les même: seulement pour les exceptions
+# - a 2nd tables with the missing indicators
+
+# Si tu mais option full.table = TRUE,  tes commentaires tombent à l'eau (sauf celui long term éventuellement)
+```
+
+---
+
+# Macroeconomic results: GDP and its components
+
+```{r Graph GDP,  fig.height = 6, fig.width = 14}
+label_macro <- c("Gross domestic product", "Households consumption", "Investment", "Public spending")
+A <- simpleplot(data_full,c("GDP", "CH", "I", "G"), label_macro, startyear, endyear, titleplot = "GDP and its components  (in difference from baseline)")
+
+B <- simpleplot(data_full,c("X", "M", "BAL_TRADE"),label_series = c("Exports", "Imports", "Trade balance"), startyear, endyear, titleplot = "External trade  (in difference from baseline)")
+
+
+macro <- ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+## Save image on disk for further use (ready to be activated)
+# ggsave("macro.svg", device = svg, width = 32,  height = 16, units = c("cm"))
+
+
+## See the graph in Mark-down
+macro
+
+
+```
+
+
+---
+
+# GDP and its components (Growth rate)
+```{r Graph Macro Growth rate, fig.height = 6, fig.width=14}
+
+A <- simpleplot(data_full,c("GDP", "CH", "I", "G"), label_macro, startyear, endyear, "gr", titleplot = "GDP and its components (growth rates)")
+
+B <- simpleplot(data_full,c("X", "M"), c("Exports", "Imports"), startyear, endyear, "gr", titleplot = "External trade (growth rates)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
+# Contribution to the GDP change relative to the baseline (expenditure approach)
+```{r contrib GDP expenduture, fig.height=6, fig.width=14}
+variables_selection = c("M","X", "CH", "I", "G","DS", "GDP")
+new_indicators <- data_full %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~.x %>%          
+        mutate(
+          BAL_TRADE = X - M,
+          CH_G = CH + G,
+          I_DS = I + DS)
+      
+      ) %>% 
+  long_data()
+
+contrib_comp <- c( "CH_G", "I_DS", "BAL_TRADE")
+contrib_comp_label <- c( "Final consumption", "Investment", "Trade balance")
+
+data_plot <-  contrib(new_indicators,"GDP", contrib_comp, scenar = c("baseline",scenario_name))
+
+A <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+             startyear = startyear, titleplot = "Contributions to change in GDP (in difference from baseline)", line_tot = TRUE)
+
+contrib_comp <- c( "X", "M")
+contrib_comp_label <- c("Exports", "Imports")
+
+data_plot <-  contrib(new_indicators,"BAL_TRADE", contrib_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "M")
+
+B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+             startyear = startyear, titleplot = "Contributions to change in trade balance (in difference from baseline)", line_tot = TRUE)
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+
+```
+
+
+
+# Contribution to the GDP change relative to the baseline (income approch)
+```{r contrib GDP income, fig.height=6, fig.width=14}
+
+contrib_comp <- c( "VA", "NTAXC")
+contrib_comp_label <- c( "Value-Added","Net taxes on products")
+
+data_plot <-  contrib(data_full,"GDP", contrib_comp, scenar = c("baseline",scenario_name))
+
+A <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+             startyear = startyear, titleplot = "Contributions to change in GDP (in difference from baseline)", line_tot = TRUE)
+
+contrib_comp <- c("GOS", "WAGES", "RSC", "NTAXS")
+contrib_comp_label <- c("Gross operating surplus", "Gross wages", "Employers social contributions", "Net taxes on the production")
+
+data_plot <-  contrib(data_full,"VA", contrib_comp, scenar = c("baseline",scenario_name))
+ 
+B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+              startyear = startyear, titleplot = "Contributions to change in value-added (in difference from baseline)", line_tot = TRUE)
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+
+```
+
+
+---
+
+# Value-added and its components
+
+```{r Prod_VA, fig.height = 6, fig.width=14}
+
+
+contrib_comp <- c("Y", "CI")
+contrib_comp_label <- c("Production", "Intermediary consumption")
+
+A <- simpleplot(data_full,c(contrib_comp, c("VA")), c(contrib_comp_label,c("Value-added")), startyear, endyear, titleplot = "Value-added and its components (in difference from baseline)")
+
+data_plot <-  contrib(data_full,"VA", contrib_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "CI")
+
+B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+             startyear = startyear, titleplot = "Contributions to changes in Value-Added (in difference from baseline)", line_tot = TRUE)
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+
+```
+
+
+---
+
+# Employment
+
+```{r Employment, fig.height = 6, fig.width=14}
+
+A <- simpleplot(data_full,"F_L", label_series = "Labor", startyear, endyear, decimal = 1, titleplot = "Employment (in difference from baseline)")
+B <- simpleplot(data_full,"F_L", label_series = "Labor", startyear, endyear, "diff", unit = 1000, decimal = 1, titleplot = "Employment (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
+---
+
+
+# Unemployment
+
+```{r Unemployment, fig.height = 6, fig.width=14}
+
+C <- simpleplot(data_full,"UNR", label_series = "Unemployment", startyear, endyear,"diff", unit = 100, titleplot = "Unemployment rate (in difference from baseline)")
+D <- simpleplot(data_full,"UNR", label_series = "Unemployment rate (dashed line = baseline)", startyear, endyear, "level", titleplot = "Unemployment rate  (level)")
+
+ggarrange(C,D,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
+# Prices and wages 
+
+```{r Graph Prices, fig.height = 6, fig.width=14}
+label_prices <- c("Consumption", "Production", "Value added","Imports", "Exports")
+A <- simpleplot(data_full,c("PCH", "PY", "PVA", "PM", "PX"),label_prices, startyear, endyear, titleplot = "Prices (in difference from baseline)")
+B <- simpleplot(data_full,"W", label_series = "wage", startyear, endyear, titleplot = "Gross nominal wages (in difference from baseline)")
+
+prix_salaires <- ggarrange(A,B,
+                           labels = c("(a)", "(b)"),
+                           hjust =-0.5, vjust = 1.5,
+                           ncol = 2, nrow = 1,
+                           widths = 2,  heights = 1)
+prix_salaires
+```
+
+
+---
+
+# Sectorial results: Production
+
+```{r Prod_Sect, fig.height = 6, fig.width=14}
+
+A <- curve_sc_plot(data_sector,"Y", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Production of sectors (in difference from baseline)")
+
+data_plot <- contrib.sub(data_sector,var1 =  "Y",
+group_type = "sector", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total production and sectorial contribution (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+
+
+
+---
+
+# Sectorial results: Value-Added
+
+```{r VA_Sect, fig.height = 6, fig.width=14}
+
+A <- curve_sc_plot(data_sector,"VA", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Value-added of sectors (in difference from baseline)")
+
+data_plot <- contrib.sub(data_sector,var1 =  "VA",
+group_type = "sector", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total value-added and sectorial contribution (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+---
+
+# Sectorial results: Employment
+
+```{r employment_Sect, fig.height = 6, fig.width=14}
+
+A <- curve_sc_plot(data_sector,"F_L", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Employment of sectors (in difference from baseline)")
+
+data_plot <- contrib.sub(data_sector,var1 =  "F_L",
+group_type = "sector", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total employment and sectorial contribution (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+
+---
+
+# Sectorial results: Investment
+
+```{r INV_Sect, fig.height = 6, fig.width=14}
+
+A <- curve_sc_plot(data_sector,"I", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Investment of sectors (in difference from baseline)")
+
+data_plot <- contrib.sub(data_sector,var1 =  "I",
+group_type = "sector", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total Investment and sectorial contribution (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+
+
+---
+
+# GHG emissions: decomposition per driver
+
+```{r GHG emissions, fig.height = 6, fig.width=14}
+variables_selection = c("EMS_CI", "EMS_Y", "EMS_MAT", "EMS_CH", "EMS")
+
+new_indicators <- data_full %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~.x %>%          
+        mutate(
+          EMS_PROD = EMS_MAT  + EMS_Y)
+      
+      ) %>% 
+  long_data()
+
+
+
+contrib_comp <- c("EMS_CI", "EMS_PROD", "EMS_CH")
+contrib_comp_label <- c("Intermediary consumption", "Production process", "Household's final consumption")
+
+A <- simpleplot(new_indicators,c(contrib_comp, c("EMS")), c(contrib_comp_label,c("Total GHG emssions")), startyear, endyear, titleplot = "GHG emissions and its components (in difference from baseline)")
+
+data_plot <-  contrib(new_indicators, "EMS", contrib_comp, scenar = c("baseline",scenario_name))
+
+B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+             startyear = startyear, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)", line_tot = TRUE)
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+
+```
+
+---
+
+# GHG emissions: decomposition per source
+
+```{r GHG emissions per source, fig.height=6, fig.width=14}
+
+variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
+                             variables_like(data_sector,"^EMS_CH_C0",FALSE),   
+                             "EMS_CI", "EMS_CH"  )
+
+new_indicators_bis <- data_sector %>%  dplyr::filter(variable %in% variables_selection) 
+
+calcul_indic <- function(data){
+  res <- data %>%      mutate(
+  
+          EMS_CI_CH = EMS_CI + EMS_CH,
+          EMS_CI_CH_C001 = EMS_CI_C001 + EMS_CH_C001,
+          EMS_CI_CH_C002 = EMS_CI_C002 + EMS_CH_C002,
+          EMS_CI_CH_C003 = EMS_CI_C003 + EMS_CH_C003,
+
+          # EMS_CI_C004 = 0,
+          # EMS_CH_C004 = 0,
+          # EMS_CI_CH_C004 = EMS_CI_C004 + EMS_CH_C004,
+          #
+          # EMS_CI_C005 = 0,
+          # EMS_CH_C005 = 0,
+          # EMS_CI_CH_C005 = EMS_CI_C005 + EMS_CH_C005,
+          #
+          # EMS_CI_C006 = 0,
+          # EMS_CH_C006 = 0,
+          # EMS_CI_CH_C006 = EMS_CI_C006 + EMS_CH_C006,
+          EMS_CI_CH_C007 = EMS_CI_C007 + EMS_CH_C007,
+          EMS_CI_CH_C008 = EMS_CI_C008 + EMS_CH_C008
+                                                          )
+    
+  
+}
+
+new_indicators <- new_indicators_bis %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~calcul_indic(.x)) %>% 
+  long_data()
+
+A <- curve_sc_plot(new_indicators,"EMS_CI_CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
+
+data_plot <- contrib.sub(new_indicators,var1 =  "EMS_CI_CH",
+group_type = "C", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
+
+
+
+```{r GHG emissions per source Test For Loop, eval=FALSE, fig.height=6, fig.width=14, include=FALSE}
+
+# for(i in c(1, 2, 3)) {
+#   print("i")
+# }
+
+
+ # for (i in 1:10) {
+ #       print("A") 
+ # }
+
+  # for (i in 1:1) {
+  #     res <-mutate(res,
+              #   EMS_CI_CH_C00[[i]] = EMS_CI_C00[[i]] + EMS_CH_C00[[i]])
+  #   # paste0("EMS_CI_CH_C00",i) =  paste0("EMS_CI_C00",i) +  paste0("EMS_CH_C00",i)
+  #   
+  #   
+  # }  
+#   
+
+variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
+                             variables_like(data_sector,"^EMS_CH_C0",FALSE),   
+                             "EMS_CI", "EMS_CH"  )
+
+new_indicators_bis <- data_sector %>%  dplyr::filter(variable %in% variables_selection) 
+
+new_indicators <- new_indicators_bis %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list")
+
+
+
+calcul_indic <- function(data){
+   res <- data
+   res <- mutate(res,     
+          EMS_CI_CH = EMS_CI + EMS_CH)
+
+   res <- mutate(res,     
+          EMS_CI_CH_C001 = EMS_CI_C001 + EMS_CH_C001)
+
+ for (index in c(1:1)){
+
+    res <- mutate(res,
+            EMS_CI_CH_C002 = EMS_CI_C002 + EMS_CH_C002)
+ }
+
+    
+  
+}
+
+data <- new_indicators$baseline
+
+existing_commodities_CI <- names(data)[grep(pattern = "^EMS_CI_C\\d{3}$" , x= names(data))] %>%  str_extract("C\\d{3}$")
+existing_commodities_CH <- names(data)[grep(pattern = "^EMS_CH_C\\d{3}$" , x= names(data))] %>%  str_extract("C\\d{3}$")
+
+
+
+
+data_res <- commodities %>% map(~mutate_if(data,
+                                           exists(paste0(EMS_CI_,.x))
+                                        var_test = ifelse ))
+
+ 
+
+  for (index in 1:1) {
+print("a")
+  }
+
+rm(new_indicators3)
+new_indicators3 <- new_indicators %>% map(~calcul_indic(.x)) #%>% long_data()
+View(new_indicators3)
+
+
+new_indicators <- new_indicators_bis %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~calcul_indic(.x)) %>% 
+  long_data()
+
+A <- curve_sc_plot(new_indicators,"EMS_CI_CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
+
+data_plot <- contrib.sub(new_indicators,var1 =  "EMS_CI_CH",
+group_type = "C", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
+
+
+
+```{r CO2 emissions per source, eval=FALSE, fig.height=6, fig.width=14, include=FALSE}
+
+# Pour mémoire: Ex qui marche directement.
+#---
+
+# CO2 emissions: decomposition per source
+
+
+A <- curve_sc_plot(data_sector,"EMS_CI_CO2", group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
+
+data_plot <- contrib.sub(data_sector,var1 =  "EMS_CI_CO2",
+group_type = "C", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+```
+
+```{r Look at data, eval=FALSE, include=FALSE}
+
+
+variables_selection <-   c(  variables_like(data_full,"^Y_S",FALSE),
+                             # variables_like(data_full,"^EMS_CH_C0",FALSE),   
+                             "Y"  )
+
+variables_selection <-   c("Y")
+
+
+
+indicators <- data_full %>%  dplyr::filter(variable %in% variables_selection, year  %in%  2019) 
+
+view(indicators)
+
+
+```
+
+
+
+
+```{r Key indicators, eval=FALSE, include=FALSE}
+# variables_selection <-   c(  variables_like(data_full,"^Y_",FALSE),
+#                              "Y", "EMS_CH"  )
+
+
+
+## Create Workbook object and add worksheets
+wb <- createWorkbook()
+
+## Add worksheets
+addWorksheet(wb, "Indicators")
+
+
+variables.sectors <- c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL")
+
+
+startCol <- 1
+for (var in variables.sectors) {
+
+list_sectors <- names_sectors %>% dplyr::filter(!grepl("^S00",code))
+
+variables_selection <-   c(paste0(var,"_", list_sectors$code),var) %>% toupper()
+
+
+indicators <- data_full %>% select(variable, year, baseline, sector) %>%  dplyr::filter(variable %in% variables_selection, year %in% 2019) %>% 
+                        arrange(match(sector, c(list_sectors$name,NA))) %>% 
+                        select(- year, - sector)
+
+## Add data in worksheets
+writeData(wb, "Indicators", indicators, startCol = startCol  , startRow = 1)
+
+startCol <- startCol + 2
+}
+
+
+
+## Save workbook
+saveWorkbook(wb,"ThreeME_Indicators.xlsx",overwrite = TRUE)
+
+
+
+```
+
+
+
+
+```{r Key indicators2, eval=FALSE, include=FALSE}
+# variables_selection <-   c(  variables_like(data_full,"^Y_",FALSE),
+#                              "Y", "EMS_CH"  )
+
+
+
+## Create Workbook object and add worksheets
+wb <- createWorkbook()
+
+## Add worksheets
+addWorksheet(wb, "Indicators")
+
+type <- "S"
+
+paste0("variables.", type)
+
+variables.S <- c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL")
+!paste0("variables.", type) := c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL")
+assign(x=paste0("variables.", type), value = c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL"))
+
+ma_variables_list <- list(c("Y","CI", "VA", "WAGES", "GOS", "RSC", "NTAXS_VAL") , 
+                          c("CI", "VA" )) %>% 
+  purrr::set_names(paste0("variables.", c("a","b"))) 
+
+list2env(ma_variables_list, envir = )
+
+startCol <- 1
+for (var in variables.S) {
+
+list_sectors <- names_sectors %>% dplyr::filter(!grepl("^S00",code))
+
+variables_selection <-   c(paste0(var,"_", list_sectors$code),var) %>% toupper()
+
+
+indicators <- data_full %>% select(variable, year, baseline, sector) %>%  dplyr::filter(variable %in% variables_selection, year %in% 2019) %>% 
+                        arrange(match(sector, c(list_sectors$name,NA))) %>% 
+                        select(- year, - sector)
+
+## Add data in worksheets
+writeData(wb, "Indicators", indicators, startCol = startCol  , startRow = 1)
+
+startCol <- startCol + 2
+}
+
+
+
+## Save workbook
+saveWorkbook(wb,"ThreeME_Indicators.xlsx",overwrite = TRUE)
+
+
+
+```
+
+
+
+

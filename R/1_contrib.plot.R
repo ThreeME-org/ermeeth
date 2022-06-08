@@ -84,15 +84,11 @@ contrib.plot <- function(data,
       ggplot2::geom_line(data = data.2 , aes(x = year, y = value), colour = "#606060", size = .5) +
       ggplot2::geom_point(data = data.2 , aes(x = year, y = value), colour = "#202020", size = .6)
   }
-  ifelse(template =="ofce",
-
-         plot <- plot +  ofce::theme_ofce(base_family = ""),
-
-         plot <- plot +  ggplot2::theme(legend.position = "bottom")
-  )
+  if(template =="ofce"){ plot <- plot +  ofce::theme_ofce(base_family = "") }
 
   plot <- plot + ggplot2::theme(legend.title = element_blank(),
-                                axis.title.y = element_blank() )
+                                   axis.title.y = element_blank(),
+                                    legend.position = "bottom")
 
   plot
 }
