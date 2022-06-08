@@ -184,6 +184,10 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
   graph_data$CAT <- graph_data[,tolower(division_type)]
   graph_data$name <- stringr::str_replace_all(graph_data$name, purrr::set_names(scenario.names,scenario))
 
+  series <- unique(graph_data$variable) %>% sort
+  label <- unique(graph_data$CAT) %>% sort
+
+
   #### Preparing x axis breaks
   ## calculating the optimal number of ticks to show
 
@@ -213,18 +217,41 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
   color_outerlines = "gray42"
 
   color_gridlines = "gray84"
+
+  #### Creating the color palette
+  if(group== "S"){
+    data_sectors <-unique(data %>% dplyr::select(sector) %>% dplyr::filter(!is.na(sector)) ) %>% unlist() %>% unname()
+    n_sector<-length(data_sectors)
+
+
+    palette <- custom.palette(n = n_sector) %>% purrr::set_names(.,data_sectors)
+
+  }
+
+
+  if(group== "C"){
+    data_commodities <-unique(data %>% dplyr::select(commodity) %>% dplyr::filter(!is.na(commodity)) ) %>% unlist() %>% unname()
+    n_commodity<-length(data_commodities)
+
+
+    palette <- custom.palette(n = n_commodity) %>% purrr::set_names(.,data_commodities)
+
+  }
+
+
+
   ##Differentiate plot arguments according to number of scenario_name
   if(n.scen > 1){
     res_plot  <- ggplot2::ggplot(data=graph_data,
                                  aes(group= c(grouping),
-                                     y = value, x = year,color= CAT)) +
+                                     y = value, x = year, color= CAT)) +
       ggplot2::geom_point(size=0)+
       ggplot2::geom_line(aes(linetype=name))  +
       ggplot2::labs(linetype = "Scenario" ) +
       ggplot2::scale_linetype_manual(values=c("dashed","solid")) ##order automatically later
 
   }else{
-    res_plot  <- ggplot2::ggplot(data=graph_data,
+    res_plot  <- ggplot2::ggplot(data = graph_data,
                                  aes(group= c(grouping),y = value, x = year,color= CAT)) +
       ggplot2::geom_point(size=0)+
       ggplot2::geom_line()
@@ -236,8 +263,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
     ggplot2::labs(title = title,
                   color = "" ) +
     ggplot2::ylab("") + ggplot2::xlab("") +
-    ggplot2::scale_color_brewer(palette = "Dark2")+
-    ggplot2::theme(legend.position = "bottom")
+    ggplot2::scale_color_manual(values = palette, limits = label)
 
   if(template =="ofce"){
     res_plot <- res_plot + ofce::theme_ofce(base_family = "")
@@ -280,6 +306,9 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
           axis.ticks = element_line(size = 0.5, colour = "grey42")
 
     )
+
+  res_plot <- res_plot + ggplot2::theme(legend.position = "bottom")
+
   res_plot
 }
 
@@ -462,7 +491,7 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
 
   #### Creating the color palette
   if(group== "S"){
-    data_sectors <-unique(data %>% dplyr::select(sector) %>% dplyr::filter(!is.na(sector)) ) %>% unlist() %>% unname()
+    data_sectors <-unique(data %>% dplyr::select(sector) %>% dplyr::filter(!is.na(sector)) ) %>% unlist() %>% unname() %>% sort
     n_sector<-length(data_sectors)
 
     if(!is.null(bridge4palette_sectors) & !is.null(names4palette_sectors)){
@@ -480,7 +509,7 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
   }
 
   if(group== "C"){
-    data_commodities <-unique(data %>% dplyr::select(commodity) %>% dplyr::filter(!is.na(commodity)) ) %>% unlist() %>% unname()
+    data_commodities <-unique(data %>% dplyr::select(commodity) %>% dplyr::filter(!is.na(commodity)) ) %>% unlist() %>% unname() %>% sort
     n_commodity<-length(data_commodities)
 
 

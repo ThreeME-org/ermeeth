@@ -52,7 +52,7 @@ simpleplot <- function(data,
 
 
   # Palette de 4 couleurs en attendant d'en rajouter dans celles OFCE
-  pal <- c("#fbc572", "#fb8072","#68a6c5","#466963")
+  pal <- custom.palette(n = length(series)) %>% purrr::set_names(.,series)
 
   selection <- selectseries(data,scenario, series, startyear, endyear, transformation)
 
@@ -112,7 +112,7 @@ simpleplot <- function(data,
   plotseries <- plotseries +
     scale_x_continuous(breaks = break_x_sequence)+
     scale_y_continuous(labels = scales::percent_format(accuracy = decimal, suffix = lab_percent))  +
-    scale_color_manual(values = pal[1:length(series)], limits = series,
+    scale_color_manual(values = pal, limits = series,
                        labels = label_series)  +
     labs(x = "", y = transformation, title = titleplot)
 
@@ -129,7 +129,8 @@ simpleplot <- function(data,
 
   plotseries <- plotseries + theme(legend.title = element_blank(),
                                    axis.title.y = element_blank() ,
-                                   axis.ticks = element_line(size = 0.5, colour = "grey42") )
+                                   axis.ticks = element_line(size = 0.5, colour = "grey42"),
+                                   legend.position="bottom")
 
   plotseries
 }
