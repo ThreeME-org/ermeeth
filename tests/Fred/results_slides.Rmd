@@ -436,44 +436,50 @@ widths = 2,  heights = 1)
 
 ```{r GHG emissions per source, fig.height=6, fig.width=14}
 
+
 variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
                              variables_like(data_sector,"^EMS_CH_C0",FALSE),   
                              "EMS_CI", "EMS_CH"  )
 
-new_indicators_bis <- data_sector %>%  dplyr::filter(variable %in% variables_selection) 
-
 calcul_indic <- function(data){
-  res <- data %>%      mutate(
-  
-          EMS_CI_CH = EMS_CI + EMS_CH,
-          EMS_CI_CH_C001 = EMS_CI_C001 + EMS_CH_C001,
-          EMS_CI_CH_C002 = EMS_CI_C002 + EMS_CH_C002,
-          EMS_CI_CH_C003 = EMS_CI_C003 + EMS_CH_C003,
+   res <- data
+   res <- mutate(res,     
+          EMS_CI_CH = EMS_CI + EMS_CH)
 
-          # EMS_CI_C004 = 0,
-          # EMS_CH_C004 = 0,
-          # EMS_CI_CH_C004 = EMS_CI_C004 + EMS_CH_C004,
-          #
-          # EMS_CI_C005 = 0,
-          # EMS_CH_C005 = 0,
-          # EMS_CI_CH_C005 = EMS_CI_C005 + EMS_CH_C005,
-          #
-          # EMS_CI_C006 = 0,
-          # EMS_CH_C006 = 0,
-          # EMS_CI_CH_C006 = EMS_CI_C006 + EMS_CH_C006,
-          EMS_CI_CH_C007 = EMS_CI_C007 + EMS_CH_C007,
-          EMS_CI_CH_C008 = EMS_CI_C008 + EMS_CH_C008
-                                                          )
-    
+ for (i in c(1:8)){
+
+   if(exists(paste0("EMS_CI_C00",i), data ) & exists(paste0("EMS_CH_C00",i), data )  ){   
+     res <- mutate(res,
+                !!paste0("EMS_CI_CH_C00",i) := get(paste0("EMS_CI_C00",i)) + get(paste0("EMS_CH_C00",i)) ) 
+   }
+
+   if(exists(paste0("EMS_CI_C00",i), data ) & !exists(paste0("EMS_CH_C00",i), data )  ){   
+     res <- mutate(res,
+                !!paste0("EMS_CI_CH_C00",i) := get(paste0("EMS_CI_C00",i))  ) 
+   }
+   
+   
+   if(!exists(paste0("EMS_CI_C00",i), data ) & exists(paste0("EMS_CH_C00",i), data )  ){   
+     res <- mutate(res,
+                !!paste0("EMS_CI_CH_C00",i) :=  get(paste0("EMS_CH_C00",i)) ) 
+   }
+      
+   
+   
+ }
+
+    return(res)
   
 }
 
-new_indicators <- new_indicators_bis %>% 
+
+new_indicators <- data_sector %>%  dplyr::filter(variable %in% variables_selection) %>% 
   # 1. Put in Wide format
   wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
   # 2. Calculate indicators
   map(~calcul_indic(.x)) %>% 
   long_data()
+
 
 A <- curve_sc_plot(new_indicators,"EMS_CI_CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
 
@@ -490,76 +496,7 @@ widths = 2,  heights = 1)
 
 ```
 
-
-
-
-```{r GHG emissions per source Test For Loop, eval=FALSE, fig.height=6, fig.width=14, include=FALSE}
-
-# for(i in c(1, 2, 3)) {
-#   print("i")
-# }
-
-
- # for (i in 1:10) {
- #       print("A") 
- # }
-
-  # for (i in 1:1) {
-  #     res <-mutate(res,
-              #   EMS_CI_CH_C00[[i]] = EMS_CI_C00[[i]] + EMS_CH_C00[[i]])
-  #   # paste0("EMS_CI_CH_C00",i) =  paste0("EMS_CI_C00",i) +  paste0("EMS_CH_C00",i)
-  #   
-  #   
-  # }  
-#   
-
-variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
-                             variables_like(data_sector,"^EMS_CH_C0",FALSE),   
-                             "EMS_CI", "EMS_CH"  )
-
-new_indicators_bis <- data_sector %>%  dplyr::filter(variable %in% variables_selection) 
-
-new_indicators <- new_indicators_bis %>% 
-  # 1. Put in Wide format
-  wide_data(variables = variables_selection , out_format = "list")
-
-
-
-calcul_indic <- function(data){
-   res <- data
-   res <- mutate(res,     
-          EMS_CI_CH = EMS_CI + EMS_CH)
-
-   res <- mutate(res,     
-          EMS_CI_CH_C001 = EMS_CI_C001 + EMS_CH_C001)
-
- for (index in c(1:1)){
-
-    res <- mutate(res,
-            EMS_CI_CH_C002 = EMS_CI_C002 + EMS_CH_C002)
- }
-
-    return(res)
-  
-}
-rm(new_indicators3)
-new_indicators3 <- new_indicators %>% map(~calcul_indic(.x)) #%>% long_data()
-View(new_indicators3)
-
-
-new_indicators <- new_indicators_bis %>% 
-  # 1. Put in Wide format
-  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
-  # 2. Calculate indicators
-  map(~calcul_indic(.x)) %>% 
-  long_data()
-
-
-
-```
-
-
-```{r version Anissa STEP BY STEP, eval=FALSE}
+```{r version Anissa To avoid for loop: STEP BY STEP, eval=FALSE, include=FALSE}
 # 
 # ### 0. Data base for testing purposes
 # variables_selection <-   c(  variables_like(new_indicators_bis,"^EMS_CI_C0",FALSE),
@@ -643,9 +580,13 @@ new_indicators <- new_indicators_bis %>%
 #   reduce(full_join,by = "year") %>%
 #   full_join(data_mod,., by = "year")
 
+
+
+
 ```
 
-```{r Complete Solution}
+
+```{r version Anissa Complete Solution to avoid For Loop, eval=FALSE, include=FALSE}
 
 variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
                              variables_like(data_sector,"^EMS_CH_C0",FALSE),   
@@ -697,10 +638,9 @@ new_indicators_vAS <-  new_indicators_bis %>%
   # 3. Back to long data
   long_data()
 
-```
 
 
-```{r plots witch computed indices}
+
 A <- curve_sc_plot(new_indicators,"EMS_CI_CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
 
 data_plot <- contrib.sub(new_indicators,var1 =  "EMS_CI_CH",
@@ -715,7 +655,6 @@ ncol = 2, nrow = 1,
 widths = 2,  heights = 1)
 
 ```
-
 
 
 
@@ -809,7 +748,57 @@ saveWorkbook(wb,"ThreeME_Indicators.xlsx",overwrite = TRUE)
 
 
 
+
 ```{r Key indicators2, eval=FALSE, include=FALSE}
+# variables_selection <-   c(  variables_like(data_full,"^Y_",FALSE),
+#                              "Y", "EMS_CH"  )
+
+
+
+## Create Workbook object and add worksheets
+wb <- createWorkbook()
+
+## Add worksheets
+addWorksheet(wb, "Indicators")
+
+
+variables.sectors <- c("CH","G", "I", "X", "M", "MGS", "NTAXC", "VATD", "VATM", "SUBCD", "SUBCM")
+#variables.sectors <- c("CH")
+
+
+startCol <- 1
+for (var in variables.sectors) {
+
+list_sectors <- names_commodities %>% dplyr::filter(!grepl("^C00",code))
+
+variables_selection <-   c(paste0(var,"_", list_sectors$code),var) %>% toupper()
+
+
+indicators <- data_full %>% select(variable, year, baseline, commodity) %>%  dplyr::filter(variable %in% variables_selection, year %in% 2019) %>% 
+                        arrange(match(commodity, c(list_sectors$name,NA))) %>% 
+                        select(- year, - commodity)
+
+## Add data in worksheets
+writeData(wb, "Indicators", indicators, startCol = startCol  , startRow = 1)
+
+startCol <- startCol + 2
+}
+
+
+
+## Save workbook
+saveWorkbook(wb,"ThreeME_Indicators.xlsx",overwrite = TRUE)
+
+
+
+```
+
+
+
+
+
+
+```{r Key indicators3, eval=FALSE, include=FALSE}
 # variables_selection <-   c(  variables_like(data_full,"^Y_",FALSE),
 #                              "Y", "EMS_CH"  )
 
