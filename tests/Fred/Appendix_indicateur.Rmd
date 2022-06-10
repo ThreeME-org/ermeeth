@@ -77,229 +77,200 @@ source(paste0("bridges/codenames_",classification,".R"))
 
 ```
 
+
 ---
-
-# GHG emissions: decomposition per source
-
-```{r GHG emissions per source, fig.height=6, fig.width=14}
-
-
-variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
-                             variables_like(data_sector,"^EMS_CH_C0",FALSE),   
-                             "EMS_CI", "EMS_CH"  )
-
-calcul_indic <- function(data){
-   res <- data
-   res <- mutate(res,     
-          EMS_CI_CH = EMS_CI + EMS_CH)
-
- for (i in c(1:8)){
-
-   if(exists(paste0("EMS_CI_C00",i), data ) & exists(paste0("EMS_CH_C00",i), data )  ){   
-     res <- mutate(res,
-                !!paste0("EMS_CI_CH_C00",i) := get(paste0("EMS_CI_C00",i)) + get(paste0("EMS_CH_C00",i)) ) 
-   }
-
-   if(exists(paste0("EMS_CI_C00",i), data ) & !exists(paste0("EMS_CH_C00",i), data )  ){   
-     res <- mutate(res,
-                !!paste0("EMS_CI_CH_C00",i) := get(paste0("EMS_CI_C00",i))  ) 
-   }
-   
-   
-   if(!exists(paste0("EMS_CI_C00",i), data ) & exists(paste0("EMS_CH_C00",i), data )  ){   
-     res <- mutate(res,
-                !!paste0("EMS_CI_CH_C00",i) :=  get(paste0("EMS_CH_C00",i)) ) 
-   }
-      
-   
-   
- }
-
-    return(res)
-  
-}
-
-
-new_indicators <- data_sector %>%  dplyr::filter(variable %in% variables_selection) %>% 
-  # 1. Put in Wide format
-  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
-  # 2. Calculate indicators
-  map(~calcul_indic(.x)) %>% 
-  long_data()
-
-
-A <- curve_sc_plot(new_indicators,"EMS_CI_CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
-
-data_plot <- contrib.sub(new_indicators,var1 =  "EMS_CI_CH",
-group_type = "C", scenar = c("baseline", scenario_name))
-
-B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)")
-
-ggarrange(A,B,
-labels = c("(a)", "(b)"),
-hjust = -0.5, vjust = 1.5,
-ncol = 2, nrow = 1,
-widths = 2,  heights = 1)
-
-```
-
-```{r version Anissa To avoid for loop: STEP BY STEP, eval=FALSE, include=FALSE}
-
-### 0. Data base for testing purposes
-variables_selection <-   c(  variables_like(new_indicators_bis,"^EMS_CI_C0",FALSE),
-                             variables_like(new_indicators_bis,"^EMS_CH_C0",FALSE),
-                             "EMS_CI", "EMS_CH"  )
-list_data <- new_indicators_bis %>% wide_data(variables = variables_selection , out_format = "list")
-data <- list_data$baseline
-
-
-### 1. Start by creating a list of commodity where calculation is possible
-
-existing_commodities_CI <- names(data)[grep(pattern = "^EMS_CI_C\\d{3}$" , x= names(data))] %>%
-  str_extract("C\\d{3}$")
-existing_commodities_CH <- names(data)[grep(pattern = "^EMS_CH_C\\d{3}$" , x= names(data))] %>%
-  str_extract("C\\d{3}$")
-
-existing_commodities <- unique(c(existing_commodities_CI,existing_commodities_CH))
-
-### 2.A  Version A : WORKS IF BOTH CH AND CI ARE PRESENT
-
-compute_EMS_v0 <- function(commodity, database){
-  res <- mutate(database,
-                !!paste0("EMS_",commodity) := get(paste0("EMS_CI_",commodity)) + get(paste0("EMS_CH_",commodity)) ) %>%
-    select(year,all_of(paste0("EMS_",commodity) ) )
-  }
-
-data_res <- existing_commodities %>%
-  map(~compute_EMS_v0(commodity = .x, database = data) ) %>%
-  reduce(full_join,by = "year") %>%
-  full_join(data, by = "year")
-
-##############
-### 2.B  Version B : WORKS IF ONE IS MISSING
-data_mod <- data %>% select(-EMS_CH_C003,-EMS_CI_C007)
-
-compute_EMS_safe_v1 <- function(commodity, database){
-
-  if(exists(paste0("EMS_CI_",commodity), database ) & exists(paste0("EMS_CH_",commodity), database )  ){
-  res <- mutate(database,
-                !!paste0("EMS_",commodity) := get(paste0("EMS_CI_",commodity)) + get(paste0("EMS_CH_",commodity)) ) %>%
-    select(year,all_of(paste0("EMS_",commodity) ) ) }
-
-
-  if(exists(paste0("EMS_CI_",commodity), database ) & !exists(paste0("EMS_CH_",commodity), database )  ){
-    res <- mutate(database,
-                  !!paste0("EMS_",commodity) := get(paste0("EMS_CI_",commodity))  ) %>%
-      select(year,all_of(paste0("EMS_",commodity) ) ) }
-
-
-  if(!exists(paste0("EMS_CI_",commodity), database ) & exists(paste0("EMS_CH_",commodity), database )  ){
-    res <- mutate(database,
-                  !!paste0("EMS_",commodity) := get(paste0("EMS_CH_",commodity)) ) %>%
-      select(year,all_of(paste0("EMS_",commodity) ) ) }
-
-  return(res)
-}
-
-### 2.C  Version C : WORKS FOR SUMS ONLY
-
-compute_EMS_safe_v2 <- function(commodity, database){
-
- var_to_sum <- unique(c(names(database)[grep(paste0("^EMS_CI_",commodity,"$"),names(database))],
-                        names(database)[grep(paste0("^EMS_CH_",commodity,"$"),names(database))])
-                      )
-
- res <- mutate(database,
-                  !!paste0("EMS_",commodity) := rowSums(across(all_of(var_to_sum))) ) %>%
-      select(year,all_of(paste0("EMS_",commodity) ) )
-
-  return(res)
-}
-
-# ###Testeur
-# database<- data_mod
-# commodity = "C001"
-# database_test<- mutate(database, plop = rowSums(across(all_of(var_to_sum))) )
-# ###
-
-data_res2 <- existing_commodities %>%
-  map(~compute_EMS_safe_v2(commodity = .x, database = data_mod) ) %>%
-  reduce(full_join,by = "year") %>%
-  full_join(data_mod,., by = "year")
-
-
-
-
-```
 
 
 ```{r version Anissa Complete Solution to avoid For Loop, eval=FALSE, include=FALSE}
 
-variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
-                             variables_like(data_sector,"^EMS_CH_C0",FALSE),   
-                             "EMS_CI", "EMS_CH"  )
+  ### step 0: prepare database
+variables_selection <-   c(variables_like(data_full,"^F_L_S[A-Z0-9]{3}$",FALSE),"F_L",
+                           variables_like(data_full,"^F_K_S[A-Z0-9]{3}$",FALSE),"F_K",
+                           variables_like(data_full,"^F_MAT_S[A-Z0-9]{3}$",FALSE),"F_MAT",
+                           variables_like(data_full,"^F_E_S[A-Z0-9]{3}$",FALSE),"F_E",
+                           variables_like(data_full,"^I_S[A-Z0-9]{3}$",FALSE),"I",
+                           variables_like(data_full,"^C_L_S[A-Z0-9]{3}$",FALSE),"C_L",
+                           variables_like(data_full,"^C_K_S[A-Z0-9]{3}$",FALSE),"C_K",
+                           variables_like(data_full,"^C_MAT_S[A-Z0-9]{3}$",FALSE),"C_MAT",
+                           variables_like(data_full,"^C_E_S[A-Z0-9]{3}$",FALSE),"C_E",
+                           variables_like(data_full,"^Y_S[A-Z0-9]{3}$",FALSE),"Y",
+                           variables_like(data_full,"^PY_S[A-Z0-9]{3}$",FALSE),"PY",
+                           variables_like(data_full,"^MGS_C[A-Z0-9]{3}$",FALSE), "MGS",
+                           #only 3 commodities,"MGS_CPRI" "MGS_CRAI" "MGS_CROA"
+                           variables_like(data_full,"^CI_C[A-Z0-9]{3}$",FALSE), "CI", #CCOI missing
+                           variables_like(data_full,"^F_E_C[A-Z0-9]{3}$",FALSE), #doesn't existing in database
+                           variables_like(data_full,"^CH_C[A-Z0-9]{3}$",FALSE),"CH",
+                           variables_like(data_full,"^G_C[A-Z0-9]{3}$",FALSE), "G", #CCOI missing
+                           variables_like(data_full,"^I_C[A-Z0-9]{3}$",FALSE), #CCOI missing
+                           variables_like(data_full,"^X_C[A-Z0-9]{3}$",FALSE),"X", #CCOI missing
+                           variables_like(data_full,"^M_C[A-Z0-9]{3}$",FALSE),"M", #CCOI missing
+                           "GDP","PGDP",
+                           "SPEND_G_VAL","INC_G_VAL","PNTAXC","NTAXC",
+                           variables_like(data_sector,"^F_L_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^F_K_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^F_MAT_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^F_E_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^I_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^C_L_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^C_K_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^C_MAT_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^C_E_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^Y_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^PY_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^MGS_C[A-Z0-9]{3}$",FALSE), 
+                           variables_like(data_sector,"^CI_C[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^F_E_C[A-Z0-9]{3}$",FALSE), 
+                           variables_like(data_sector,"^CH_C[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^G_C[A-Z0-9]{3}$",FALSE), 
+                           variables_like(data_sector,"^I_C[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^X_C[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^M_C[A-Z0-9]{3}$",FALSE)
+                           )
 
-new_indicators_bis <- data_sector %>%  dplyr::filter(variable %in% variables_selection) 
-####PUTTING IT ALL TOGETHER
+data_ratio <- rbind(dplyr::filter(data_full,variable %in% variables_selection),
+                    dplyr::filter(data_sector,variable %in% variables_selection)) %>%
+              unique()
 
-calcul_indic_AS <- function(database){
 
-  ### step 1: get the commodities
-existing_commodities_CI <- names(database)[grep(pattern = "^EMS_CI_C\\d{3}$" , x= names(database))] %>%
-  str_extract("C\\d{3}$")
-existing_commodities_CH <- names(database)[grep(pattern = "^EMS_CH_C\\d{3}$" , x= names(database))] %>%
-  str_extract("C\\d{3}$")
-existing_commodities <- unique(c(existing_commodities_CI,existing_commodities_CH))
-
+  ### step 1: check and complete missing data
+  list_S_variable <- c("F_L","F_K","F_MAT","F_E","C_L","C_K","C_MAT","C_E","I","Y","PY") %>%
+    map(~paste0(.x,"_",toupper(names_sectors[,"code"]))) %>%
+    reduce(c)
+  list_C_variable <- c("MGS","CI","CH","G","I","X","M","F_E") %>%
+    map(~paste0(.x,"_",toupper(names_commodities[,"code"]))) %>%
+    reduce(c)
+  
+  missing_data <- c(list_S_variable,list_C_variable) %>%
+    setdiff(.,intersect(., data_ratio$variable)) %>%
+    purrr::set_names() %>%
+    imap(~data.frame(rep(0,length(unique(data_full$year))))%>%set_names(.y)) %>%
+    reduce(cbind)
+  
+  data_ratio <- data_ratio %>%
+              wide_data(variables = data_ratio$variable, out_format = "list") %>% 
+    map(~cbind(.x,missing_data)) %>%
+    long_data()
+  
+calcul_indic <- function(database){
+  
   ### step 2: write de the function for the sum 
-compute_EMS_safe_short <- function(commodity, data){
-
-
- var_to_sum <- unique(c(names(data)[grep(paste0("^EMS_CI_",commodity,"$"),names(data))],
-                        names(data)[grep(paste0("^EMS_CH_",commodity,"$"),names(data))])
-                      )
+calcul_sector_functions <- function(sector, data){
 
  res <- mutate(data,
-                  !!paste0("EMS_CI_CH_",commodity) := rowSums(across(all_of(var_to_sum))) ) %>%
-      select(year,all_of(paste0("EMS_CI_CH_",commodity) ) )
+               !!paste0("PHI_I_Y_",sector) := get(paste0("I_",sector))/get(paste0("Y_",sector)),
+               !!paste0("PHI_FL_Y_",sector) := get(paste0("F_L_",sector))/get(paste0("Y_",sector)),
+               !!paste0("PHI_FMAT_Y_",sector) := get(paste0("F_MAT_",sector))/get(paste0("Y_",sector)),
+               !!paste0("PHI_FE_Y_",sector) := get(paste0("F_E_",sector))/get(paste0("Y_",sector)),
+               !!paste0("PHI_FK_Y_",sector) := get(paste0("F_K_",sector))/get(paste0("Y_",sector)),
+               !!paste0("PHI_FE_GDP_",sector) := get(paste0("F_E_",sector))/GDP,
+               !!paste0("PHI_VAL_FK_Y_",sector) := get(paste0("F_K_",sector))*get(paste0("C_K_",sector))/
+                                                  get(paste0("Y_",sector))*get(paste0("PY_",sector)),
+               !!paste0("PHI_VAL_FL_Y_",sector) := get(paste0("F_L_",sector))*get(paste0("C_L_",sector))/
+                                                  get(paste0("Y_",sector))*get(paste0("PY_",sector)),
+               !!paste0("PHI_VAL_FE_Y_",sector) := get(paste0("F_E_",sector))*get(paste0("C_E_",sector))/
+                                                  get(paste0("Y_",sector))*get(paste0("PY_",sector)),
+               !!paste0("PHI_VAL_FMAT_Y_",sector) := get(paste0("F_MAT_",sector))*get(paste0("C_MAT_",sector))/
+                                                    get(paste0("Y_",sector))*get(paste0("PY_",sector))
+               ) %>%
+      select(year,
+             all_of(paste0("PHI_I_Y_",sector)),
+             all_of(paste0("PHI_FL_Y_",sector)),
+             all_of(paste0("PHI_FMAT_Y_",sector)),
+             all_of(paste0("PHI_FE_Y_",sector)),
+             all_of(paste0("PHI_FK_Y_",sector)),
+             all_of(paste0("PHI_FE_GDP_",sector)),
+             all_of(paste0("PHI_VAL_FK_Y_",sector)),
+             all_of(paste0("PHI_VAL_FL_Y_",sector)),
+             all_of(paste0("PHI_VAL_FE_Y_",sector)),
+             all_of(paste0("PHI_VAL_FMAT_Y_",sector))
+             )
+
+  return(res)
+}
+
+calcul_commodity_functions <- function(commodity, data){
+
+ res <- mutate(data,
+               !!paste0("PHI_MGS_GDP_",commodity) := get(paste0("MGS_",commodity))/GDP,
+               !!paste0("PHI_CI_GDP_",commodity) := get(paste0("CI_",commodity))/GDP,
+               !!paste0("PHI_FE_GDP_",commodity) := get(paste0("F_E_",commodity))/GDP,
+               !!paste0("PHI_CH_GDP_",commodity) := get(paste0("CH_",commodity))/GDP,
+               !!paste0("PHI_G_GDP_",commodity) := get(paste0("G_",commodity))/GDP,
+               !!paste0("PHI_I_GDP_",commodity) := get(paste0("I_",commodity))/GDP,
+               !!paste0("PHI_X_GDP_",commodity) := get(paste0("X_",commodity))/GDP,
+               !!paste0("PHI_M_GDP_",commodity) := get(paste0("M_",commodity))/GDP,
+               !!paste0("BLC_TRADE_",commodity) := (get(paste0("X_",commodity))-get(paste0("M_",commodity)))/GDP,
+               !!paste0("OPN_TRADE_",commodity) := (get(paste0("X_",commodity))+get(paste0("M_",commodity)))/GDP
+               ) %>%
+      select(year,
+             all_of(paste0("PHI_MGS_GDP_",commodity)),
+             all_of(paste0("PHI_CI_GDP_",commodity)),
+             all_of(paste0("PHI_FE_GDP_",commodity)),
+             all_of(paste0("PHI_CH_GDP_",commodity)),
+             all_of(paste0("PHI_G_GDP_",commodity)),
+             all_of(paste0("PHI_I_GDP_",commodity)),
+             all_of(paste0("PHI_X_GDP_",commodity)),
+             all_of(paste0("PHI_M_GDP_",commodity)),
+             all_of(paste0("BLC_TRADE_",commodity)),
+             all_of(paste0("OPN_TRADE_",commodity))
+             )
 
   return(res)
 }
 
 ### step 3: Line for one wide data base
-data_res <- existing_commodities %>%
-  map(~compute_EMS_safe_short(commodity = .x, data = database) ) %>%
+data_res_sector <- toupper(names_sectors[,"code"]) %>%
+  map(~calcul_sector_functions(sector = .x, data = database)) %>%
+  reduce(full_join,by = "year")
+
+data_res <- toupper(names_commodities[,"code"]) %>%
+  map(~calcul_commodity_functions(commodity = .x, data = database) ) %>%
   reduce(full_join,by = "year") %>%
-  full_join(database,., by = "year") %>% 
   ##variables independent of commodity
-  mutate( EMS_CI_CH = EMS_CI + EMS_CH )
+  mutate( #by sectors
+PHI_FL_Y = F_L/Y,
+PHI_FK_Y = F_K/Y,
+PHI_I_Y = I/Y,
+PHI_FMAT_Y = F_MAT/Y,
+PHI_FE_Y = F_E/Y,
+PHI_VAL_K_Y = C_K*F_K/(PY*Y),
+PHI_VAL_L_Y = C_L*F_L/(PY*Y),
+PHI_VAL_E_Y = C_E*F_E/(PY*Y),
+PHI_VAL_MAT_Y = C_MAT*F_MAT/(PY*Y),
+
+#PVA[s] non existing
+#PHI_VAL_VA_Y = PVA*VA/(PY*Y),
+#PHI_VAL_L_VA = C_L*F_L/(PVA*VA),
+#PHI_VAL_PI_VA = 1 - C_L*F_L/(PVA*VA),
+
+#by commodities
+PHI_MGS_GDP = MGS/GDP,
+PHI_CI_GDP = CI/GDP,
+PHI_FE_GDP = F_E/GDP,
+PHI_CH_GDP = CH/GDP,
+PHI_G_GDP = G/GDP,
+PHI_I_GDP = I/GDP,
+PHI_X_GDP = X/GDP,
+PHI_M_GDP = M/GDP,
+BLC_TRADE = (X-M)/GDP,
+OPN_TRADE = (X+M)/GDP,
+
+#aggregated level
+PHI_VAL_SPEND_G_GDP = SPEND_G_VAL/(PGDP*GDP),
+PHI_VAL_INC_G_GDP = INC_G_VAL/(PGDP*GDP),
+NTAXC_VAL = PNTAXC*NTAXC ) %>%
+  cbind(data_res_sector) %>% unique()
 
 return(data_res)
 }
 
-new_indicators_vAS <-  new_indicators_bis %>% 
+data_ratio <- data_ratio %>% 
   # 1. Put in Wide format
-  wide_data(variables = variables_selection , out_format = "list") %>%  
+  wide_data(variables = data_ratio$variable , out_format = "list") %>%  
   # 2. Calculate indicators
-  map(~calcul_indic_AS(.x)) %>% 
+  map(~calcul_indic(.x)) %>% 
   # 3. Back to long data
   long_data()
-
-
-
-
-A <- curve_sc_plot(new_indicators,"EMS_CI_CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
-
-data_plot <- contrib.sub(new_indicators,var1 =  "EMS_CI_CH",
-group_type = "C", scenar = c("baseline", scenario_name))
-
-B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)")
-
-ggarrange(A,B,
-labels = c("(a)", "(b)"),
-hjust = -0.5, vjust = 1.5,
-ncol = 2, nrow = 1,
-widths = 2,  heights = 1)
 
 ```
 
