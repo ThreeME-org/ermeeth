@@ -66,7 +66,7 @@ source("src/0_create_databases.R")
 
 data_full<-readRDS(file = paste0("databases/",scenario_name,"_",classification,".rds"))
 ### loading the sector and commodity aggregated database 
-data_sector <- readRDS(file = paste0("databases/",scenario_name,"_",classification,"_commodities_sectors.rds"))
+data_com_sec <- readRDS(file = paste0("databases/",scenario_name,"_",classification,"_commodities_sectors.rds"))
 
 
 source(paste0("bridges/bridge_",classification,".R"))
@@ -83,7 +83,7 @@ source(paste0("bridges/codenames_",classification,".R"))
 
 ```{r Table macro, results ='asis'}
 
-table <- ermeeth::table.output(data = data_sector, scenario = scenario_name, 
+table <- ermeeth::table.output(data = data_com_sec, scenario = scenario_name, 
              full.table = TRUE, export.doc = FALSE, langue = "en",
              title = 'Macroeconomic main results')
 
@@ -302,9 +302,9 @@ prix_salaires
 
 ```{r Prod_Sect, fig.height = 6, fig.width=14}
 
-A <- curve_sc_plot(data_sector,"Y", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Production of sectors (in difference from baseline)")
+A <- curve_sc_plot(data_com_sec,"Y", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Production of sectors (in difference from baseline)")
 
-data_plot <- contrib.sub(data_sector,var1 =  "Y",
+data_plot <- contrib.sub(data_com_sec,var1 =  "Y",
 group_type = "sector", scenar = c("baseline", scenario_name))
 
 B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total production and sectorial contribution (in difference from baseline)")
@@ -327,9 +327,9 @@ widths = 2,  heights = 1)
 
 ```{r VA_Sect, fig.height = 6, fig.width=14}
 
-A <- curve_sc_plot(data_sector,"VA", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Value-added of sectors (in difference from baseline)")
+A <- curve_sc_plot(data_com_sec,"VA", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Value-added of sectors (in difference from baseline)")
 
-data_plot <- contrib.sub(data_sector,var1 =  "VA",
+data_plot <- contrib.sub(data_com_sec,var1 =  "VA",
 group_type = "sector", scenar = c("baseline", scenario_name))
 
 B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total value-added and sectorial contribution (in difference from baseline)")
@@ -349,9 +349,9 @@ widths = 2,  heights = 1)
 
 ```{r employment_Sect, fig.height = 6, fig.width=14}
 
-A <- curve_sc_plot(data_sector,"F_L", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Employment of sectors (in difference from baseline)")
+A <- curve_sc_plot(data_com_sec,"F_L", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Employment of sectors (in difference from baseline)")
 
-data_plot <- contrib.sub(data_sector,var1 =  "F_L",
+data_plot <- contrib.sub(data_com_sec,var1 =  "F_L",
 group_type = "sector", scenar = c("baseline", scenario_name))
 
 B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total employment and sectorial contribution (in difference from baseline)")
@@ -372,9 +372,9 @@ widths = 2,  heights = 1)
 
 ```{r INV_Sect, fig.height = 6, fig.width=14}
 
-A <- curve_sc_plot(data_sector,"I", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Investment of sectors (in difference from baseline)")
+A <- curve_sc_plot(data_com_sec,"I", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Investment of sectors (in difference from baseline)")
 
-data_plot <- contrib.sub(data_sector,var1 =  "I",
+data_plot <- contrib.sub(data_com_sec,var1 =  "I",
 group_type = "sector", scenar = c("baseline", scenario_name))
 
 B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total Investment and sectorial contribution (in difference from baseline)")
@@ -437,8 +437,8 @@ widths = 2,  heights = 1)
 ```{r GHG emissions per source, fig.height=6, fig.width=14}
 
 
-variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
-                             variables_like(data_sector,"^EMS_CH_C0",FALSE),   
+variables_selection <-   c(  variables_like(data_com_sec,"^EMS_CI_C0",FALSE),
+                             variables_like(data_com_sec,"^EMS_CH_C0",FALSE),   
                              "EMS_CI", "EMS_CH"  )
 
 calcul_indic <- function(data){
@@ -473,7 +473,7 @@ calcul_indic <- function(data){
 }
 
 
-new_indicators <- data_sector %>%  dplyr::filter(variable %in% variables_selection) %>% 
+new_indicators <- data_com_sec %>%  dplyr::filter(variable %in% variables_selection) %>% 
   # 1. Put in Wide format
   wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
   # 2. Calculate indicators
@@ -503,9 +503,9 @@ widths = 2,  heights = 1)
 ```{r ExporTed GHG emissions per source, fig.height=6, fig.width=14}
 
 
-A <- curve_sc_plot(data_sector,"EMS_X", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
+A <- curve_sc_plot(data_com_sec,"EMS_X", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
 
-data_plot <- contrib.sub(data_sector,var1 =  "EMS_X",
+data_plot <- contrib.sub(data_com_sec,var1 =  "EMS_X",
 group_type = "C", scenar = c("baseline", scenario_name))
 
 B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)")
@@ -615,11 +615,11 @@ data_res2 <- existing_commodities %>%
 
 ```{r version Anissa Complete Solution to avoid For Loop, eval=FALSE, include=FALSE}
 
-variables_selection <-   c(  variables_like(data_sector,"^EMS_CI_C0",FALSE),
-                             variables_like(data_sector,"^EMS_CH_C0",FALSE),   
+variables_selection <-   c(  variables_like(data_com_sec,"^EMS_CI_C0",FALSE),
+                             variables_like(data_com_sec,"^EMS_CH_C0",FALSE),   
                              "EMS_CI", "EMS_CH"  )
 
-new_indicators_bis <- data_sector %>%  dplyr::filter(variable %in% variables_selection) 
+new_indicators_bis <- data_com_sec %>%  dplyr::filter(variable %in% variables_selection) 
 ####PUTTING IT ALL TOGETHER
 
 calcul_indic_AS <- function(database){
@@ -693,9 +693,9 @@ widths = 2,  heights = 1)
 # CO2 emissions: decomposition per source
 
 
-A <- curve_sc_plot(data_sector,"EMS_CI_CO2", group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
+A <- curve_sc_plot(data_com_sec,"EMS_CI_CO2", group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
 
-data_plot <- contrib.sub(data_sector,var1 =  "EMS_CI_CO2",
+data_plot <- contrib.sub(data_com_sec,var1 =  "EMS_CI_CO2",
 group_type = "C", scenar = c("baseline", scenario_name))
 
 B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)")
