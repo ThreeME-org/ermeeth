@@ -81,7 +81,7 @@ source(paste0("bridges/codenames_",classification,".R"))
 ---
 
 
-```{r version Anissa Complete Solution to avoid For Loop, eval=FALSE, include=FALSE}
+```{r Calculation of new indicators}
 
   ### step 0: prepare database
 variables_selection <-   c(variables_like(data_full,"^F_L_S[A-Z0-9]{3}$",FALSE),"F_L",
@@ -132,7 +132,7 @@ data_ratio <- rbind(dplyr::filter(data_full,variable %in% variables_selection),
               unique()
 
 
-  ### step 1: check and complete missing data
+  ### step 1: check and complete missing data by 0
   list_S_variable <- c("F_L","F_K","F_MAT","F_E","C_L","C_K","C_MAT","C_E","I","Y","PY") %>%
     map(~paste0(.x,"_",toupper(names_sectors[,"code"]))) %>%
     reduce(c)
@@ -153,7 +153,7 @@ data_ratio <- rbind(dplyr::filter(data_full,variable %in% variables_selection),
   
 calcul_indic <- function(database){
   
-  ### step 2: write de the function for the sum 
+  ### step 2: write de the function for the calculation 
 calcul_sector_functions <- function(sector, data){
 
  res <- mutate(data,
@@ -234,15 +234,15 @@ PHI_FK_Y = F_K/Y,
 PHI_I_Y = I/Y,
 PHI_FMAT_Y = F_MAT/Y,
 PHI_FE_Y = F_E/Y,
-PHI_VAL_K_Y = C_K*F_K/(PY*Y),
-PHI_VAL_L_Y = C_L*F_L/(PY*Y),
-PHI_VAL_E_Y = C_E*F_E/(PY*Y),
-PHI_VAL_MAT_Y = C_MAT*F_MAT/(PY*Y),
+PHI_VAL_FK_Y = C_K*F_K/(PY*Y),
+PHI_VAL_FL_Y = C_L*F_L/(PY*Y),
+PHI_VAL_FE_Y = C_E*F_E/(PY*Y),
+PHI_VAL_FMAT_Y = C_MAT*F_MAT/(PY*Y),
 
 #PVA[s] non existing
-#PHI_VAL_VA_Y = PVA*VA/(PY*Y),
-#PHI_VAL_L_VA = C_L*F_L/(PVA*VA),
-#PHI_VAL_PI_VA = 1 - C_L*F_L/(PVA*VA),
+# PHI_VAL_VA_Y = PVA*VA/(PY*Y),
+# PHI_VAL_L_VA = C_L*F_L/(PVA*VA),
+# PHI_VAL_PI_VA = 1 - C_L*F_L/(PVA*VA),
 
 #by commodities
 PHI_MGS_GDP = MGS/GDP,
@@ -261,18 +261,95 @@ PHI_VAL_SPEND_G_GDP = SPEND_G_VAL/(PGDP*GDP),
 PHI_VAL_INC_G_GDP = INC_G_VAL/(PGDP*GDP),
 NTAXC_VAL = PNTAXC*NTAXC )
 
-data_final <- rbind(data_res_commodity,data_res_sector,data_res_agg)
+data_final <- cbind(data_res_commodity,data_res_sector,data_res_agg)
 
 return(data_final)
 }
 
 data_ratio <- data_ratio %>% 
-  # 1. Put in Wide format
   wide_data(variables = data_ratio$variable , out_format = "list") %>%  
-  # 2. Calculate indicators
   map(~calcul_indic(.x)) %>% 
-  # 3. Back to long data
   long_data()
 
+```
+
+```{r Function to visualise indicators with detail and aggregated sector/commodity}
+
+plot_ratio <- function(data, 
+                       indicator = NULL, 
+                       years = NULL, 
+                       title = "", 
+                       scenario = NULL)
+{
+
+### Inputs check
+  if(length(indicator) > 1 ){
+    stop(message("Please choose only one indicator each time. \n"))
+  }else if(is.null(indicator)){
+    stop(message("Please choose one indicator. \n"))
+  }else if(!TRUE %in% grepl(paste0("^",indicator,"_"), data$variable)){
+    stop(message("Indicator does not exist, please choose another one. \n"))
+  }
+  
+  if(length(years) > 1 ){
+    stop(message("Please choose only one year each time. \n"))
+  }else if(is.null(years)){
+    years <- 2019
+  }
+  
+  if(length(scenario) > 1 ){
+    stop(message("Please choose only one scenario each time. \n"))
+  }else if(is.null(scenario)){
+    scenario <- "baseline"
+  }else if(!TRUE %in% grepl(scenario, names(data))){
+    stop(message("Scenario does not exist, please choose another one. \n"))
+  }
+  
+### Code list for regroup the detailed sector/commodity
+
+code_list <- bridge_sectors %>%
+  imap(~data_frame(name = toupper(.x), code = .y) %>% as.data.frame()) %>%
+  reduce(rbind) %>%
+  rbind(c("S001","S001"),c("S002","S002"),c("S003","S003"),c("S004","S004"),
+        c("S005","S005"),c("S006","S006"),c("S007","S007"),c("S008","S008"),
+        c("C001","C001"),c("C002","C002"),c("C003","C003"),c("C004","C004"),
+        c("C005","C005"),c("C006","C006"),c("C007","C007"),c("C008","C008")) %>%
+  rbind(
+    bridge_commodities %>%
+    imap(~data_frame(name = toupper(.x), code = .y) %>% as.data.frame()) %>%
+    reduce(rbind)) %>%
+  left_join(rbind(tail(names_commodities,8),tail(names_sectors,8)) %>% 
+              set_names(c("facet_by","code")), by = "code")
+
+### Preparation of data base
+data_fig <- data %>% 
+            filter(grepl(paste0("^",indicator,"_[A-Z0-9]{4}$"),variable), year == years)
+
+### Matching detailed sector with aggregated sector
+data_fig <- data_fig %>% mutate(name = case_when(
+            str_extract(data_fig$variable,"C[A-Z0-9]{3}$|S[A-Z0-9]{3}$") %in% code_list$name 
+                       ~str_extract(data_fig$variable,"C[A-Z0-9]{3}$|S[A-Z0-9]{3}$"))) %>% 
+            left_join(code_list, by = "name") %>% as.data.frame()
+
+### Plot drawing
+fig <- ggplot(data_fig, aes(x = name, y = get(scenario), fill = facet_by, group = facet_by)) + 
+       geom_bar(stat = "identity") +
+       scale_fill_manual("Sector/Commodity",values = custom.palette(8) ) +
+       ylab(scenario) +
+       xlab("") +
+       ggtitle(title) +
+       facet_grid(~facet_by, scales = "free_x", space = "free_x") +
+       theme(axis.text.x = element_text(angle = 45))
+
+return(fig)
+}
+
+```
+
+```{r Example}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FE_Y", years = 2019, title = "Energy cost (in value) over production  (in value)", scenario = "baseline")
+
+fig
 ```
 
