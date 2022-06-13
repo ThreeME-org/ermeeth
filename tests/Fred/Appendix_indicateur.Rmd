@@ -223,10 +223,11 @@ data_res_sector <- toupper(names_sectors[,"code"]) %>%
   map(~calcul_sector_functions(sector = .x, data = database)) %>%
   reduce(full_join,by = "year")
 
-data_res <- toupper(names_commodities[,"code"]) %>%
+data_res_commodity <- toupper(names_commodities[,"code"]) %>%
   map(~calcul_commodity_functions(commodity = .x, data = database) ) %>%
-  reduce(full_join,by = "year") %>%
-  ##variables independent of commodity
+  reduce(full_join,by = "year")
+
+data_res_agg <- database %>%
   mutate( #by sectors
 PHI_FL_Y = F_L/Y,
 PHI_FK_Y = F_K/Y,
@@ -258,10 +259,11 @@ OPN_TRADE = (X+M)/GDP,
 #aggregated level
 PHI_VAL_SPEND_G_GDP = SPEND_G_VAL/(PGDP*GDP),
 PHI_VAL_INC_G_GDP = INC_G_VAL/(PGDP*GDP),
-NTAXC_VAL = PNTAXC*NTAXC ) %>%
-  cbind(data_res_sector) %>% unique()
+NTAXC_VAL = PNTAXC*NTAXC )
 
-return(data_res)
+data_final <- rbind(data_res_commodity,data_res_sector,data_res_agg)
+
+return(data_final)
 }
 
 data_ratio <- data_ratio %>% 
