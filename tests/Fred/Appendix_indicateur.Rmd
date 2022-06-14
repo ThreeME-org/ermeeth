@@ -346,9 +346,9 @@ return(fig)
 
 ```
 
-```{r Example}
+```{r Example, fig.width=14,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FE_Y", years = 2019, title = "Energy cost (in value) over production  (in value)", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "", years = 2050, title = "Energy over production", scenario = "baseline")
 
 fig
 ```
