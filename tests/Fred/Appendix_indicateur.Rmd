@@ -1,5 +1,5 @@
 ---
-title: "ThreeME Standard results"
+title: "Appendix: ThreeME Additional indicators"
 author: "ThreeME team"
 date: "`r format(Sys.Date(), '%d %B %y')`"
 output: slidy_presentation
@@ -10,9 +10,9 @@ subtitle: 'Scenario: `r params$scenario_name`'
 params:
   startyear: 2020
   endyear: 2050
-  scenario_name: carbontax_lux
+  scenario_name: carbontax300_lux
   
-  classification: c25_s26
+  classification: c23_s26
   template_default: ofce
 ---
 
@@ -78,7 +78,18 @@ source(paste0("bridges/codenames_",classification,".R"))
 ```
 
 
----
+```{r Add short names for Bridge}
+
+short_names_c <- c("Agriculture","Forestry","Food","Vehicles","Non-metallic minerals","Chemicals","Plastics","Metals","Other industries","Other consumers","Construction","Rail","Road","Water","Air","Business","Finance","Public","Non-energy mining","Coal","Oil","Natural gas","Electricity","TOTAL.1","TOTAL.2","TOTAL.3","TOTAL.4","TOTAL.5","TOTAL.6","TOTAL.7","TOTAL.8")
+
+names_commodities <- names_commodities %>% cbind(short_names_c) %>% purrr::set_names(c("name","code","short_name"))
+
+short_names_s <- c("Agriculture","Forestry","Food","Vehicles","Non-metallic minerals","Chemicals","Plastics","Metallurgy","Other industries","Other consumers","Construction","Rail","Road","Water","Air","Business","Finance","Public","Mining","Fossil energy","Oil elec.","Gas elec.","Wind elec.","Solar elec.","Hydro elec.","Other elec.","TOTAL.1","TOTAL.2","TOTAL.3","TOTAL.4","TOTAL.5","TOTAL.6","TOTAL.7","TOTAL.8")
+
+
+names_sectors <- names_sectors %>% cbind(short_names_s) %>% purrr::set_names(c("name","code","short_name"))
+
+```
 
 
 ```{r Calculation of new indicators}
@@ -95,6 +106,7 @@ variables_selection <-   c(variables_like(data_full,"^F_L_S[A-Z0-9]{3}$",FALSE),
                            variables_like(data_full,"^C_E_S[A-Z0-9]{3}$",FALSE),"C_E",
                            variables_like(data_full,"^Y_S[A-Z0-9]{3}$",FALSE),"Y",
                            variables_like(data_full,"^PY_S[A-Z0-9]{3}$",FALSE),"PY",
+                           variables_like(data_full,"^VA_VAL_S[A-Z0-9]{3}$",FALSE),"PVA","VA",
                            variables_like(data_full,"^MGS_C[A-Z0-9]{3}$",FALSE), "MGS",
                            #only 3 commodities,"MGS_CPRI" "MGS_CRAI" "MGS_CROA"
                            variables_like(data_full,"^CI_C[A-Z0-9]{3}$",FALSE), "CI", #CCOI missing
@@ -124,7 +136,8 @@ variables_selection <-   c(variables_like(data_full,"^F_L_S[A-Z0-9]{3}$",FALSE),
                            variables_like(data_sector,"^G_C[A-Z0-9]{3}$",FALSE), 
                            variables_like(data_sector,"^I_C[A-Z0-9]{3}$",FALSE),
                            variables_like(data_sector,"^X_C[A-Z0-9]{3}$",FALSE),
-                           variables_like(data_sector,"^M_C[A-Z0-9]{3}$",FALSE)
+                           variables_like(data_sector,"^M_C[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^VA_VAL_S[A-Z0-9]{3}$",FALSE)
                            )
 
 data_ratio <- rbind(dplyr::filter(data_full,variable %in% variables_selection),
@@ -162,7 +175,7 @@ calcul_sector_functions <- function(sector, data){
                !!paste0("PHI_FMAT_Y_",sector) := get(paste0("F_MAT_",sector))/get(paste0("Y_",sector)),
                !!paste0("PHI_FE_Y_",sector) := get(paste0("F_E_",sector))/get(paste0("Y_",sector)),
                !!paste0("PHI_FK_Y_",sector) := get(paste0("F_K_",sector))/get(paste0("Y_",sector)),
-               !!paste0("PHI_FE_GDP_",sector) := get(paste0("F_E_",sector))/GDP,
+               !!paste0("PHI_FE_S_GDP_",sector) := get(paste0("F_E_",sector))/GDP,
                !!paste0("PHI_VAL_FK_Y_",sector) := get(paste0("F_K_",sector))*get(paste0("C_K_",sector))/
                                                   get(paste0("Y_",sector))*get(paste0("PY_",sector)),
                !!paste0("PHI_VAL_FL_Y_",sector) := get(paste0("F_L_",sector))*get(paste0("C_L_",sector))/
@@ -170,7 +183,13 @@ calcul_sector_functions <- function(sector, data){
                !!paste0("PHI_VAL_FE_Y_",sector) := get(paste0("F_E_",sector))*get(paste0("C_E_",sector))/
                                                   get(paste0("Y_",sector))*get(paste0("PY_",sector)),
                !!paste0("PHI_VAL_FMAT_Y_",sector) := get(paste0("F_MAT_",sector))*get(paste0("C_MAT_",sector))/
-                                                    get(paste0("Y_",sector))*get(paste0("PY_",sector))
+                                                    get(paste0("Y_",sector))*get(paste0("PY_",sector)),
+               !!paste0("PHI_VAL_VA_Y_",sector) := get(paste0("VA_VAL_",sector))/
+                                                    get(paste0("Y_",sector))*get(paste0("PY_",sector)),
+               !!paste0("PHI_VAL_L_VA_",sector) := get(paste0("F_L_",sector))*get(paste0("C_L_",sector))/
+                                                    get(paste0("VA_VAL_",sector)),
+               !!paste0("PHI_VAL_PI_VA_",sector) := 1 - get(paste0("F_L_",sector))*get(paste0("C_L_",sector))/
+                                                    get(paste0("VA_VAL_",sector))
                ) %>%
       select(year,
              all_of(paste0("PHI_I_Y_",sector)),
@@ -178,11 +197,14 @@ calcul_sector_functions <- function(sector, data){
              all_of(paste0("PHI_FMAT_Y_",sector)),
              all_of(paste0("PHI_FE_Y_",sector)),
              all_of(paste0("PHI_FK_Y_",sector)),
-             all_of(paste0("PHI_FE_GDP_",sector)),
+             all_of(paste0("PHI_FE_S_GDP_",sector)),
              all_of(paste0("PHI_VAL_FK_Y_",sector)),
              all_of(paste0("PHI_VAL_FL_Y_",sector)),
              all_of(paste0("PHI_VAL_FE_Y_",sector)),
-             all_of(paste0("PHI_VAL_FMAT_Y_",sector))
+             all_of(paste0("PHI_VAL_FMAT_Y_",sector)),
+             all_of(paste0("PHI_VAL_VA_Y_",sector)),
+             all_of(paste0("PHI_VAL_L_VA_",sector)),
+             all_of(paste0("PHI_VAL_PI_VA_",sector))
              )
 
   return(res)
@@ -193,7 +215,7 @@ calcul_commodity_functions <- function(commodity, data){
  res <- mutate(data,
                !!paste0("PHI_MGS_GDP_",commodity) := get(paste0("MGS_",commodity))/GDP,
                !!paste0("PHI_CI_GDP_",commodity) := get(paste0("CI_",commodity))/GDP,
-               !!paste0("PHI_FE_GDP_",commodity) := get(paste0("F_E_",commodity))/GDP,
+               !!paste0("PHI_FE_C_GDP_",commodity) := get(paste0("F_E_",commodity))/GDP,
                !!paste0("PHI_CH_GDP_",commodity) := get(paste0("CH_",commodity))/GDP,
                !!paste0("PHI_G_GDP_",commodity) := get(paste0("G_",commodity))/GDP,
                !!paste0("PHI_I_GDP_",commodity) := get(paste0("I_",commodity))/GDP,
@@ -205,7 +227,7 @@ calcul_commodity_functions <- function(commodity, data){
       select(year,
              all_of(paste0("PHI_MGS_GDP_",commodity)),
              all_of(paste0("PHI_CI_GDP_",commodity)),
-             all_of(paste0("PHI_FE_GDP_",commodity)),
+             all_of(paste0("PHI_FE_C_GDP_",commodity)),
              all_of(paste0("PHI_CH_GDP_",commodity)),
              all_of(paste0("PHI_G_GDP_",commodity)),
              all_of(paste0("PHI_I_GDP_",commodity)),
@@ -240,14 +262,15 @@ PHI_VAL_FE_Y = C_E*F_E/(PY*Y),
 PHI_VAL_FMAT_Y = C_MAT*F_MAT/(PY*Y),
 
 #PVA[s] non existing
-# PHI_VAL_VA_Y = PVA*VA/(PY*Y),
-# PHI_VAL_L_VA = C_L*F_L/(PVA*VA),
-# PHI_VAL_PI_VA = 1 - C_L*F_L/(PVA*VA),
+PHI_VAL_VA_Y = PVA*VA/(PY*Y),
+PHI_VAL_L_VA = C_L*F_L/(PVA*VA),
+PHI_VAL_PI_VA = 1 - C_L*F_L/(PVA*VA),
 
 #by commodities
 PHI_MGS_GDP = MGS/GDP,
 PHI_CI_GDP = CI/GDP,
-PHI_FE_GDP = F_E/GDP,
+PHI_FE_S_GDP = F_E/GDP,
+PHI_FE_C_GDP = F_E/GDP,
 PHI_CH_GDP = CH/GDP,
 PHI_G_GDP = G/GDP,
 PHI_I_GDP = I/GDP,
@@ -284,31 +307,31 @@ plot_ratio <- function(data,
 
 ### Inputs check
   if(length(indicator) > 1 ){
-    stop(message("Please choose only one indicator each time. \n"))
+    stop("Please choose only one indicator each time. \n")
   }else if(is.null(indicator)){
-    stop(message("Please choose one indicator. \n"))
+    stop("Please choose one indicator. \n")
   }else if(!TRUE %in% grepl(paste0("^",indicator,"_"), data$variable)){
-    stop(message("Indicator does not exist, please choose another one. \n"))
+    stop("Indicator does not exist, please choose another one. \n")
   }
   
   if(length(years) > 1 ){
-    stop(message("Please choose only one year each time. \n"))
+    stop("Please choose only one year each time. \n")
   }else if(is.null(years)){
     years <- 2019
   }
   
   if(length(scenario) > 1 ){
-    stop(message("Please choose only one scenario each time. \n"))
+    stop("Please choose only one scenario each time. \n")
   }else if(is.null(scenario)){
     scenario <- "baseline"
   }else if(!TRUE %in% grepl(scenario, names(data))){
-    stop(message("Scenario does not exist, please choose another one. \n"))
+    stop("Scenario does not exist, please choose another one. \n")
   }
   
 ### Code list for regroup the detailed sector/commodity
 
 code_list <- bridge_sectors %>%
-  imap(~data_frame(name = toupper(.x), code = .y) %>% as.data.frame()) %>%
+  imap(~data_frame(code = .x, agg_code = .y) %>% as.data.frame()) %>%
   reduce(rbind) %>%
   rbind(c("S001","S001"),c("S002","S002"),c("S003","S003"),c("S004","S004"),
         c("S005","S005"),c("S006","S006"),c("S007","S007"),c("S008","S008"),
@@ -316,40 +339,266 @@ code_list <- bridge_sectors %>%
         c("C005","C005"),c("C006","C006"),c("C007","C007"),c("C008","C008")) %>%
   rbind(
     bridge_commodities %>%
-    imap(~data_frame(name = toupper(.x), code = .y) %>% as.data.frame()) %>%
+    imap(~data_frame(code = .x, agg_code = .y) %>% as.data.frame()) %>%
     reduce(rbind)) %>%
-  left_join(rbind(tail(names_commodities,8),tail(names_sectors,8)) %>% 
-              set_names(c("facet_by","code")), by = "code")
+  left_join(rbind(tail(names_commodities,8)[,1:2],tail(names_sectors,8)[,1:2]) %>% 
+              set_names(c("facet_by","agg_code")), by = "agg_code") %>%
+  left_join(rbind(names_commodities[,c("code","short_name")],names_sectors[,c("code","short_name")]), by = "code") %>%
+  mutate(code = toupper(code))
 
 ### Preparation of data base
 data_fig <- data %>% 
-            filter(grepl(paste0("^",indicator,"_[A-Z0-9]{4}$"),variable), year == years)
+            filter(grepl(paste0("^",indicator,"_[A-Z0-9]{4}"),variable), year == years)
 
 ### Matching detailed sector with aggregated sector
-data_fig <- data_fig %>% mutate(name = case_when(
-            str_extract(data_fig$variable,"C[A-Z0-9]{3}$|S[A-Z0-9]{3}$") %in% code_list$name 
+data_fig <- data_fig %>% mutate(code = case_when(
+            str_extract(data_fig$variable,"C[A-Z0-9]{3}$|S[A-Z0-9]{3}$") %in% code_list$code 
                        ~str_extract(data_fig$variable,"C[A-Z0-9]{3}$|S[A-Z0-9]{3}$"))) %>% 
-            left_join(code_list, by = "name") %>% as.data.frame()
+            left_join(code_list, by = "code") %>% 
+  rbind(filter(data, variable == indicator, year == years) %>% mutate(facet_by = "AGGREGATE", short_name = "AGGREGATE",agg_code = NA, code = NA)) %>%
+  as.data.frame()
+
+data_fig$facet_by <- factor(data_fig$facet_by,      # Reordering group factor levels
+                         levels = c("AGGREGATE",tail(names_sectors,8)[,1]))
 
 ### Plot drawing
-fig <- ggplot(data_fig, aes(x = name, y = get(scenario), fill = facet_by, group = facet_by)) + 
+fig <- ggplot(data_fig, aes(x = short_name, y = get(scenario), fill = facet_by, group = facet_by)) + 
        geom_bar(stat = "identity") +
-       scale_fill_manual("Sector/Commodity",values = custom.palette(8) ) +
-       ylab(scenario) +
+       scale_fill_manual("Sector/Commodity",values = custom.palette(9) ) +
+       ylab("") +
        xlab("") +
        ggtitle(title) +
        facet_grid(~facet_by, scales = "free_x", space = "free_x") +
-       theme(axis.text.x = element_text(angle = 45))
+       theme(axis.text.x = element_text(angle = 90,hjust = 0.95),legend.position = "none")
+
 
 return(fig)
 }
 
 ```
 
-```{r Example, fig.width=14,fig.height=6}
+---
 
-fig <- plot_ratio(data = data_ratio, indicator = "", years = 2050, title = "Energy over production", scenario = "baseline")
+# Labor intensity of production by sectors
+
+```{r Labor intesnsity of production, fig.width=15, fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FL_Y", years = 2019, title = "F_L[s] / Y[s]", scenario = "baseline")
 
 fig
 ```
 
+---
+
+# Capital intesnsity of production by sectors
+
+```{r Capital intesnsity of production, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FK_Y", years = 2019, title = "F_K[s] / Y[s]", scenario = "baseline")
+
+fig
+```
+
+---
+
+# Energy intesnsity of production by sectors
+
+```{r Energy intesnsity of production, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FE_Y", years = 2019, title = "F_E[s] / Y[s]", scenario = "baseline")
+
+fig
+```
+
+---
+
+# Material intesnsity of production by sectors
+
+```{r Material intesnsity of production, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FMAT_Y", years = 2019, title = "F_MAT[s] / Y[s]", scenario = "baseline")
+
+fig
+```
+
+---
+
+# Investment over production by sectors
+
+```{r Investment over production, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_I_Y", years = 2019, title = "I[s] / Y[s]", scenario = "baseline")
+
+fig
+```
+
+---
+
+# Cost share of labor by sectors
+
+```{r Cost share of labor, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FL_Y", years = 2019, title = "", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Cost share of capital, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FK_Y", years = 2019, title = "Cost share of capital by sectors", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Cost share of energy, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FE_Y", years = 2019, title = "Cost share of energy by sectors", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Cost share of material, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FMAT_Y", years = 2019, title = "Cost share of material by sectors", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Share of value added into the production, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_VA_Y", years = 2019, title = "Share of value added into the production by sectors", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Labor share into the value added, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_L_VA", years = 2019, title = "Labor share into the value added by sectors", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Profits share into the value added, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_PI_VA", years = 2019, title = "Profits share into the value added by sectors", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Margins share into GDP, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_MGS_GDP", years = 2019, title = "Margins share into GDP by commodities", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Intermediay consumption share into GDP, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_CI_GDP", years = 2019, title = "Intermediary consumption share into GDP by commodities", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Energy share into GDP, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FE_S_GDP", years = 2019, title = "Energy share into GDP by sector", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Household\'s consumption share into GDP, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_CH_GDP", years = 2019, title = "Household's consumption share into GDP by commodities", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Gouvernement expenditure share into GDP, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_G_GDP", years = 2019, title = "Gouvernement expenditure share into GDP by commodities", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Investment share into GDP, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_I_GDP", years = 2019, title = "Investment share into GDP by commodities", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Export share into GDP, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_X_GDP", years = 2019, title = "Export share into GDP by commodities", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Import share into GDP, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_M_GDP", years = 2019, title = "Import share into GDP by commodities", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Trade balance, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "BLC_TRADE", years = 2019, title = "Trade balance by commodities", scenario = "baseline")
+
+fig
+```
+
+---
+
+
+```{r Trade openness, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "OPN_TRADE", years = 2019, title = "Trade openness by commodities", scenario = "baseline")
+
+fig
+```
