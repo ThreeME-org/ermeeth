@@ -116,7 +116,9 @@ variables_selection <-   c(variables_like(data_full,"^F_L_S[A-Z0-9]{3}$",FALSE),
                            variables_like(data_full,"^I_C[A-Z0-9]{3}$",FALSE), #CCOI missing
                            variables_like(data_full,"^X_C[A-Z0-9]{3}$",FALSE),"X", #CCOI missing
                            variables_like(data_full,"^M_C[A-Z0-9]{3}$",FALSE),"M", #CCOI missing
-                           "GDP","PGDP",
+                           variables_like(data_full,"^EMS_CI_CO2_C[A-Z0-9]{3}$",FALSE),"EMS_CI_CO2",
+                           variables_like(data_full,"^EMS_CH_CO2_C[A-Z0-9]{3}$",FALSE),"EMS_CH_CO2",
+                           "GDP","PGDP","EMS_CO2",
                            "SPEND_G_VAL","INC_G_VAL","PNTAXC","NTAXC",
                            variables_like(data_sector,"^F_L_S[A-Z0-9]{3}$",FALSE),
                            variables_like(data_sector,"^F_K_S[A-Z0-9]{3}$",FALSE),
@@ -149,7 +151,7 @@ data_ratio <- rbind(dplyr::filter(data_full,variable %in% variables_selection),
   list_S_variable <- c("F_L","F_K","F_MAT","F_E","C_L","C_K","C_MAT","C_E","I","Y","PY") %>%
     map(~paste0(.x,"_",toupper(names_sectors[,"code"]))) %>%
     reduce(c)
-  list_C_variable <- c("MGS","CI","CH","G","I","X","M","F_E") %>%
+  list_C_variable <- c("MGS","CI","CH","G","I","X","M","F_E","EMS_CI_CO2","EMS_CH_CO2") %>%
     map(~paste0(.x,"_",toupper(names_commodities[,"code"]))) %>%
     reduce(c)
   
@@ -222,7 +224,9 @@ calcul_commodity_functions <- function(commodity, data){
                !!paste0("PHI_X_GDP_",commodity) := get(paste0("X_",commodity))/GDP,
                !!paste0("PHI_M_GDP_",commodity) := get(paste0("M_",commodity))/GDP,
                !!paste0("BLC_TRADE_",commodity) := (get(paste0("X_",commodity))-get(paste0("M_",commodity)))/GDP,
-               !!paste0("OPN_TRADE_",commodity) := (get(paste0("X_",commodity))+get(paste0("M_",commodity)))/GDP
+               !!paste0("OPN_TRADE_",commodity) := (get(paste0("X_",commodity))+get(paste0("M_",commodity)))/GDP,
+               !!paste0("PHI_EMS_CI_",commodity) := get(paste0("EMS_CI_CO2_",commodity))/EMS_CI_CO2,
+               !!paste0("PHI_EMS_CH_",commodity) := get(paste0("EMS_CH_CO2_",commodity))/EMS_CH_CO2
                ) %>%
       select(year,
              all_of(paste0("PHI_MGS_GDP_",commodity)),
@@ -234,7 +238,9 @@ calcul_commodity_functions <- function(commodity, data){
              all_of(paste0("PHI_X_GDP_",commodity)),
              all_of(paste0("PHI_M_GDP_",commodity)),
              all_of(paste0("BLC_TRADE_",commodity)),
-             all_of(paste0("OPN_TRADE_",commodity))
+             all_of(paste0("OPN_TRADE_",commodity)),
+             all_of(paste0("PHI_EMS_CI_",commodity)),
+             all_of(paste0("PHI_EMS_CH_",commodity))
              )
 
   return(res)
@@ -282,7 +288,10 @@ OPN_TRADE = (X+M)/GDP,
 #aggregated level
 PHI_VAL_SPEND_G_GDP = SPEND_G_VAL/(PGDP*GDP),
 PHI_VAL_INC_G_GDP = INC_G_VAL/(PGDP*GDP),
-NTAXC_VAL = PNTAXC*NTAXC )
+NTAXC_VAL = PNTAXC*NTAXC,
+PHI_EMS_GDP = EMS_CO2 / GDP,
+PHI_EMS_CI_GDP = EMS_CI_CO2 / GDP,
+PHI_EMS_CH_GDP = EMS_CH_CO2 / GDP)
 
 data_final <- cbind(data_res_commodity,data_res_sector,data_res_agg)
 
