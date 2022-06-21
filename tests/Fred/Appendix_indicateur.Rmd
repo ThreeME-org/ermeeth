@@ -358,8 +358,10 @@ data_fig <- data_fig %>% mutate(code = case_when(
   rbind(filter(data, variable == indicator, year == years) %>% mutate(facet_by = "AGGREGATE", short_name = "AGGREGATE",agg_code = NA, code = NA)) %>%
   as.data.frame()
 
-data_fig$facet_by <- factor(data_fig$facet_by,      # Reordering group factor levels
+### Reordering factor levels
+data_fig$facet_by <- factor(data_fig$facet_by,      
                          levels = c("AGGREGATE",tail(names_sectors,8)[,1]))
+data_fig$short_name <- factor(data_fig$short_name, levels = data_fig$short_name)
 
 ### Plot drawing
 fig <- ggplot(data_fig, aes(x = short_name, y = get(scenario), fill = facet_by, group = facet_by)) + 
@@ -370,7 +372,6 @@ fig <- ggplot(data_fig, aes(x = short_name, y = get(scenario), fill = facet_by, 
        ggtitle(title) +
        facet_grid(~facet_by, scales = "free_x", space = "free_x") +
        theme(axis.text.x = element_text(angle = 90,hjust = 0.95),legend.position = "none")
-
 
 return(fig)
 }
@@ -438,167 +439,183 @@ fig
 
 ```{r Cost share of labor, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FL_Y", years = 2019, title = "", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FL_Y", years = 2019, title = "(C_L[s] * F_L[s]) / (PY[s] * Y[s])", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Cost share of capital by sectors
 
 ```{r Cost share of capital, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FK_Y", years = 2019, title = "Cost share of capital by sectors", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FK_Y", years = 2019, title = "(C_K[s] * F_K[s]) / (PY[s] * Y[s])", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Cost share of energy by sectors
 
 ```{r Cost share of energy, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FE_Y", years = 2019, title = "Cost share of energy by sectors", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FE_Y", years = 2019, title = "(C_E[s] * F_E[s]) / (PY[s] * Y[s])", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Cost share of material by sectors
 
 ```{r Cost share of material, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FMAT_Y", years = 2019, title = "Cost share of material by sectors", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FMAT_Y", years = 2019, title = "(C_MAT[s] * F_MAT[s]) / (PY[s] * Y[s])", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Share of value added into the production by sectors
 
 ```{r Share of value added into the production, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_VA_Y", years = 2019, title = "Share of value added into the production by sectors", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_VA_Y", years = 2019, title = "VA_VAL[s] / (PY[s]*Y[s])", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Labor share into the value added by sectors
 
 ```{r Labor share into the value added, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_L_VA", years = 2019, title = "Labor share into the value added by sectors", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_L_VA", years = 2019, title = "(C_L[s] * F_L[s]) / VA_VAL[s]", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Profits share into the value added by sectors
 
 ```{r Profits share into the value added, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_PI_VA", years = 2019, title = "Profits share into the value added by sectors", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_PI_VA", years = 2019, title = "1 - [ (C_L[s] * F_L[s]) / VA_VAL[s] ]", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Margins share into GDP by commodities
 
 ```{r Margins share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_MGS_GDP", years = 2019, title = "Margins share into GDP by commodities", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_MGS_GDP", years = 2019, title = "MGS[c] / GDP", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Intermediary consumption share into GDP by commodities
 
 ```{r Intermediay consumption share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_CI_GDP", years = 2019, title = "Intermediary consumption share into GDP by commodities", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_CI_GDP", years = 2019, title = "CI[c] / GDP", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Energy share into GDP by sectors
 
 ```{r Energy share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_FE_S_GDP", years = 2019, title = "Energy share into GDP by sector", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FE_S_GDP", years = 2019, title = "F_E[s] / GDP", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Household's consumption share into GDP by commodities
 
 ```{r Household\'s consumption share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_CH_GDP", years = 2019, title = "Household's consumption share into GDP by commodities", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_CH_GDP", years = 2019, title = "CH[c] / GDP", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Gouvernement expenditure share into GDP by commodities
 
 ```{r Gouvernement expenditure share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_G_GDP", years = 2019, title = "Gouvernement expenditure share into GDP by commodities", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_G_GDP", years = 2019, title = "G[c] / GDP", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Investment share into GDP by commodities
 
 ```{r Investment share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_I_GDP", years = 2019, title = "Investment share into GDP by commodities", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_I_GDP", years = 2019, title = "I[c] / GDP", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Export share into GDP by commodities
 
 ```{r Export share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_X_GDP", years = 2019, title = "Export share into GDP by commodities", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_X_GDP", years = 2019, title = "X[c] / GDP", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Import share into GDP by commodities
 
 ```{r Import share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_M_GDP", years = 2019, title = "Import share into GDP by commodities", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_M_GDP", years = 2019, title = "M[c] / GDP", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Trade balance by commodities
 
 ```{r Trade balance, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "BLC_TRADE", years = 2019, title = "Trade balance by commodities", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "BLC_TRADE", years = 2019, title = "( X[c] - M[c] ) / GDP", scenario = "baseline")
 
 fig
 ```
 
 ---
 
+# Trade openness by commodities
 
 ```{r Trade openness, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "OPN_TRADE", years = 2019, title = "Trade openness by commodities", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "OPN_TRADE", years = 2019, title = "( X[c] + M[c] ) / GDP", scenario = "baseline")
 
 fig
 ```
