@@ -393,7 +393,7 @@ data_fig$short_name <- factor(data_fig$short_name, levels = unique(data_fig$shor
 fig <- ggplot(data_fig, aes(x = short_name, y = get(scenario), fill = facet_by, alpha = factor(year), group = facet_by)) + 
        geom_bar(stat = "identity",position = "dodge2") +
        scale_alpha_manual("year", values = c(1,0.6)) +
-       scale_fill_manual("Sector/Commodity",values = custom.palette(9) ) +
+       scale_fill_manual("Sector/Commodity",values = custom.palette(9)) +
        ylab("") +
        xlab("") +
        ggtitle(title) +
@@ -423,7 +423,7 @@ fig
 
 ```{r Capital intesnsity of production, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_FK_Y", years = 2019, title = "F_K[s] / Y[s]", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FK_Y", years = c(2019,2050), title = "F_K[s] / Y[s]", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -434,7 +434,7 @@ fig
 
 ```{r Energy intesnsity of production, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_FE_Y", years = 2019, title = "F_E[s] / Y[s]", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FE_Y", years = c(2019,2050), title = "F_E[s] / Y[s]", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -445,7 +445,7 @@ fig
 
 ```{r Material intesnsity of production, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_FMAT_Y", years = 2019, title = "F_MAT[s] / Y[s]", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FMAT_Y", years = c(2019,2050), title = "F_MAT[s] / Y[s]", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -456,7 +456,7 @@ fig
 
 ```{r Investment over production, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_I_Y", years = 2019, title = "I[s] / Y[s]", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_I_Y", years = c(2019,2050), title = "I[s] / Y[s]", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -467,7 +467,7 @@ fig
 
 ```{r Cost share of labor, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FL_Y", years = 2019, title = "(C_L[s] * F_L[s]) / (PY[s] * Y[s])", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FL_Y", years = c(2019,2050), title = "(C_L[s] * F_L[s]) / (PY[s] * Y[s])", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -478,7 +478,7 @@ fig
 
 ```{r Cost share of capital, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FK_Y", years = 2019, title = "(C_K[s] * F_K[s]) / (PY[s] * Y[s])", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FK_Y", years = c(2019,2050), title = "(C_K[s] * F_K[s]) / (PY[s] * Y[s])", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -489,7 +489,7 @@ fig
 
 ```{r Cost share of energy, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FE_Y", years = 2019, title = "(C_E[s] * F_E[s]) / (PY[s] * Y[s])", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FE_Y", years = c(2019,2050), title = "(C_E[s] * F_E[s]) / (PY[s] * Y[s])", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -500,7 +500,7 @@ fig
 
 ```{r Cost share of material, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FMAT_Y", years = 2019, title = "(C_MAT[s] * F_MAT[s]) / (PY[s] * Y[s])", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_FMAT_Y", years = c(2019,2050), title = "(C_MAT[s] * F_MAT[s]) / (PY[s] * Y[s])", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -511,7 +511,7 @@ fig
 
 ```{r Share of value added into the production, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_VA_Y", years = 2019, title = "VA_VAL[s] / (PY[s]*Y[s])", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_VA_Y", years = c(2019,2050), title = "VA_VAL[s] / (PY[s]*Y[s])", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -522,7 +522,7 @@ fig
 
 ```{r Labor share into the value added, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_L_VA", years = 2019, title = "(C_L[s] * F_L[s]) / VA_VAL[s]", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_L_VA", years = c(2019,2050), title = "(C_L[s] * F_L[s]) / VA_VAL[s]", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -533,7 +533,7 @@ fig
 
 ```{r Profits share into the value added, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_PI_VA", years = 2019, title = "1 - [ (C_L[s] * F_L[s]) / VA_VAL[s] ]", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VAL_PI_VA", years = c(2019,2050), title = "1 - [ (C_L[s] * F_L[s]) / VA_VAL[s] ]", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -544,7 +544,7 @@ fig
 
 ```{r Margins share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_MGS_GDP", years = 2019, title = "MGS[c] / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_MGS_GDP", years = c(2019,2050), title = "MGS[c] / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -555,7 +555,7 @@ fig
 
 ```{r Intermediay consumption share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_CI_GDP", years = 2019, title = "CI[c] / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_CI_GDP", years = c(2019,2050), title = "CI[c] / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -566,7 +566,7 @@ fig
 
 ```{r Energy share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_FE_S_GDP", years = 2019, title = "F_E[s] / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FE_S_GDP", years = c(2019,2050), title = "F_E[s] / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -577,7 +577,7 @@ fig
 
 ```{r Household\'s consumption share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_CH_GDP", years = 2019, title = "CH[c] / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_CH_GDP", years = c(2019,2050), title = "CH[c] / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -588,7 +588,7 @@ fig
 
 ```{r Gouvernement expenditure share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_G_GDP", years = 2019, title = "G[c] / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_G_GDP", years = c(2019,2050), title = "G[c] / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -599,7 +599,7 @@ fig
 
 ```{r Investment share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_I_GDP", years = 2019, title = "I[c] / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_I_GDP", years = c(2019,2050), title = "I[c] / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -610,7 +610,7 @@ fig
 
 ```{r Export share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_X_GDP", years = 2019, title = "X[c] / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_X_GDP", years = c(2019,2050), title = "X[c] / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -621,7 +621,7 @@ fig
 
 ```{r Import share into GDP, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_M_GDP", years = 2019, title = "M[c] / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_M_GDP", years = c(2019,2050), title = "M[c] / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -632,7 +632,7 @@ fig
 
 ```{r Trade balance, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "BLC_TRADE", years = 2019, title = "( X[c] - M[c] ) / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "BLC_TRADE", years = c(2019,2050), title = "( X[c] - M[c] ) / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -643,7 +643,7 @@ fig
 
 ```{r Trade openness, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "OPN_TRADE", years = 2019, title = "( X[c] + M[c] ) / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "OPN_TRADE", years = c(2019,2050), title = "( X[c] + M[c] ) / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -654,7 +654,7 @@ fig
 
 ```{r Household consumption emissions share by commodities, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_EMS_CH", years = 2019, title = "EMS_CO2_CH[c] / EMS_CO2_CH", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_EMS_CH", years = c(2019,2050), title = "EMS_CO2_CH[c] / EMS_CO2_CH", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -665,7 +665,7 @@ fig
 
 ```{r Intermediary consumption emissions share by commodities, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_EMS_CI_C", years = 2019, title = "EMS_CO2_CI[c] / EMS_CO2_CI", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_EMS_CI_C", years = c(2019,2050), title = "EMS_CO2_CI[c] / EMS_CO2_CI", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -676,7 +676,7 @@ fig
 
 ```{r Intermediary consumption emissions share by sectors, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_EMS_CI_S", years = 2019, title = "EMS_CO2_CI[s] / EMS_CO2_CI", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_EMS_CI_S", years = c(2019,2050), title = "EMS_CO2_CI[s] / EMS_CO2_CI", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -687,7 +687,7 @@ fig
 
 ```{r Value added share by sectors, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_VA", years = 2019, title = "VA[s] / VA", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VA", years = c(2019,2050), title = "VA[s] / VA", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -698,7 +698,7 @@ fig
 
 ```{r Production share by sectors, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_Y", years = 2019, title = "Y[s] / Y", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_Y", years = c(2019,2050), title = "Y[s] / Y", scenario = "carbontax300_lux")
 
 fig
 ```
@@ -709,7 +709,7 @@ fig
 
 ```{r GDP share by commodities, fig.width=15,fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_GDP", years = 2019, title = "GDP[c] / GDP", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_GDP", years = c(2019,2050), title = "GDP[c] / GDP", scenario = "carbontax300_lux")
 
 fig
 ```
