@@ -107,6 +107,7 @@ variables_selection <-   c(variables_like(data_full,"^F_L_S[A-Z0-9]{3}$",FALSE),
                            variables_like(data_full,"^Y_S[A-Z0-9]{3}$",FALSE),"Y",
                            variables_like(data_full,"^PY_S[A-Z0-9]{3}$",FALSE),"PY",
                            variables_like(data_full,"^VA_VAL_S[A-Z0-9]{3}$",FALSE),"PVA","VA",
+                           variables_like(data_full,"^VA_S[A-Z0-9]{3}$",FALSE),
                            variables_like(data_full,"^MGS_C[A-Z0-9]{3}$",FALSE), "MGS",
                            #only 3 commodities,"MGS_CPRI" "MGS_CRAI" "MGS_CROA"
                            variables_like(data_full,"^CI_C[A-Z0-9]{3}$",FALSE), "CI", #CCOI missing
@@ -116,9 +117,12 @@ variables_selection <-   c(variables_like(data_full,"^F_L_S[A-Z0-9]{3}$",FALSE),
                            variables_like(data_full,"^I_C[A-Z0-9]{3}$",FALSE), #CCOI missing
                            variables_like(data_full,"^X_C[A-Z0-9]{3}$",FALSE),"X", #CCOI missing
                            variables_like(data_full,"^M_C[A-Z0-9]{3}$",FALSE),"M", #CCOI missing
-                           variables_like(data_full,"^EMS_CI_CO2_C[A-Z0-9]{3}$",FALSE),"EMS_CI_CO2",
-                           variables_like(data_full,"^EMS_CH_CO2_C[A-Z0-9]{3}$",FALSE),"EMS_CH_CO2",
-                           "GDP","PGDP","EMS_CO2",
+                           variables_like(data_full,"^EMS_CI_C[A-Z0-9]{3}$",FALSE),"EMS_CI",
+                           variables_like(data_full,"^EMS_CH_C[A-Z0-9]{3}$",FALSE),"EMS_CH",
+                           variables_like(data_full,"^EMS_CI_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_full,"^GDP_C[A-Z0-9]{3}$",FALSE),
+                           "GDP","PGDP",
+                           "EMS",
                            "SPEND_G_VAL","INC_G_VAL","PNTAXC","NTAXC",
                            variables_like(data_sector,"^F_L_S[A-Z0-9]{3}$",FALSE),
                            variables_like(data_sector,"^F_K_S[A-Z0-9]{3}$",FALSE),
@@ -139,8 +143,13 @@ variables_selection <-   c(variables_like(data_full,"^F_L_S[A-Z0-9]{3}$",FALSE),
                            variables_like(data_sector,"^I_C[A-Z0-9]{3}$",FALSE),
                            variables_like(data_sector,"^X_C[A-Z0-9]{3}$",FALSE),
                            variables_like(data_sector,"^M_C[A-Z0-9]{3}$",FALSE),
-                           variables_like(data_sector,"^VA_VAL_S[A-Z0-9]{3}$",FALSE)
-                           )
+                           variables_like(data_sector,"^VA_VAL_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^EMS_CI_C[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^EMS_CH_C[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^EMS_CI_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^VA_S[A-Z0-9]{3}$",FALSE),
+                           variables_like(data_sector,"^GDP_C[A-Z0-9]{3}$",FALSE)
+                           ) %>% str_remove("GDP_CONT") # what is GDP_CONT?
 
 data_ratio <- rbind(dplyr::filter(data_full,variable %in% variables_selection),
                     dplyr::filter(data_sector,variable %in% variables_selection)) %>%
@@ -148,10 +157,10 @@ data_ratio <- rbind(dplyr::filter(data_full,variable %in% variables_selection),
 
 
   ### step 1: check and complete missing data by 0
-  list_S_variable <- c("F_L","F_K","F_MAT","F_E","C_L","C_K","C_MAT","C_E","I","Y","PY") %>%
+  list_S_variable <- c("F_L","F_K","F_MAT","F_E","C_L","C_K","C_MAT","C_E","I","Y","PY","EMS_CI","VA") %>%
     map(~paste0(.x,"_",toupper(names_sectors[,"code"]))) %>%
     reduce(c)
-  list_C_variable <- c("MGS","CI","CH","G","I","X","M","F_E","EMS_CI_CO2","EMS_CH_CO2") %>%
+  list_C_variable <- c("MGS","CI","CH","G","I","X","M","F_E","EMS_CI","EMS_CH","GDP") %>%
     map(~paste0(.x,"_",toupper(names_commodities[,"code"]))) %>%
     reduce(c)
   
@@ -191,7 +200,10 @@ calcul_sector_functions <- function(sector, data){
                !!paste0("PHI_VAL_L_VA_",sector) := get(paste0("F_L_",sector))*get(paste0("C_L_",sector))/
                                                     get(paste0("VA_VAL_",sector)),
                !!paste0("PHI_VAL_PI_VA_",sector) := 1 - get(paste0("F_L_",sector))*get(paste0("C_L_",sector))/
-                                                    get(paste0("VA_VAL_",sector))
+                                                    get(paste0("VA_VAL_",sector)),
+               !!paste0("PHI_EMS_CI_S_",sector) := get(paste0("EMS_CI_",sector))/EMS_CI,
+               !!paste0("PHI_VA_",sector) := get(paste0("VA_",sector))/VA,
+               !!paste0("PHI_Y_",sector) := get(paste0("Y_",sector))/Y
                ) %>%
       select(year,
              all_of(paste0("PHI_I_Y_",sector)),
@@ -206,7 +218,10 @@ calcul_sector_functions <- function(sector, data){
              all_of(paste0("PHI_VAL_FMAT_Y_",sector)),
              all_of(paste0("PHI_VAL_VA_Y_",sector)),
              all_of(paste0("PHI_VAL_L_VA_",sector)),
-             all_of(paste0("PHI_VAL_PI_VA_",sector))
+             all_of(paste0("PHI_VAL_PI_VA_",sector)),
+             all_of(paste0("PHI_EMS_CI_S_",sector)),
+             all_of(paste0("PHI_VA_",sector)),
+             all_of(paste0("PHI_Y_",sector))
              )
 
   return(res)
@@ -225,8 +240,9 @@ calcul_commodity_functions <- function(commodity, data){
                !!paste0("PHI_M_GDP_",commodity) := get(paste0("M_",commodity))/GDP,
                !!paste0("BLC_TRADE_",commodity) := (get(paste0("X_",commodity))-get(paste0("M_",commodity)))/GDP,
                !!paste0("OPN_TRADE_",commodity) := (get(paste0("X_",commodity))+get(paste0("M_",commodity)))/GDP,
-               !!paste0("PHI_EMS_CI_",commodity) := get(paste0("EMS_CI_CO2_",commodity))/EMS_CI_CO2,
-               !!paste0("PHI_EMS_CH_",commodity) := get(paste0("EMS_CH_CO2_",commodity))/EMS_CH_CO2
+               !!paste0("PHI_EMS_CI_C_",commodity) := get(paste0("EMS_CI_",commodity))/EMS_CI,
+               !!paste0("PHI_EMS_CH_",commodity) := get(paste0("EMS_CH_",commodity))/EMS_CH,
+               !!paste0("PHI_GDP_",commodity) := get(paste0("GDP_",commodity))/GDP
                ) %>%
       select(year,
              all_of(paste0("PHI_MGS_GDP_",commodity)),
@@ -239,8 +255,9 @@ calcul_commodity_functions <- function(commodity, data){
              all_of(paste0("PHI_M_GDP_",commodity)),
              all_of(paste0("BLC_TRADE_",commodity)),
              all_of(paste0("OPN_TRADE_",commodity)),
-             all_of(paste0("PHI_EMS_CI_",commodity)),
-             all_of(paste0("PHI_EMS_CH_",commodity))
+             all_of(paste0("PHI_EMS_CI_C_",commodity)),
+             all_of(paste0("PHI_EMS_CH_",commodity)),
+             all_of(paste0("PHI_GDP_",commodity))
              )
 
   return(res)
@@ -289,9 +306,9 @@ OPN_TRADE = (X+M)/GDP,
 PHI_VAL_SPEND_G_GDP = SPEND_G_VAL/(PGDP*GDP),
 PHI_VAL_INC_G_GDP = INC_G_VAL/(PGDP*GDP),
 NTAXC_VAL = PNTAXC*NTAXC,
-PHI_EMS_GDP = EMS_CO2 / GDP,
-PHI_EMS_CI_GDP = EMS_CI_CO2 / GDP,
-PHI_EMS_CH_GDP = EMS_CH_CO2 / GDP)
+PHI_EMS_GDP = EMS / GDP,
+PHI_EMS_CI_GDP = EMS_CI / GDP,
+PHI_EMS_CH_GDP = EMS_CH / GDP)
 
 data_final <- cbind(data_res_commodity,data_res_sector,data_res_agg)
 
@@ -625,6 +642,72 @@ fig
 ```{r Trade openness, fig.width=15,fig.height=6}
 
 fig <- plot_ratio(data = data_ratio, indicator = "OPN_TRADE", years = 2019, title = "( X[c] + M[c] ) / GDP", scenario = "baseline")
+
+fig
+```
+
+---
+
+# Household consumption emissions share by commodities
+
+```{r Household consumption emissions share by commodities, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_EMS_CH", years = 2019, title = "EMS_CO2_CH[c] / EMS_CO2_CH", scenario = "baseline")
+
+fig
+```
+
+---
+
+# Intermediary consumption emissions share by commodities
+
+```{r Intermediary consumption emissions share by commodities, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_EMS_CI_C", years = 2019, title = "EMS_CO2_CI[c] / EMS_CO2_CI", scenario = "baseline")
+
+fig
+```
+
+---
+
+# Intermediary consumption emissions share by sectors
+
+```{r Intermediary consumption emissions share by sectors, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_EMS_CI_S", years = 2019, title = "EMS_CO2_CI[s] / EMS_CO2_CI", scenario = "baseline")
+
+fig
+```
+
+---
+
+# Value added share by sectors
+
+```{r Value added share by sectors, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_VA", years = 2019, title = "VA[s] / VA", scenario = "baseline")
+
+fig
+```
+
+---
+
+# Production share by sectors
+
+```{r Production share by sectors, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_Y", years = 2019, title = "Y[s] / Y", scenario = "baseline")
+
+fig
+```
+
+---
+
+# GDP share by commodities
+
+```{r GDP share by commodities, fig.width=15,fig.height=6}
+
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_GDP", years = 2019, title = "GDP[c] / GDP", scenario = "baseline")
 
 fig
 ```
