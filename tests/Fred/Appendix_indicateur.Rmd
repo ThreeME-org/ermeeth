@@ -66,7 +66,7 @@ source("src/0_create_databases.R")
 
 data_full<-readRDS(file = paste0("databases/",scenario_name,"_",classification,".rds"))
 ### loading the sector and commodity aggregated database 
-data_sector <- readRDS(file = paste0("databases/",scenario_name,"_",classification,"_commodities_sectors.rds"))
+data_sector <- readRDS(file = paste0("databases/",scenario_name,"_",classification,"_commodities_sectors.rds")) 
 
 
 source(paste0("bridges/bridge_",classification,".R"))
@@ -340,12 +340,12 @@ plot_ratio <- function(data,
     stop("Indicator does not exist, please choose another one. \n")
   }
   
-  if(length(years) > 1 ){
-    stop("Please choose only one year each time. \n")
+  if(length(years) > 2 ){
+    stop("Please choose at most two years each time. \n")
   }else if(is.null(years)){
     years <- 2019
   }
-  
+
   if(length(scenario) > 1 ){
     stop("Please choose only one scenario each time. \n")
   }else if(is.null(scenario)){
@@ -387,17 +387,19 @@ data_fig <- data_fig %>% mutate(code = case_when(
 ### Reordering factor levels
 data_fig$facet_by <- factor(data_fig$facet_by,      
                          levels = c("AGGREGATE",tail(names_sectors,8)[,1]))
-data_fig$short_name <- factor(data_fig$short_name, levels = data_fig$short_name)
+data_fig$short_name <- factor(data_fig$short_name, levels = unique(data_fig$short_name))
 
 ### Plot drawing
-fig <- ggplot(data_fig, aes(x = short_name, y = get(scenario), fill = facet_by, group = facet_by)) + 
-       geom_bar(stat = "identity") +
+fig <- ggplot(data_fig, aes(x = short_name, y = get(scenario), fill = facet_by, alpha = factor(year), group = facet_by)) + 
+       geom_bar(stat = "identity",position = "dodge2") +
+       scale_alpha_manual("year", values = c(1,0.6)) +
        scale_fill_manual("Sector/Commodity",values = custom.palette(9) ) +
        ylab("") +
        xlab("") +
        ggtitle(title) +
        facet_grid(~facet_by, scales = "free_x", space = "free_x") +
-       theme(axis.text.x = element_text(angle = 90,hjust = 0.95),legend.position = "none")
+       theme(axis.text.x = element_text(angle = 90,hjust = 0.95))
+       #theme(axis.text.x = element_text(angle = 90,hjust = 0.95),legend.position = "none")
 
 return(fig)
 }
@@ -410,7 +412,7 @@ return(fig)
 
 ```{r Labor intesnsity of production, fig.width=15, fig.height=6}
 
-fig <- plot_ratio(data = data_ratio, indicator = "PHI_FL_Y", years = 2019, title = "F_L[s] / Y[s]", scenario = "baseline")
+fig <- plot_ratio(data = data_ratio, indicator = "PHI_FL_Y", years = c(2019,2050), title = "F_L[s] / Y[s]", scenario = "carbontax300_lux")
 
 fig
 ```
