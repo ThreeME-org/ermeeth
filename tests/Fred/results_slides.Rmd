@@ -10,9 +10,9 @@ subtitle: 'Scenario: `r params$scenario_name`'
 params:
   startyear: 2020
   endyear: 2050
-  scenario_name: carbontax_lux
+  scenario_name: stand_expg1_fra
   
-  classification: c25_s26
+  classification: c28_s32
   template_default: ofce
 ---
 
@@ -83,19 +83,30 @@ source(paste0("bridges/codenames_",classification,".R"))
 
 ```{r Table macro, results ='asis'}
 
-table <- ermeeth::table.output(data = data_com_sec, scenario = scenario_name, 
+# variables_selection = c("GDP","CH","I", "X", "M",
+#                   "PVA","PCH","PY" ,"PX","PM",
+#                   "DISPINC_BT_VAL", "W", "RSAV_H_VAL", "F_L", "RBAL_TRADE_VAL", "RBAL_G_TOT_VAL", "RSAV_H_VAL", "UNR",
+#                   "PY", "CU")
+# 
+# new_indicators <- data_full %>% 
+#   # 1. Put in Wide format
+#   wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+#   # 2. Calculate indicators
+#   map(~.x %>%          
+#         mutate(
+#           MARKUP = PY / CU - 1)
+#       
+#       ) %>% 
+#   long_data()
+
+table <- table.output(data = data_com_sec, scenario = scenario_name, 
+# table <- ermeeth::table.output(data = data_com_sec, scenario = scenario_name, 
              full.table = TRUE, export.doc = FALSE, langue = "en",
              title = 'Macroeconomic main results')
 
 table
 
-# to do:
-# - Unité pas claire unclear: %, unit? 
-# - manque des indicateurs:  taux de chomage
-# - Légend (a) inutile car toute les même: seulement pour les exceptions
-# - a 2nd tables with the missing indicators
 
-# Si tu mais option full.table = TRUE,  tes commentaires tombent à l'eau (sauf celui long term éventuellement)
 ```
 
 ---
@@ -201,10 +212,10 @@ A <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_l
 contrib_comp <- c("GOS", "WAGES", "RSC", "NTAXS")
 contrib_comp_label <- c("Gross operating surplus", "Gross wages", "Employers social contributions", "Net taxes on the production")
 
-# data_plot <-  contrib(data_full,"VA", contrib_comp, scenar = c("baseline",scenario_name))
-#  
-# B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
-#               startyear = startyear, titleplot = "Contributions to change in value-added (in difference from baseline)", line_tot = TRUE)
+data_plot <-  contrib(data_full,"VA", contrib_comp, scenar = c("baseline",scenario_name))
+  
+B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+               startyear = startyear, titleplot = "Contributions to change in value-added (in difference from baseline)", line_tot = TRUE)
 
 ggarrange(A,B,
 labels = c("(a)", "(b)"),
@@ -280,6 +291,87 @@ widths = 2,  heights = 1)
 
 ```
 
+
+# Government: Debt
+
+```{r Gov_Debt, fig.height = 6, fig.width=14}
+variable_macro <- c("RDEBT_G_VAL") %>% toupper()
+label_macro <- c("Debt")
+
+A <- simpleplot(data_full, variable_macro, label_macro, startyear, endyear,"diff", unit = 100, titleplot = "Debt to GDP ratio (in difference from baseline)")
+
+B <- simpleplot(data_full, variable_macro, label_macro, startyear, endyear,"level", unit = 100, titleplot = "Debt to GDP ratio (dashed line = baseline)")
+
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+# Government: Savings/deficit  
+
+```{r Gov_Savings_deficit, fig.height = 6, fig.width=14}
+variable_macro <- c("RSAV_G_VAL", "RBal_G_Prim_VAL", "RBal_G_Tot_VAL") %>% toupper()
+label_macro <- c("Savings", "Primary balance", "Total balance")
+
+# new_indicators <- data_full %>%  dplyr::filter(variable %in% variable_macro)
+
+A <- simpleplot(data_full, variable_macro, label_macro, startyear, endyear,"diff", unit = 100, titleplot = "Saving to GDP ratio indicators (in difference from baseline)")
+
+B <- simpleplot(data_full, variable_macro, label_macro, startyear, endyear,"level", unit = 100, titleplot = "Saving to GDP ratio indicators  (dashed line = baseline)")
+
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+# Savings of the Governmentcorresponds to the net lending/borrowing, which is the published deficit/savings of the Government.
+
+
+```
+
+The **Savings of the Government** corresponds to the net lending/borrowing (Income minus spending), which is the published deficit/savings of the Government.
+
+The **Total balance of the Government** corresponds to the savings excluding the reimbursement of the debt from the Government spending. 
+
+The **Primary balance of the Government** corresponds to the savings excluding the reimbursement and the interest paid on the debt from the Government spending. 
+
+
+# Government: Incomes and spending
+
+```{r Gov_Savings_Inc_spend, fig.height = 6, fig.width=14}
+
+
+A <- simpleplot(data_full, c("INC_G_VAL", "SPEND_G_VAL"), label_series =  c("Incomes", "Spending"), startyear, endyear, transformation = "reldiff", titleplot = "Incomes and spending  (in difference from baseline)")
+
+A 
+
+# contrib_comp <- c( "INC_G_VAL", "SPEND_G_VAL")
+# contrib_comp_label <- c("Incomes", "Spending")
+# 
+# data_plot <-  contrib(data_full,"SAV_G_VAL", contrib_comp, scenar = c("baseline",scenario_name), indicator = "rel.diff", neg.value = "SPEND_G_VAL")
+# 
+# B <- contrib.plot(data_plot, series = contrib_comp,label_series = contrib_comp_label,
+#              startyear = startyear, titleplot = "Contributions to change in Saving (in difference from baseline)", line_tot = TRUE)
+# 
+# 
+# ggarrange(A,B,
+# labels = c("(a)", "(b)"),
+# hjust = -0.5, vjust = 1.5,
+# ncol = 2, nrow = 1,
+# widths = 2,  heights = 1)
+
+
+```
+
+
+
 # Prices and wages 
 
 ```{r Graph Prices, fig.height = 6, fig.width=14}
@@ -295,6 +387,58 @@ prix_salaires <- ggarrange(A,B,
 prix_salaires
 ```
 
+
+---
+
+# Sectorial results: Prices of production and of value-added
+
+```{r Price_Sect, fig.height = 6, fig.width=14}
+
+
+
+variables_selection <-   c(  variables_like(data_com_sec,"^VA_S0",FALSE),
+                             variables_like(data_com_sec,"^VA_VAL_S0",FALSE),   
+                             variables_like(data_com_sec,"^PY_S0",FALSE),   
+                             "PVA", "PY")
+
+calcul_indic <- function(data){
+   res <- data
+
+ for (i in c(1:8)){
+
+           res <- mutate(res,
+                !!paste0("PVA_S00",i) := get(paste0("VA_S00",i))/get(paste0("VA_VAL_S00",i))   ) 
+
+ }
+
+    return(res)
+  
+}
+
+
+new_indicators <- data_com_sec %>%  dplyr::filter(variable %in% variables_selection) %>% 
+  # 1. Put in Wide format
+  wide_data(variables = variables_selection , out_format = "list") %>%  ## 1. passe en wide
+  # 2. Calculate indicators
+  map(~calcul_indic(.x)) %>% 
+  long_data()
+
+
+
+A <- curve_sc_plot(new_indicators,"PY", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Production price (in difference from baseline)")
+
+
+B <- curve_sc_plot(new_indicators,"PVA", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Value- added price (in difference from baseline)")
+
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
 
 ---
 
@@ -317,9 +461,6 @@ widths = 2,  heights = 1)
 
 
 ```
-
-
-
 
 ---
 
@@ -365,7 +506,6 @@ widths = 2,  heights = 1)
 
 ```
 
-
 ---
 
 # Sectorial results: Investment
@@ -387,6 +527,126 @@ widths = 2,  heights = 1)
 
 
 ```
+
+
+---
+
+# Results per products: Investment
+
+```{r INV_Com, fig.height = 6, fig.width=14}
+
+A <- curve_sc_plot(data_com_sec,"I", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Investment in commodities (in difference from baseline)")
+
+data_plot <- contrib.sub(data_com_sec,var1 =  "I",
+group_type = "C", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total investment and commodity contribution (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+---
+
+# Results per product: Intermediary consumption
+
+```{r CI_Com, fig.height = 6, fig.width=14}
+
+A <- curve_sc_plot(data_com_sec,"CI", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Intermediary consumption in commodities (in difference from baseline)")
+
+data_plot <- contrib.sub(data_com_sec,var1 =  "CI",
+group_type = "C", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total intermediary consumption and commodity contribution (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+
+
+
+---
+
+# Results per product: Households' final consumption
+
+```{r CH_Com, fig.height = 6, fig.width=14}
+
+A <- curve_sc_plot(data_com_sec,"CH", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Households' consumption in commodities (in difference from baseline)")
+
+data_plot <- contrib.sub(data_com_sec,var1 =  "CH",
+group_type = "C", scenar = c("baseline", scenario_name))
+
+B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Total Households' consumption and commodity contribution (in difference from baseline)")
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+
+
+# Results per product: Commodity prices
+
+```{r PCH_com Wage Sect, fig.height = 6, fig.width=14}
+
+
+A <- curve_sc_plot(data_com_sec,"PCH", group_type = "C", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Household's Consumption price per commodity (in difference from baseline)")
+
+
+
+B <- curve_sc_plot(data_com_sec,"PCI", group_type = "C", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Intermediary consumption price per commodity (in difference from baseline)")
+
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+
+
+
+# Results per product: Consumption prices for imported and domesticly producted commodities
+
+```{r PCH_DM_com Wage Sect, fig.height = 6, fig.width=14}
+
+
+A <- curve_sc_plot(data_com_sec,"PCHD", group_type = "C", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Domesticly producted commodities (in difference from baseline)")
+
+
+
+B <- curve_sc_plot(data_com_sec,"PCHM", group_type = "C", startyear = startyear, endyear = endyear, growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "Imported commodities (in difference from baseline)")
+
+
+ggarrange(A,B,
+labels = c("(a)", "(b)"),
+hjust = -0.5, vjust = 1.5,
+ncol = 2, nrow = 1,
+widths = 2,  heights = 1)
+
+
+```
+
+
+
 
 
 
@@ -498,17 +758,14 @@ widths = 2,  heights = 1)
 
 ---
 
-# Exported GHG emissions: decomposition per source
-
-```{r ExporTed GHG emissions per source, fig.height=6, fig.width=14}
 
 
-A <- curve_sc_plot(data_com_sec,"EMS_X", startyear = startyear, endyear = endyear, group_type = "C", growth.rate = FALSE,diff = TRUE,abs.diff = FALSE, title = "GHG emissions per source (in difference from baseline)")
+```{r ExporTed GHG emissions per source, eval=FALSE, fig.height=6, fig.width=14, include=FALSE}
 
-data_plot <- contrib.sub(data_com_sec,var1 =  "EMS_X",
-group_type = "C", scenar = c("baseline", scenario_name))
+# Exported GHG emissions: emissions of non-residents
+A <- simpleplot(data_full,"EMS_X", label_series = "Emissions related to exported gazoline", startyear, endyear, decimal = 1, titleplot = "Emissions related to exported gazoline (in difference from baseline)")
 
-B <- contrib.sub.plot(data_plot, template = "ofce", startyear = startyear, endyear = endyear, line_tot =  TRUE, titleplot = "Contributions to changes in GHG emissions (in difference from baseline)")
+B <- simpleplot(data_full,"PX_CFUT", label_series = "Price of exported gazoline", startyear, endyear, decimal = 1, titleplot = "Price of exported gazoline")
 
 ggarrange(A,B,
 labels = c("(a)", "(b)"),
