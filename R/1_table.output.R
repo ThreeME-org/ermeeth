@@ -7,6 +7,7 @@
 #' @param title character(1) string of character for the title of the table
 #' @param langue character(1) string to specify the language of comments c('en', 'fr)
 #' @param results.folder character(1): pathfile to export the results. By defaut the program folder
+#' @param decimal numeric : number of decimal in the datable
 #'
 #' @import flextable officer
 #' @return a flextable
@@ -18,41 +19,46 @@
 #' }
 
 table.output <- function(data = data,
-                         scenario = NULL,
+                         scenario = scenario_name,
                          export.doc = TRUE,
-                         langue = NULL,
+                         langue = "en",
                          full.table = TRUE,
                          title = NULL,
-                         results.folder = NULL){
+                         decimal = 2,
+                         results.folder = getwd()){
 
   # General conditions
-  if (is.null(scenario)){
-    scenario = scenario_name
-  }
   if (is.null(title)){
     title = paste0("scenario:", scenario)
   }
-  if (is.null(langue)){
-    langue = "en"
-  }
-  if (is.null(results.folder)){
-    results.folder <- (getwd())
-  }
+
+  # Parameters for all flextable: aesthetics arguments
+  flextable::set_flextable_defaults(
+    digits = decimal
+  )
+
+
   ## Choice of years to include in the table
-  years <- c("2022", "2023","2024","2025","2027", "2050")
+  # years <- c("2022", "2023","2024","2025","2027", "2050")
+  startyear <- 2022
+  endyear <- 2050
+  time.horizon <- c(0,1,2,3,5,10,endyear-startyear)
+  years <- c(rep(startyear, length(time.horizon))) + time.horizon
+  # years
+
 
   # Variable in relative deviation
   var_list.1 <- c("GDP","CH","I", "X", "M",
                   "PVA","PCH","PY" ,"PX","PM",
                   "DISPINC_BT_VAL", "W", "RSAV_H_VAL")
   if (langue == "fr"){
-    years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5", "long terme")
+    years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5","t+10", "long terme")
     var_label.1 <- c("PIB (a)","Consommation des m\u00e9nages (a)","Investissement (a)","Exportations (a)", "Importations (a)",
                      "Prix de VA (a)","Prix \u00e0 la consommation (a)", "Prix \u00e0 la production (a)", "Prix des exportations (a)", "Prix des importations (a)",
                      "Revenu des m\u00e9nages en valeur (a)", "Salaire (a)", "Taux d'\u00e9pargne des m\u00e9nages (a)")
   }
   if (langue == "en"){
-    years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5", "long-term")
+    years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5","t+10","long-term")
     var_label.1 <- c("GDP (a)","Households consumption (a)","Investment (a)","Exports (a)", "Imports (a)",
                      "Price of VA (a)","Consumption price (a)", "Production price (a)", "Export price (a)", "Import price (a)",
                      "Households disposable income (a)", "Nominal wages (a)", "Households saving rate (a)")
@@ -60,7 +66,7 @@ table.output <- function(data = data,
 
   data_table.1 <- data %>% dplyr::filter(year %in% years ,
                                          variable %in% var_list.1) %>%
-    dplyr::mutate(variation = round(100 * (get(scenario)/baseline -1),3),
+    dplyr::mutate(variation = round(100 * (get(scenario)/baseline -1),decimal),
                   variable = str_replace_all(variable, purrr::set_names(var_label.1, paste0("^",var_list.1,"$")))) %>%
     dplyr::select(variable, year, variation) %>%
     tidyr::pivot_wider(names_from = year, values_from = variation) %>%
@@ -80,7 +86,7 @@ table.output <- function(data = data,
 
     data_table.2 <- data %>% dplyr::filter(year %in% years ,
                                            variable %in% var_list.2) %>%
-      dplyr::mutate(variation = round((get(scenario) - baseline),3),
+      dplyr::mutate(variation = round((get(scenario) - baseline),decimal),
                     variable = stringr::str_replace_all(variable, purrr::set_names(var_label.2, paste0("^",var_list.2,"$")))) %>%
       dplyr::select(variable, year, variation) %>%
       tidyr::pivot_wider(names_from = year, values_from = variation) %>%
@@ -94,13 +100,13 @@ table.output <- function(data = data,
                        "Taux de marge des entreprises (d)", "Taux de ch\u00f4mage (d)")
     }
     if (langue == "en"){
-      var_label.3 <- c("Trade balance (c)","government balance (c)","Households saving rate (d)",
-                       "mark-up rate (d)", "Unemployment rate (d)")
+      var_label.3 <- c("Trade balance (c)","Government balance (c)","Households saving rate (d)",
+                       "Mark-up rate (d)", "Unemployment rate (d)")
     }
 
     data_table.3 <- data %>% filter(year %in% years ,
                                     variable %in% var_list.3) %>%
-      dplyr::mutate(variation = 100 * round(get(scenario),5),
+      dplyr::mutate(variation = 100 * round(get(scenario),2 + decimal),
                     variable = stringr::str_replace_all(variable, purrr::set_names(var_label.3, paste0("^",var_list.3,"$")))) %>%
       dplyr::select(variable, year, variation) %>%
       tidyr::pivot_wider(names_from = year, values_from = variation) %>%
@@ -134,20 +140,21 @@ table.output <- function(data = data,
       footnote.tab <- c("(a): In relative deviation wrt baseline")
     }
     j.tab <- 1
-}
-    ## Flextable
-    output <- flextable::flextable(data_table) %>%
-      width(width = 2.75, j = 1)
-    ## Flextable: add of the footnotes
-    output <- flextable::footnote(output, i = 1, j = j.tab,
-                                  value = as_paragraph(
-                                    footnote.tab),
-                                  part = "header",
-                                  ref_symbols = "",
-                                  inline = TRUE)
-    ## Flextable: add of the title
-    output <-  flextable::set_caption(output, caption = title,
-                                      style = "Table Caption")
+  }
+  ## Flextable
+  output <- flextable::flextable(data_table) %>%
+    width(width = 2.75, j = 1)
+
+  ## Flextable: add of the footnotes
+  output <- flextable::footnote(output, i = 1, j = j.tab,
+                                value = as_paragraph(
+                                  footnote.tab),
+                                part = "header",
+                                ref_symbols = "",
+                                inline = TRUE)
+  ## Flextable: add of the title
+  output <-  flextable::set_caption(output, caption = title,
+                                    style = "Table Caption")
 
 
   if (export.doc == TRUE){

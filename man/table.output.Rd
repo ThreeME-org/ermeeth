@@ -6,12 +6,13 @@
 \usage{
 table.output(
   data = data,
-  scenario = NULL,
+  scenario = scenario_name,
   export.doc = TRUE,
-  langue = NULL,
+  langue = "en",
   full.table = TRUE,
   title = NULL,
-  results.folder = NULL
+  decimal = 2,
+  results.folder = getwd()
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ table.output(
 \item{full.table}{boolean if TRUE, include other macroeconomic indicators ,TRUE by default}
 
 \item{title}{character(1) string of character for the title of the table}
+
+\item{decimal}{numeric : number of decimal in the datable}
 
 \item{results.folder}{character(1): pathfile to export the results. By defaut the program folder}
 }
