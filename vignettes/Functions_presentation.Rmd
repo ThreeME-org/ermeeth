@@ -203,17 +203,17 @@ geom_point(aes(x = x_v,
 
 ```{r interpol}
 
-dates <- c(1990 , 1995 , 2000 , 2010, 2015 )
-values <- c(107  , 120  , 84   , 42  , 78)
+dates <- c(1990 , 1995 , 2000 , 2015 )
+values <- c(107  , 120  , 84   , 42 )
 
 interpolation_series(date_vector = dates,
                      value_vector = values,
-                     first.date = 1990 , last.date = 2020)
+                     first.date = 1990 , last.date = 2020, smoothed = FALSE)
 
 ## Pour voir graphiquement ce que donne l'interpolation
 interpolation_series( date_vector =  dates,
                      value_vector = values,
-                     first.date = 1990 , last.date = 2012, full_results = TRUE)
+                     first.date = 1990 , last.date = 2050, full_results = TRUE)
 
 ```
 
@@ -225,10 +225,25 @@ last_date_x <- 2050
 # 
 my_data <- data.frame(year = c(first_date_x:last_date_x), gdp = 100) %>%
   mutate(gdp = 100 * 1.013 ^( year - first_date_x ),
-         target = interpolation_series(date_vector = c(2005,2015,2025,2035,2045,2050),
-                                       value_vector = c(500, 550, 400, 420, 400, 300),
+         target_0 = 300* 1.013 ^( year - first_date_x ),
+         target = interpolation_series(date_vector = c(first_date_x:2005,
+                                                       2015,2025,2035,2045,2050),
+                                       value_vector = c(target_0[which(year %in% c(first_date_x:2005))],
+                                                        550, 400, 420, 400, 300),
+                                       first.date = first_date_x, 
+                                       last.date = last_date_x),
+         gdp_bis = interpolation_series(date_vector = c(first_date_x:2019,
+                                                       2020,
+                                                       2030:last_date_x),
+                                       value_vector = c(gdp[which(year %in% c(first_date_x:2019))],
+                                                        gdp[which(year == 2020)] *0.8,
+                                                        gdp[which(year %in% c(2030:last_date_x))]),
                                        first.date = first_date_x, 
                                        last.date = last_date_x))
+ggplot(my_data, aes(x= year))+
+  geom_line(aes(y = gdp), color = "darkblue") +
+  geom_line(aes(y = gdp_bis), color = "seagreen2") 
+
 
 ```
 
