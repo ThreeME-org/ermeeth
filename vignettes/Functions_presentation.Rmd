@@ -244,6 +244,10 @@ ggplot(my_data, aes(x= year))+
   geom_line(aes(y = gdp), color = "darkblue") +
   geom_line(aes(y = gdp_bis), color = "seagreen2") 
 
+ggplot(my_data, aes(x= year))+
+  geom_line(aes(y = target_0), color = "darkblue") +
+  geom_line(aes(y = target), color = "seagreen2") 
+
 
 ```
 
