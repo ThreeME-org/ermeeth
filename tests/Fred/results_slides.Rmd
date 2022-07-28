@@ -11,7 +11,6 @@ params:
   startyear: 2020
   endyear: 2050
   scenario_name: stand_expg1_fra
-  
   classification: c28_s32
   template_default: ofce
 ---
@@ -756,11 +755,10 @@ widths = 2,  heights = 1)
 
 ```
 
----
-
 
 
 ```{r ExporTed GHG emissions per source, eval=FALSE, fig.height=6, fig.width=14, include=FALSE}
+# ---
 
 # Exported GHG emissions: emissions of non-residents
 A <- simpleplot(data_full,"EMS_X", label_series = "Emissions related to exported gazoline", startyear, endyear, decimal = 1, titleplot = "Emissions related to exported gazoline (in difference from baseline)")
