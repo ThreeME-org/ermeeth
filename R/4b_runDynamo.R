@@ -16,7 +16,7 @@
 #' @export
 #'
 runDynaMo <- function(iso3, baseyear, lastyear, calib, model, max_lags = 3,
-                      dynamo_path = file.path("..","src")) {
+                      dynamo_path = file.path("src")) {
   dynamo_os <- "dynamo.exe"
   if(grepl("macOS",osVersion)){dynamo_os<-"dynamo_mac"}
 
