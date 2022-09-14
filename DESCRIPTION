@@ -1,7 +1,7 @@
 Package: ermeeth
 Type: Package
 Title: Functions used by ThreeMe team
-Version: 0.2.01.1
+Version: 0.2.02.0
 Authors@R: 
     person("ThreeMe", "Team", , "first.last@example.com", role = c("aut", "cre"))
 Description: All functions used for ThreeMe analysis
@@ -17,11 +17,13 @@ Imports:
     ggplot2,
     ofce,
     officer,
+    pegr,
     purrr,
     scales,
     stringr,
     sys,
     tidyr,
+    tools,
     utils,
     zip
 RoxygenNote: 7.1.2

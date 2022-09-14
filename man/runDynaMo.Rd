@@ -11,7 +11,7 @@ runDynaMo(
   calib,
   model,
   max_lags = 3,
-  dynamo_path = file.path("..", "src")
+  dynamo_path = file.path("src")
 )
 }
 \arguments{

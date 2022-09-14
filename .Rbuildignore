@@ -6,3 +6,6 @@
 ^LICENSE\.md$
 ^todolist$
 ^results$
+^.*\.aux$
+^.*\.log$
+^.*\.pdf$
