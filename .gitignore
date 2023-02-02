@@ -6,3 +6,5 @@ inst/doc
 ^.*\.aux$
 ^.*\.log$
 ^.*\.pdf$
+/doc/
+/Meta/

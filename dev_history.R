@@ -1,6 +1,7 @@
 library(devtools)
 library(roxygen2)
-
+library(ermeeth)
+library(tidyverse)
 
 usethis::use_build_ignore("dev_history.r")
 usethis::use_build_ignore("tests")
@@ -27,7 +28,7 @@ usethis::use_package("zip")
 
 # devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")
 devtools::build(path = "../ThreeME_V3/R_ThreeME/src/")
-
+devtools::build_vignettes()
 ## Retrouver les fichiers du inst
 system.file("bridge_c28_s32.R",package = "ermeeth")
 system.file("models",package = "tresthor")

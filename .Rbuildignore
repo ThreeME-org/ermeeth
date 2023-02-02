@@ -9,3 +9,5 @@
 ^.*\.aux$
 ^.*\.log$
 ^.*\.pdf$
+^doc$
+^Meta$

@@ -38,6 +38,7 @@
 #' @import dplyr
 #' @import tidyr stringr
 #' @importFrom purrr imap map map_df reduce set_names
+#' @importFrom methods as
 #'
 #' @return A data.frame with the following columns:
 #'  - variable: name of the ThreeME variable for which the result is reported in a given row

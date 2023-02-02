@@ -50,7 +50,7 @@ long_data <- function(data,
 
   ## Checking data class and scenarios
 
-  if(class(data) == "data.frame"){
+  if(inherits(data,"data.frame")){
 
     scenarios <- str_extract(names(data),"^.+\\.") %>% str_remove("\\.") %>% unique() %>% stats::na.omit()
 
@@ -64,7 +64,7 @@ long_data <- function(data,
                    dplyr::rename_all(~str_remove(.x,"^.+\\.")) ## should change to use scenario.name
       )
   }else{
-    if(class(data)=="list"){
+    if(inherits(data,"list")){
       data_list <- data
       scenarios <- names(data_list)
     }else{

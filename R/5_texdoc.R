@@ -5,6 +5,7 @@
 #' @param exo mdl source files containing the exogenous variables
 #' @param base.path source files directory
 #' @param out.path output files directory (default is working directory)
+#' @param compile_pdf TRUE (default) will compile the tex files into a pdf
 #'
 #' @return creates the necessary tex files to compile the model's documentation and compiles a pdf version
 #' @export
@@ -20,7 +21,8 @@
 #'         out       = "documentation-eq",
 #'         out.path  = "documentation_test")
 #' }
-teXdoc <- function(sources , exo = c(),base.path = "src/model", out = "doc", out.path = getwd()) {
+teXdoc <- function(sources , exo = c(),base.path = "src/model", out = "doc", out.path = getwd(),
+                   compile_pdf = TRUE) {
 
   out <- basename(out)
   #### teXdoc specific functions
@@ -598,14 +600,21 @@ teXdoc <- function(sources , exo = c(),base.path = "src/model", out = "doc", out
   writeFile(compiled$preface, stringr::str_c(out, "_preface.tex"))
 
   # Export the main document
-  exportLateX(out,
-              stringr::str_c(compiled$code, "\n",
+
+  files_to_move <- stringr::str_c(out, c(".tex","_preface.tex"))
+
+  if(compile_pdf){
+    exportLateX(out, stringr::str_c(compiled$code, "\n",
                     #exo.compiled, "\n",
                     glossaryTeX(compiled$glossary)))
 
+    files_to_move <- c(stringr::str_c(out, c(".pdf")),files_to_move)
+
+    }
+
   ### Move the pdf and tex files to other location out.path
 
-   files_to_move <- stringr::str_c(out, c(".pdf",".tex","_preface.tex"))
+
 
    if(!dir.exists(out.path)){dir.create(out.path)}
 

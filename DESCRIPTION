@@ -1,10 +1,10 @@
 Package: ermeeth
 Type: Package
-Title: Functions used by ThreeMe team
-Version: 0.2.02.0
+Title: Functions used by ThreeME team
+Version: 0.2.02.1
 Authors@R: 
     person("ThreeMe", "Team", , "first.last@example.com", role = c("aut", "cre"))
-Description: All functions used for ThreeMe analysis
+Description: All functions used for ThreeME analysis
     Use four spaces when indenting paragraphs within the Description.
 Encoding: UTF-8
 LazyData: true
@@ -25,7 +25,7 @@ Imports:
     tidyr,
     tools,
     utils,
-    zip
+    methods
 RoxygenNote: 7.1.2
 Suggests: 
     knitr,

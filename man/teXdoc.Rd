@@ -9,7 +9,8 @@ teXdoc(
   exo = c(),
   base.path = "src/model",
   out = "doc",
-  out.path = getwd()
+  out.path = getwd(),
+  compile_pdf = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ teXdoc(
 \item{out}{output file names (no directory needed, the output directory is to be specified in out.path)}
 
 \item{out.path}{output files directory (default is working directory)}
+
+\item{compile_pdf}{TRUE (default) will compile the tex files into a pdf}
 }
 \value{
 creates the necessary tex files to compile the model's documentation and compiles a pdf version

@@ -8,7 +8,7 @@
 #' @return Dynamo installation in the specified location
 #' @export
 #'
-#' @importFrom zip unzip
+#' @importFrom utils unzip
 #'
 #' @examples
 #' \dontrun{
@@ -18,7 +18,7 @@ install_dynamo <- function(dynamo_path = getwd() , overwrite = TRUE){
 
 
   #1. copy the dynamo files
-  zip::unzip(system.file("dynamo.zip",package = "ermeeth"),exdir =file.path(dynamo_path,"compiler"),overwrite = overwrite)
+  utils::unzip(system.file("dynamo.zip",package = "ermeeth"),exdir =file.path(dynamo_path,"compiler"),overwrite = overwrite)
 
   #2 Build other structural files
   if(!dir.exists(file.path(dynamo_path,"data"))){dir.create(file.path(dynamo_path,"data"))}
