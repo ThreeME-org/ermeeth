@@ -610,6 +610,13 @@ teXdoc <- function(sources , exo = c(),base.path = "src/model", out = "doc", out
 
     files_to_move <- c(stringr::str_c(out, c(".pdf")),files_to_move)
 
+  }else{
+    filename2 <- file.path(stringr::str_c(out, ".tex"))
+    teXcode2 <- stringr::str_c(compiled$code, "\n",
+                               #exo.compiled, "\n",
+                               glossaryTeX(compiled$glossary))
+    writeFile(stringr::str_c(texHeader(out), teXcode2, texFooter), filename2)
+
     }
 
   ### Move the pdf and tex files to other location out.path
