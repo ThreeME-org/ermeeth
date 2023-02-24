@@ -11,9 +11,10 @@ contrib.plot(
   line_tot = FALSE,
   startyear = NULL,
   endyear = NULL,
+  custom_x_breaks = NULL,
   unit = "percent",
   decimal = 0.1,
-  titleplot = "",
+  titleplot = NULL,
   template = template_default
 )
 }
@@ -29,6 +30,8 @@ contrib.plot(
 \item{startyear}{numeric(1), date de début de la période plottée}
 
 \item{endyear}{numeric(1), date de fin  de la période plottée}
+
+\item{custom_x_breaks}{numeric(1), choix du break en nombres d'années}
 
 \item{unit}{character(1) string , choix de legende pour l'axe des x (en pourcentage ou en niveau)}
 
