@@ -15,6 +15,7 @@
 #' @param titleplot character(1) string , titre du graphique
 #' @param template character(1) string, nom du thème ggplot retenu pour le plot
 #' @param line_tot boolean. Default FALSE . TRUE will display the line for the main variable.
+#' @param custom_x_breaks numeric(1), choix du break en nombres d'années
 #'
 #' @return  ggplot
 #' @import ggh4x ggplot2 dplyr tidyr
@@ -27,9 +28,10 @@ contrib.plot <- function(data,
                          line_tot = FALSE,
                          startyear = NULL,
                          endyear = NULL,
+                         custom_x_breaks = NULL,
                          unit = "percent",
                          decimal = 0.1,
-                         titleplot = "",
+                         titleplot = NULL,
                          template = template_default) {
   # To debug the function step by step, activate line below
   # browser()
@@ -48,13 +50,45 @@ contrib.plot <- function(data,
   if (is.null(startyear)){startyear  =  min(data$year)}
   if (is.null(endyear)){endyear  =  max(data$year)}
 
+  if (is.null(titleplot)){titleplot  = ""}
+
+
+  if (is.null(custom_x_breaks)) {
+    n_years <- endyear - startyear
+    algo_x_breaks <- 10
+    if (n_years <= 35) {
+      algo_x_breaks <- 5
+    }
+    if (n_years <= 20) {
+      algo_x_breaks <- 2
+    }
+    if (n_years <= 10) {
+      algo_x_breaks <- 1
+    }
+    break_x_sequence <- seq(from = startyear, to = endyear,
+                            by = algo_x_breaks)
+
+  }
+  else {
+    if (is.numeric(custom_x_breaks)) {
+      break_x_sequence <- seq(from = startyear, to = endyear,
+                              by = custom_x_breaks)
+    }
+    else {
+      break_x_sequence <- waiver()
+    }
+  }
+
+
   ## Data filtering
   data <- data %>% dplyr::filter(year > startyear & year < endyear)
+  #data$year <- lubridate::ymd(data$year, truncated = 2L)
 
   ## Plot making
   plot <- ggplot2::ggplot() +
     ggplot2::geom_bar(data = data , aes(x = year, y = value, fill = variable),
                       stat= "identity", width = 0.9, position = position_stack(reverse = TRUE)) +
+    ggplot2::scale_x_continuous(breaks = break_x_sequence) +
     ggplot2::scale_fill_manual(values = custom.palette(length(series)),
                                limits = series,
                                labels = label_series) +
@@ -87,8 +121,8 @@ contrib.plot <- function(data,
   if(template =="ofce"){ plot <- plot +  ofce::theme_ofce(base_family = "") }
 
   plot <- plot + ggplot2::theme(legend.title = element_blank(),
-                                   axis.title.y = element_blank(),
-                                    legend.position = "bottom")
+                                axis.title.y = element_blank(),
+                                legend.position = "bottom")
 
   plot
 }
