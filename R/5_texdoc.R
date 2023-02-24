@@ -21,7 +21,11 @@
 #'         out       = "documentation-eq",
 #'         out.path  = "documentation_test")
 #' }
-teXdoc <- function(sources , exo = c(),base.path = "src/model", out = "doc", out.path = getwd(),
+teXdoc <- function(sources ,
+                   exo = c(),
+                   base.path = "src/model",
+                   out = "doc",
+                   out.path = getwd(),
                    compile_pdf = TRUE) {
 
   out <- basename(out)
@@ -558,7 +562,10 @@ teXdoc <- function(sources , exo = c(),base.path = "src/model", out = "doc", out
   }
 
 
-
+#### Added latexcodecleaning (Anissa)
+  cleanlatex2 <- function(latexcode){
+    latexcode %>% stringr::str_replace_all("\\\\\\\\([A-Za-z])","\\\\\\1")
+    }
 
 
 
@@ -596,26 +603,28 @@ teXdoc <- function(sources , exo = c(),base.path = "src/model", out = "doc", out
   saved.compiled <<- compiled
   compiled$glossary$.dict <- NULL
 
+  main_document_tex <- stringr::str_c(compiled$code, "\n",
+                                  #exo.compiled, "\n",
+                                  glossaryTeX(compiled$glossary))  %>% cleanlatex2
+  preface_tex <- compiled$preface %>% cleanlatex2
+
+
   # Export the preface
-  writeFile(compiled$preface, stringr::str_c(out, "_preface.tex"))
+  writeFile(preface_tex, stringr::str_c(out, "_preface.tex"))
 
   # Export the main document
 
   files_to_move <- stringr::str_c(out, c(".tex","_preface.tex"))
 
   if(compile_pdf){
-    exportLateX(out, stringr::str_c(compiled$code, "\n",
-                    #exo.compiled, "\n",
-                    glossaryTeX(compiled$glossary)))
+    exportLateX(out,main_document_tex)
 
     files_to_move <- c(stringr::str_c(out, c(".pdf")),files_to_move)
 
   }else{
+
     filename2 <- file.path(stringr::str_c(out, ".tex"))
-    teXcode2 <- stringr::str_c(compiled$code, "\n",
-                               #exo.compiled, "\n",
-                               glossaryTeX(compiled$glossary))
-    writeFile(stringr::str_c(texHeader(out), teXcode2, texFooter), filename2)
+    writeFile(stringr::str_c(texHeader(out), main_document_tex, texFooter), filename2)
 
     }
 
