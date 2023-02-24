@@ -53,6 +53,10 @@ contrib.plot <- function(data,
   if (is.null(titleplot)){titleplot  = ""}
 
 
+
+  ## Data filtering
+  data <- data %>% dplyr::filter(year >= startyear & year <= endyear)
+
   if (is.null(custom_x_breaks)) {
     n_years <- endyear - startyear
     algo_x_breaks <- 10
@@ -80,8 +84,7 @@ contrib.plot <- function(data,
   }
 
 
-  ## Data filtering
-  data <- data %>% dplyr::filter(year > startyear & year < endyear)
+
   #data$year <- lubridate::ymd(data$year, truncated = 2L)
 
   ## Plot making
