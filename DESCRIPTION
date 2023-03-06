@@ -1,7 +1,7 @@
 Package: ermeeth
 Type: Package
 Title: Functions used by ThreeME team
-Version: 0.2.02.3
+Version: 0.2.02.5
 Authors@R: 
     person("ThreeMe", "Team", , "first.last@example.com", role = c("aut", "cre"))
 Description: All functions used for ThreeME analysis
@@ -26,7 +26,7 @@ Imports:
     tools,
     utils,
     methods
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests: 
     knitr,
     rmarkdown

@@ -19,6 +19,7 @@ runDynaMo <- function(iso3, baseyear, lastyear, calib, model, max_lags = 3,
                       dynamo_path = file.path("src")) {
   dynamo_os <- "dynamo.exe"
   if(grepl("macOS",osVersion)){dynamo_os<-"dynamo_mac"}
+  if(grepl("Ubuntu",osVersion)){dynamo_os<-"dynamo_ubuntu"}
 
 calib_files_tests <-file.exists(file.path(dynamo_path,calib))
 model_files_tests <-file.exists(file.path(dynamo_path,model))
