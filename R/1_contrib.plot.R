@@ -111,7 +111,7 @@ contrib.plot <- function(data,
   if (line_tot == TRUE){
     # Data for ploting the line
     data.2 <- data %>%
-      dplyr::filter(year > startyear & year < endyear) %>%
+      dplyr::filter(year >= startyear & year <= endyear) %>%
       tidyr::pivot_wider(names_from = variable, values_from = value) %>%
       dplyr::rowwise() %>%
       dplyr::mutate(value = sum(dplyr::c_across(series))) %>%
