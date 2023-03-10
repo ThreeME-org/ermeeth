@@ -221,11 +221,25 @@ if(nrow(intervals)>0){na.vectors <- c(1:nrow(intervals)) %>%
       unique() %>% dplyr::arrange(date)
 
 
+
+
+
+
     }
 
 
 
   }else{final_res_smoothed <- final_res}
+
+if(sum(duplicated(final_res_smoothed$date)) >0  ){
+
+  final_res_smoothed <- final_res_smoothed %>% mutate(dupes = duplicated(date)) %>%
+    filter(dupes == FALSE) %>% select(-dupes) %>%
+    arrange(date) %>% as.data.frame()
+
+}
+
+
 
 
 compare <- left_join(final_res,final_res_smoothed %>% rename(res_vector_smoothed = res_vector), by = "date")
