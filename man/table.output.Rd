@@ -7,11 +7,14 @@
 table.output(
   data = data,
   scenario = scenario_name,
+  startyear = NULL,
+  endyear = NULL,
   export.doc = TRUE,
   langue = "en",
   full.table = TRUE,
   title = NULL,
   decimal = 2,
+  year.index = NULL,
   results.folder = getwd()
 )
 }
@@ -19,6 +22,10 @@ table.output(
 \item{data}{double(1) a dataframe created with the function loadResults()}
 
 \item{scenario}{character(1) string, vecteur avec le label des variables qui seront tracées}
+
+\item{startyear}{startyear for the table, by default, startyear of the dataframe}
+
+\item{endyear}{endyear for the table, by default, endyear of the dataframe}
 
 \item{export.doc}{boolean if TRUE, export a docx into the folder results}
 
@@ -29,6 +36,8 @@ table.output(
 \item{title}{character(1) string of character for the title of the table}
 
 \item{decimal}{numeric : number of decimal in the datable}
+
+\item{year.index}{boolean if TRUE, use years for columns, if FALSE number of periods with respect to first date}
 
 \item{results.folder}{character(1): pathfile to export the results. By defaut the program folder}
 }
