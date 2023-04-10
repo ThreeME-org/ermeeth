@@ -10,7 +10,7 @@
 #' @param label_series character(1) string, vecteur avec le label des variables qui seront plottées
 #' @param startyear numeric(1), date de début de la période plottée
 #' @param endyear numeric(1), date de fin  de la période plottée
-#' @param transformation character(1) string, choix de l'option de l'indicateur (en niveau, en variation, différence absolue, relative )
+#' @param transformation character(1) string, choix de l'option de l'indicateur (en niveau "level", en variation "gr", différence absolue, relative )
 #' @param unit character(1) string , choix de legende pour l'axe des x (en pourcentage ou en niveau)
 #' @param decimal numeric(1) , choix de la décimale retenue après la virgule
 #' @param titleplot character(1) string , titre du graphique

@@ -8,6 +8,9 @@
 #' @param langue character(1) string to specify the language of comments c('en', 'fr)
 #' @param results.folder character(1): pathfile to export the results. By defaut the program folder
 #' @param decimal numeric : number of decimal in the datable
+#' @param startyear startyear for the table, by default, startyear of the dataframe
+#' @param endyear endyear for the table, by default, endyear of the dataframe
+#' @param year.index boolean if TRUE, use years for columns, if FALSE number of periods with respect to first date
 #'
 #' @import flextable officer
 #' @return a flextable
@@ -17,20 +20,28 @@
 #' table.output(data = data, scenario = "oilprice_fra",
 #' full.table = TRUE, export.doc = FALSE, title = 'Gros test')
 #' }
-
 table.output <- function(data = data,
                          scenario = scenario_name,
+                         startyear = NULL,
+                         endyear = NULL,
                          export.doc = TRUE,
                          langue = "en",
                          full.table = TRUE,
                          title = NULL,
                          decimal = 2,
+                         year.index = NULL,
                          results.folder = getwd()){
 
   # General conditions
   if (is.null(title)){
     title = paste0("scenario:", scenario)
   }
+
+  # General conditions
+  if (is.null(startyear)){ startyear = startyear}
+  if (is.null(endyear)){ endyear = endyear}
+
+  if (is.null(year.index)){year.index = TRUE}
 
   # Parameters for all flextable: aesthetics arguments
   flextable::set_flextable_defaults(
@@ -40,8 +51,7 @@ table.output <- function(data = data,
 
   ## Choice of years to include in the table
   # years <- c("2022", "2023","2024","2025","2027", "2050")
-  startyear <- 2022
-  endyear <- 2050
+
   time.horizon <- c(0,1,2,3,5,10,endyear-startyear)
   years <- c(rep(startyear, length(time.horizon))) + time.horizon
   # years
@@ -51,14 +61,24 @@ table.output <- function(data = data,
   var_list.1 <- c("GDP","CH","I", "X", "M",
                   "PVA","PCH","PY" ,"PX","PM",
                   "DISPINC_BT_VAL", "W", "RSAV_H_VAL")
+
   if (langue == "fr"){
-    years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5","t+10", "long terme")
+    if (year.index == TRUE){
+      years_label <- c("Variable", startyear, startyear+1,startyear+2,startyear+3,startyear+4,startyear+10, endyear)
+    } else{
+      years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5","t+10", "long terme")
+    }
+
     var_label.1 <- c("PIB (a)","Consommation des m\u00e9nages (a)","Investissement (a)","Exportations (a)", "Importations (a)",
                      "Prix de VA (a)","Prix \u00e0 la consommation (a)", "Prix \u00e0 la production (a)", "Prix des exportations (a)", "Prix des importations (a)",
                      "Revenu des m\u00e9nages en valeur (a)", "Salaire (a)", "Taux d'\u00e9pargne des m\u00e9nages (a)")
   }
   if (langue == "en"){
-    years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5","t+10","long-term")
+    if (year.index == TRUE){
+      years_label <- c("Variable", startyear, startyear+1,startyear+2,startyear+3,startyear+4,startyear+10, endyear)
+    } else{
+      years_label <- c("Variable", "t", "t+1","t+2","t+3","t+5","t+10","long-term")
+    }
     var_label.1 <- c("GDP (a)","Households consumption (a)","Investment (a)","Exports (a)", "Imports (a)",
                      "Price of VA (a)","Consumption price (a)", "Production price (a)", "Export price (a)", "Import price (a)",
                      "Households disposable income (a)", "Nominal wages (a)", "Households saving rate (a)")
@@ -134,7 +154,7 @@ table.output <- function(data = data,
   } else {
     data_table <- data_table.1
     if (langue == "fr"){
-      footnote.tab <- c("(a): En deviation relative par rapport au baseline")
+      footnote.tab <- c("(a): En d\u00e9viation relative par rapport au baseline")
     }
     if (langue == "en"){
       footnote.tab <- c("(a): In relative deviation wrt baseline")
@@ -145,13 +165,10 @@ table.output <- function(data = data,
   output <- flextable::flextable(data_table) %>%
     width(width = 2.75, j = 1)
 
+
   ## Flextable: add of the footnotes
-  output <- flextable::footnote(output, i = 1, j = j.tab,
-                                value = as_paragraph(
-                                  footnote.tab),
-                                part = "header",
-                                ref_symbols = "",
-                                inline = TRUE)
+  output <- flextable::add_footer_lines(output, footnote.tab, top = FALSE)
+
   ## Flextable: add of the title
   output <-  flextable::set_caption(output, caption = title,
                                     style = "Table Caption")

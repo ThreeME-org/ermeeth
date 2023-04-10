@@ -31,7 +31,7 @@ simpleplot(
 
 \item{endyear}{numeric(1), date de fin  de la période plottée}
 
-\item{transformation}{character(1) string, choix de l'option de l'indicateur (en niveau, en variation, différence absolue, relative )}
+\item{transformation}{character(1) string, choix de l'option de l'indicateur (en niveau "level", en variation "gr", différence absolue, relative )}
 
 \item{unit}{character(1) string , choix de legende pour l'axe des x (en pourcentage ou en niveau)}
 
