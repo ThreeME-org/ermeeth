@@ -33,7 +33,7 @@ simpleplot <- function(data,
                        unit = "percent",
                        decimal = 0.1,
                        titleplot = "",
-                       scenario=scenario_name,
+                       scenario=scenario_to_analyse,
                        template=template_default,
                        percent_label = TRUE,
                        custom_x_breaks = NULL
