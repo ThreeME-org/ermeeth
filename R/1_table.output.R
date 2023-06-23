@@ -13,7 +13,8 @@
 #' @param year.index boolean if TRUE, use years for columns, if FALSE number of periods with respect to first date
 #' @param name_baseline character(1) string, nom du scénario baseline, Default : baseline
 #'
-#' @import flextable officer
+#' @import officer
+#' @importFrom flextable set_flextable_defaults flextable add_footer_lines set_caption save_as_docx
 #' @return a flextable
 #' @export
 #' @examples

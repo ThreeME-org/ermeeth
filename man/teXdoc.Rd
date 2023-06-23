@@ -10,7 +10,7 @@ teXdoc(
   base.path = "src/model",
   out = "doc",
   out.path = getwd(),
-  compile_pdf = TRUE
+  compile_pdf = FALSE
 )
 }
 \arguments{

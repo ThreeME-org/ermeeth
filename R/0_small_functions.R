@@ -53,3 +53,23 @@ if(fr_format == TRUE){c %>% as.character() %>% stringr::str_replace("\\.",",")}e
 }
 
 # pythagore()
+
+#' redirect
+#' when you need to change the directed path because of markdowns
+#'
+#' @param normal_path normal path of the file
+#' @param redirect new path of the file
+#'
+#' @return character string with the path changed
+#' @export
+#'
+redirect <- function(normal_path, redirect = path_main){
+  if(is.null(redirect)){
+    res <- file.path(normal_path)
+  }else{
+    res <- file.path(paste0(redirect), normal_path)
+  }
+
+  res |>  normalizePath()
+}
+

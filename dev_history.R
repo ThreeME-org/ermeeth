@@ -25,6 +25,8 @@ usethis::use_package("colorspace")
 usethis::use_package("flextable")
 usethis::use_package("officer")
 usethis::use_package("zip")
+usethis::use_package("readxl")
+usethis::use_package("crayon")
 
 # devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")
 devtools::build(path = "../ThreeME_V3/R_ThreeME/src/")
