@@ -10,7 +10,8 @@ selectseries(
   series,
   startyear = NULL,
   endyear = NULL,
-  transformation = "reldiff"
+  transformation = "reldiff",
+  baseline_name = "baseline"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ selectseries(
 \item{endyear}{Last year of the sample to extract. If NULL (default) the lastest year available will be used.}
 
 \item{transformation}{The transformation to apply. The options are : "reldiff" (default) for relative difference with the baseline, "diff" for the absolute difference with the baseline. Anything else will plot levels}
+
+\item{baseline_name}{Name of the baseline scenario, Default: "baseline"}
 }
 \value{
 a long form data.frame with only the selected series and years and new columns with some calculations over the scenarios.

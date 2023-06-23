@@ -17,7 +17,8 @@ simpleplot(
   scenario = scenario_name,
   template = template_default,
   percent_label = TRUE,
-  custom_x_breaks = NULL
+  custom_x_breaks = NULL,
+  name_baseline = "baseline"
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ simpleplot(
 \item{percent_label}{boolean(1) permet d'afficher ou non le signe des pourcentage  lorsque l'échelle est en pourcentage, TRUE par défaut.}
 
 \item{custom_x_breaks}{integer(1) permet de choisir manuellement les ticks des années à afficher. Si NULL (défaut) alors utilise l'algorithme de la fonction. Si "R" : algorithme par défaut de R sera utilisé.}
+
+\item{name_baseline}{character(1) string, nom du scénario baseline, Default : baseline}
 }
 \value{
 un ggplot

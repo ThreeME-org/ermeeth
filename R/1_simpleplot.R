@@ -18,6 +18,7 @@
 #' @param template character(1) string, nom du thème ggplot retenu pour le plot
 #' @param percent_label boolean(1) permet d'afficher ou non le signe des pourcentage  lorsque l'échelle est en pourcentage, TRUE par défaut.
 #' @param custom_x_breaks integer(1) permet de choisir manuellement les ticks des années à afficher. Si NULL (défaut) alors utilise l'algorithme de la fonction. Si "R" : algorithme par défaut de R sera utilisé.
+#' @param name_baseline  character(1) string, nom du scénario baseline, Default : baseline
 #'
 #' @return un ggplot
 #' @import ggh4x ggplot2 dplyr ofce tidyr
@@ -36,7 +37,8 @@ simpleplot <- function(data,
                        scenario=scenario_name,
                        template=template_default,
                        percent_label = TRUE,
-                       custom_x_breaks = NULL
+                       custom_x_breaks = NULL,
+                       name_baseline = "baseline"
                        ) {
 
   # To debug the function step by step, activate line below
@@ -54,7 +56,7 @@ simpleplot <- function(data,
   # Palette de 4 couleurs en attendant d'en rajouter dans celles OFCE
   pal <- custom.palette(n = length(series)) %>% purrr::set_names(.,series)
 
-  selection <- selectseries(data,scenario, series, startyear, endyear, transformation)
+  selection <- selectseries(data,scenario, series, startyear, endyear, transformation, baseline_name= name_baseline)
 
   if (is.null(label_series)){
     label_series =  series

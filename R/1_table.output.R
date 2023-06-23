@@ -11,6 +11,7 @@
 #' @param startyear startyear for the table, by default, startyear of the dataframe
 #' @param endyear endyear for the table, by default, endyear of the dataframe
 #' @param year.index boolean if TRUE, use years for columns, if FALSE number of periods with respect to first date
+#' @param name_baseline character(1) string, nom du scénario baseline, Default : baseline
 #'
 #' @import flextable officer
 #' @return a flextable
@@ -30,7 +31,9 @@ table.output <- function(data = data,
                          title = NULL,
                          decimal = 2,
                          year.index = NULL,
-                         results.folder = getwd()){
+                         results.folder = getwd(),
+                         name_baseline = "baseline"
+                         ){
 
   # General conditions
   if (is.null(title)){
@@ -55,7 +58,9 @@ table.output <- function(data = data,
   time.horizon <- c(0,1,2,3,5,10,endyear-startyear)
   years <- c(rep(startyear, length(time.horizon))) + time.horizon
   # years
-
+  if(name_baseline != "baseline"){
+    data <- data %>%  mutate(baseline = get(baseline_name))
+  }
 
   # Variable in relative deviation
   var_list.1 <- c("GDP","CH","I", "X", "M",

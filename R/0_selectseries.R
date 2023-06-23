@@ -5,7 +5,9 @@
 #' @param series the series to select and transform
 #' @param startyear First year of the sample to extract. If NULL (default) the earliest year available will be used.
 #' @param endyear Last year of the sample to extract. If NULL (default) the lastest year available will be used.
+#' @param baseline_name Name of the baseline scenario, Default: "baseline"
 #' @param transformation The transformation to apply. The options are : "reldiff" (default) for relative difference with the baseline, "diff" for the absolute difference with the baseline. Anything else will plot levels
+#'
 #' @import dplyr
 #'
 #' @return a long form data.frame with only the selected series and years and new columns with some calculations over the scenarios.
@@ -16,13 +18,18 @@ selectseries <- function(data,
                          series,
                          startyear = NULL,
                          endyear = NULL,
-                         transformation="reldiff") {
+                         transformation="reldiff",
+                         baseline_name = "baseline") {
 
   # To debug the function step by step, activate line below
   #browser()
 
   if (is.null(startyear)){startyear  =  min(data$year)}
   if (is.null(endyear)){endyear  =  max(data$year)}
+
+  if(baseline_name != "baseline"){
+    data <- data %>%  mutate(baseline = get(baseline_name))
+  }
 
   selection <- data %>%
 

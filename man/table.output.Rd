@@ -15,7 +15,8 @@ table.output(
   title = NULL,
   decimal = 2,
   year.index = NULL,
-  results.folder = getwd()
+  results.folder = getwd(),
+  name_baseline = "baseline"
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ table.output(
 \item{year.index}{boolean if TRUE, use years for columns, if FALSE number of periods with respect to first date}
 
 \item{results.folder}{character(1): pathfile to export the results. By defaut the program folder}
+
+\item{name_baseline}{character(1) string, nom du scénario baseline, Default : baseline}
 }
 \value{
 a flextable
