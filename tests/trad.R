@@ -1,3 +1,14 @@
+#' Title
+#'
+#' @param x 
+#' @param data 
+#' @param lang 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+
 trad <- function(x,data = read.csv(file.path("src","translation_file.csv"),sep = ";", encoding = "UTF-8"),lang = language){
   if(exists("wd_racine")==TRUE){data = read.csv(file.path("results","report","markdown","src","translation_file.csv"),sep = ";", encoding = "UTF-8")}
   names(data)[1] <- "en"
