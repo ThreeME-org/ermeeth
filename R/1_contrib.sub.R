@@ -12,7 +12,7 @@
 #'
 #' @export
 contrib.sub <- function(data, var1,  group_type = "sector",
-                            scenar = scenario_name,
+                            scenar = scenario_to_analyse,
                             check_digit = 3)
 {
 

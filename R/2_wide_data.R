@@ -2,12 +2,12 @@
 
 
 # data <- readRDS("tests/oilprice_fra_c28_s32.rds")
-# scenario_name <- "oilprice_fra"
+# scenario_to_analyse <- "oilprice_fra"
 # classification <- "c28_s32"
 # variables <- NULL
 # variables <- c("GDP","WAGES","MERIEM")
 # out_format = "list"
-# scenarios = c("baseline",scenario_name)
+# scenarios = c("baseline",scenario_to_analyse)
 # all_variables <- unique(data$variable)
 # my_variables<- sample(all_variables, size = 10000)
 #
@@ -29,7 +29,7 @@
 #' Transform a long ThreeMe database to wide format
 #'
 #' @param data data.frame: A ThreeMe dataframe (long format)
-#' @param scenarios character vector: the scenarios that should be selected, by default uses baseline and scenario_name
+#' @param scenarios character vector: the scenarios that should be selected, by default uses baseline and scenario_to_analyse
 #' @param variables character vector: the variables to be selected. NULL by default, takes all the variables in the database
 #' @param out_format output format, either 'dataframe' or 'list'. By default 'dataframe' returns a dataframe with the name of scenario preceding variable name
 #'
@@ -42,7 +42,7 @@
 #' @import dplyr
 #'
 wide_data <- function(data ,
-                      scenarios = c("baseline",scenario_name) ,
+                      scenarios = c("baseline",scenario_to_analyse) ,
                       variables = NULL ,
                       out_format = "dataframe"
                       ){

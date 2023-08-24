@@ -6,7 +6,7 @@
 \usage{
 table.output(
   data = data,
-  scenario = scenario_name,
+  scenario = scenario_to_analyse,
   startyear = NULL,
   endyear = NULL,
   export.doc = TRUE,

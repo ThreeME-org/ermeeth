@@ -6,7 +6,7 @@
 \usage{
 wide_data(
   data,
-  scenarios = c("baseline", scenario_name),
+  scenarios = c("baseline", scenario_to_analyse),
   variables = NULL,
   out_format = "dataframe"
 )
@@ -14,7 +14,7 @@ wide_data(
 \arguments{
 \item{data}{data.frame: A ThreeMe dataframe (long format)}
 
-\item{scenarios}{character vector: the scenarios that should be selected, by default uses baseline and scenario_name}
+\item{scenarios}{character vector: the scenarios that should be selected, by default uses baseline and scenario_to_analyse}
 
 \item{variables}{character vector: the variables to be selected. NULL by default, takes all the variables in the database}
 

@@ -23,7 +23,7 @@
 #' full.table = TRUE, export.doc = FALSE, title = 'Gros test')
 #' }
 table.output <- function(data = data,
-                         scenario = scenario_name,
+                         scenario = scenario_to_analyse,
                          startyear = NULL,
                          endyear = NULL,
                          export.doc = TRUE,

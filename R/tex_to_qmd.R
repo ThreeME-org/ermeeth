@@ -52,6 +52,8 @@ make_eq_qmd <-function(preface = "03.1-eq_preface.tex",
   eq_table <-readtexfile[[1]]
   if(dir.exists(out.dir)==FALSE){dir.create(out.dir)}
 
+  exo_bool = TRUE
+  glossary_bool = TRUE
 
   if(max(quarto_body$sumsection,na.rm = TRUE) == 1){
     exo_bool = FALSE
@@ -69,10 +71,7 @@ make_eq_qmd <-function(preface = "03.1-eq_preface.tex",
     glossary_bool = FALSE
   }
 
-  if(max(quarto_body$sumsection,na.rm = TRUE) == 3) {
-    exo_bool = TRUE
-    glossary_bool = TRUE
-  }
+
   ### Section 1 equation
 
   section_1 <- quarto_body |> dplyr::filter(sumsection==1) |>
@@ -186,7 +185,7 @@ make_eq_qmd <-function(preface = "03.1-eq_preface.tex",
 
     header <- c("| | | |",
                 "|:---:|:----------- |---------: |")
-    writeLines(text = c("## Glossary of variablea"," ",header,  section_3$linetowrite),
+    writeLines(text = c("## Glossary of variables"," ",header,  section_3$linetowrite),
                con = file.path(out.dir,"glossary.qmd")  )
   }else{
     writeLines(text = c(" "),

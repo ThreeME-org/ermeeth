@@ -31,7 +31,7 @@
 #'
 
 curve_sc_plot <- function(data , variable, group_type = "sector",
-                          scenario = scenario_name,
+                          scenario = scenario_to_analyse,
                           diff = FALSE ,
                           title = "" ,
                           scenario.names = NULL,
@@ -59,7 +59,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
   if(group == "C"){division_type = "Commodity" }
 
 
-  #### scenario_name check
+  #### scenario_to_analyse check
   if (is.null(scenario)){
     scenario <- "baseline"
   }
@@ -75,7 +75,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 
   if(length(scenario) > 1 & prod(scenario %in% colnames(data)) == 0){
     scenario <- intersect(scenario , colnames(data))
-    if(is_empty(scenario)){ stop(message = paste0("The specified scenario_name were not found in the database. \n"   )) }
+    if(is_empty(scenario)){ stop(message = paste0("The specified scenario_to_analyse were not found in the database. \n"   )) }
   }
 
   n.scen <- length(scenario)
@@ -240,7 +240,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 
 
 
-  ##Differentiate plot arguments according to number of scenario_name
+  ##Differentiate plot arguments according to number of scenario_to_analyse
   if(n.scen > 1){
     res_plot  <- ggplot2::ggplot(data=graph_data,
                                  aes(group= c(grouping),
@@ -343,7 +343,7 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
 #' @return a ggplot
 #' @export
 stacked_sc_plot <- function(data , variable, group_type = "sector",
-                            scenario = scenario_name,
+                            scenario = scenario_to_analyse,
                             diff = FALSE ,
                             title = "" ,
                             scenario.names = NULL,

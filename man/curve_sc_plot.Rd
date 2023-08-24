@@ -8,7 +8,7 @@ curve_sc_plot(
   data,
   variable,
   group_type = "sector",
-  scenario = scenario_name,
+  scenario = scenario_to_analyse,
   diff = FALSE,
   title = "",
   scenario.names = NULL,

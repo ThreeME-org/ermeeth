@@ -449,7 +449,13 @@ teXdoc  <-function (sources, exo = c(), base.path = "src/model", out = "doc",
   }
   cleanlatex2 <- function(latexcode) {
     latexcode %>% stringr::str_replace_all("\\\\\\\\([A-Za-z])",
-                                           "\\\\\\1")
+                                           "\\\\\\1")%>%
+      stringr::str_replace_all("Delta",
+                               "varDelta") |>
+      stringr::str_replace_all("varvarDelta",
+                               "varDelta")
+
+
   }
   first.exo <- FALSE
   compiled <- Reduce(function(out, f) {
