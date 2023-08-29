@@ -6,6 +6,7 @@
 #'
 #' @return a long format threeme dataframe
 #' @export
+#' @import package
 #'
 read_3me_eviews_csv <- function(csv.file.path = file.path("csv", "ct1.csv"),
                                 variables_selection = variables_to_keep,
