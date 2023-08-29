@@ -1,22 +1,24 @@
 #' Title
 #'
-#' @param x 
-#' @param data 
-#' @param lang 
+#' @param x a charcter
+#' @param lang
+#' @param trad_data_base
+#' @param lang_source
 #'
-#' @return
+#' @return a character vector
 #' @export
 #'
-#' @examples
+#' @examples trad("Alternatives", lang = "fr")
 
-trad <- function(x,data = read.csv(file.path("src","translation_file.csv"),sep = ";", encoding = "UTF-8"),lang = language){
-  if(exists("wd_racine")==TRUE){data = read.csv(file.path("results","report","markdown","src","translation_file.csv"),sep = ";", encoding = "UTF-8")}
-  names(data)[1] <- "en"
-  i = 1
-  nb = length(x)
-  for(i in 1:nb){
-    x[i] <- data %>% filter(en == x[i]) %>% select(all_of(lang))
-  }
-  x <- unlist(x)
-  x
+trad <- function(x,trad_data_base = trad_language_base,
+                 lang = language, lang_source = "en"){
+
+  ## Add arguments check
+
+  trad_data <- trad_data_base
+  trad_data$lang_from = trad_data_base[,lang_source]
+
+  trad_data[which(trad_data$lang_from %in% x),lang]
+
+  ##corriger base de donnees de langues pour remplacer accents par utf
 }

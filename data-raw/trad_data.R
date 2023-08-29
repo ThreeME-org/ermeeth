@@ -1,3 +1,3 @@
-trad  <- readRDS("tests/oilprice_fra_c28_s32_commodities_sectors.rds")
+trad_language_base  <- read.csv("tests/translation_file.csv", sep = ";")
 
-usethis::use_data(oilprice_fra_agg, overwrite = TRUE)
+usethis::use_data(trad_language_base, overwrite = TRUE)
