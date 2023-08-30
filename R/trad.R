@@ -1,9 +1,9 @@
 #' Title
 #'
 #' @param x a character
-#' @param lang
-#' @param trad_data_base
-#' @param lang_source
+#' @param lang translation destination language
+#' @param trad_data_base a R data frame
+#' @param lang_source translation source language
 #'
 #' @import tidyr
 #' @return a character vector
