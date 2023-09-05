@@ -2,7 +2,7 @@
 % Please edit documentation in R/trad.R
 \name{trad}
 \alias{trad}
-\title{Title}
+\title{Traduction à partir d'une base de données de langue}
 \usage{
 trad(
   x,
@@ -24,7 +24,7 @@ trad(
 a character vector
 }
 \description{
-Title
+Traduction à partir d'une base de données de langue
 }
 \examples{
 \dontrun{trad("Alternatives", lang = "fr")}

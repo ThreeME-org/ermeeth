@@ -1,4 +1,5 @@
 trad_language_base  <- read.csv("tests/translation_file.csv", sep = ";")
+
 Encoding(trad_language_base$fr) <- "UTF-8"
 
 trad_language_base$fr <- iconv(
