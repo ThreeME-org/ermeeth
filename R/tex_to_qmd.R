@@ -14,7 +14,7 @@ decompose_tex <-function(preface_file = "03.1-eq_preface.tex",
     mutate(
       label_tex = stringr::str_replace(rawline, "\\\\repeatablebody\\{([A-Za-z_0-9\\-\\.]+)\\}.+$","\\1"),
 
-      label_quarto = stringr::str_c("eq-", stringr::str_replace_all(label_tex,"(\\.|\\-)","_")),
+      label_quarto = stringr::str_c("eq-", stringr::str_replace_all(label_tex,"(\\.|\\-|\\[|\\]|\\,)","_")),
 
       equation = stringr::str_remove(rawline,"\\\\repeatablebody\\{([A-Za-z_0-9\\-\\.]+)\\}") |>
         stringr::str_replace("^\\{","$$") |> stringr::str_replace("\\}$","$$")
