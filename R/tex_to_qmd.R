@@ -37,17 +37,19 @@ decompose_tex <-function(preface_file = "03.1-eq_preface.tex",
 #' @param preface path to preface tex file created by teXdoc function
 #' @param maintex path to maintex tex file created by teXdoc function
 #' @param out.dir output directory
+#' @param path files path
 #'
 #' @return 3 or less qmd files
 #' @export
 #'
 make_eq_qmd <-function(preface = "03.1-eq_preface.tex",
                        maintex = "03.1-eq.tex",
-                       out.dir = "documentation"){
+                       path = file.path("results","quarto_templates","results_side_files"),
+                       out.dir =  file.path("results","quarto_templates","results_side_files") ){
 
   ### File read
 
-  readtexfile<-decompose_tex(preface, maintex)
+  readtexfile<-decompose_tex(file.path(path,preface), file.path(path,maintex))
   quarto_body <-readtexfile[[2]]
   eq_table <-readtexfile[[1]]
   if(dir.exists(out.dir)==FALSE){dir.create(out.dir)}

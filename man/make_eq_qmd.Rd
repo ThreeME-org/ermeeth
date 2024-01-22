@@ -7,13 +7,16 @@
 make_eq_qmd(
   preface = "03.1-eq_preface.tex",
   maintex = "03.1-eq.tex",
-  out.dir = "documentation"
+  path = file.path("results", "quarto_templates", "results_side_files"),
+  out.dir = file.path("results", "quarto_templates", "results_side_files")
 )
 }
 \arguments{
 \item{preface}{path to preface tex file created by teXdoc function}
 
 \item{maintex}{path to maintex tex file created by teXdoc function}
+
+\item{path}{files path}
 
 \item{out.dir}{output directory}
 }
