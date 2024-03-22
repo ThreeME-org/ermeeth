@@ -12,6 +12,8 @@ label(variable_code, data = label_database, lang = language)
 \item{data}{a R data frame}
 
 \item{lang}{label destination language}
+
+\item{label_database}{a R data frame}
 }
 \value{
 a character or a character vector

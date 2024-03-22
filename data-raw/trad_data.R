@@ -1,18 +1,19 @@
-trad_language_base  <- read.csv("tests/translation_file.csv", sep = ";")
+trad_database  <- read.csv("tests/translation_file.csv", sep = ";")
 
-Encoding(trad_language_base$fr) <- "UTF-8"
+Encoding(trad_database$fr) <- "UTF-8"
 
-trad_language_base$fr <- iconv(
-trad_language_base$fr,
+trad_database$fr <- iconv(
+trad_database$fr,
   "UTF-8",
   "UTF-8"
 )
-Encoding(trad_language_base$es) <- "UTF-8"
+Encoding(trad_database$es) <- "UTF-8"
 
-trad_language_base$es <- iconv(
-  trad_language_base$es,
+trad_database$es <- iconv(
+  trad_database$es,
   "UTF-8",
   "UTF-8"
 )
 
-usethis::use_data(trad_language_base, overwrite = TRUE)
+usethis::use_data(trad_database, overwrite = TRUE)
+

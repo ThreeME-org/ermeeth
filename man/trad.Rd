@@ -4,21 +4,18 @@
 \alias{trad}
 \title{Traduction à partir d'une base de données de langue}
 \usage{
-trad(
-  x,
-  trad_data_base = trad_language_base,
-  lang = language,
-  lang_source = "en"
-)
+trad(x, data = trad_database, lang = language, lang_source = "en")
 }
 \arguments{
 \item{x}{a character}
 
-\item{trad_data_base}{a R data frame}
+\item{data}{a R data frame}
 
 \item{lang}{translation destination language}
 
 \item{lang_source}{translation source language}
+
+\item{trad_database}{a R data frame}
 }
 \value{
 a character vector
