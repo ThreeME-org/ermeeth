@@ -3,7 +3,6 @@
 #' @param x a character
 #' @param lang translation destination language
 #' @param data a R data frame
-#' @param trad_database a R data frame
 #' @param lang_source translation source language
 #'
 #' @import tidyr

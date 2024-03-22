@@ -14,8 +14,6 @@ trad(x, data = trad_database, lang = language, lang_source = "en")
 \item{lang}{translation destination language}
 
 \item{lang_source}{translation source language}
-
-\item{trad_database}{a R data frame}
 }
 \value{
 a character vector
