@@ -30,7 +30,7 @@ Import price;Prix des importations;Precio de importación
 Imports;Importations;Importaciones
 in %;en %;en %
 in difference from baseline;variation par rapport au scénario de référence;variación respecto al escenario de referencia
-in GDP points;en point de PIB;en puntos de PBI
+in GDP points;en points de PIB;en puntos de PBI
 in percentage;en pourcentage;en porcentaje
 Increase in capital productivity by 10%;Hausse de la productivité du capital de 10%;Incremento en la productividad del capital de 10%
 Increase in capital productivity by 1%;Hausse de la productivité du capital de 1%;Incremento en la productividad del capital de 1%
@@ -86,3 +86,8 @@ Reference scenario;Scénario de référence;Escenario de referencia
 Value Added (commercial sector);VA du secteur marchand;
 Employment in thousands (commercial sector);Emploi salarié (en milliers);
 Model:;Modèle :;Modelo:
+Scenarios;Scénarios;Escenarios
+Unemployment rate (in %);Taux de chômage (en %);Tasa de desempleo (en %)
+Government primary balance (in GDP points);Balance primaire du gouvernement (en points de PIB);Saldo primario del gobierno (en puntos de PBI)
+Trade balance (in %);Balance commerciale (en %);Balanza comercial (en %)
+Household saving rate (in %);Taux d'épargne des ménages (en %);Tasa de ahorro de los hogares (en %)
