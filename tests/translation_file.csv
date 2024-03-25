@@ -84,10 +84,12 @@ World demand increase;Hausse permanente de la demande mondiale;Incremento perman
 Year:;Année :;Año:
 Reference scenario;Scénario de référence;Escenario de referencia
 Value Added (commercial sector);VA du secteur marchand;
-Employment in thousands (commercial sector);Emploi salarié (en milliers);
+Employment in thousands (commercial sector);Emploi en milliers (secteur marchand);
 Model:;Modèle :;Modelo:
 Scenarios;Scénarios;Escenarios
 Unemployment rate (in %);Taux de chômage (en %);Tasa de desempleo (en %)
 Government primary balance (in GDP points);Balance primaire du gouvernement (en points de PIB);Saldo primario del gobierno (en puntos de PBI)
 Trade balance (in %);Balance commerciale (en %);Balanza comercial (en %)
 Household saving rate (in %);Taux d'épargne des ménages (en %);Tasa de ahorro de los hogares (en %)
+Gouvernment saving rate (in GDP points);Epargne du gouvernement (en points de PIB);Tasa de ahorro del gobierno (en puntos de PBI)
+Labor share into VA (in %);Part du travail dans la VA (en %);Participación del trabajo en el VA (en %)
