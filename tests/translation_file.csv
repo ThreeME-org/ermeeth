@@ -83,7 +83,7 @@ VAT reduction by 1% of ex ante GDP;Baisse de la TVA d'un point de PIB ex ante;Re
 World demand increase;Hausse permanente de la demande mondiale;Incremento permanente en la demanda mundial
 Year:;Année :;Año:
 Reference scenario;Scénario de référence;Escenario de referencia
-Value Added (commercial sector);VA du secteur marchand;
+VA (commercial sector);VA du secteur marchand;
 Employment in thousands (commercial sector);Emploi en milliers (secteur marchand);
 Model:;Modèle :;Modelo:
 Scenarios;Scénarios;Escenarios
@@ -93,3 +93,9 @@ Trade balance (in %);Balance commerciale (en %);Balanza comercial (en %)
 Household saving rate (in %);Taux d'épargne des ménages (en %);Tasa de ahorro de los hogares (en %)
 Gouvernment saving rate (in GDP points);Epargne du gouvernement (en points de PIB);Tasa de ahorro del gobierno (en puntos de PBI)
 Labor share into VA (in %);Part du travail dans la VA (en %);Participación del trabajo en el VA (en %)
+Non-qualified employment (in thousands);Emploi non qualifié (en milliers);
+Qualified employment (in thousands);Emploi qualifié (en milliers);
+Production price (commercial sector);Prix à la production (secteur marchand);
+Investment (SNF + EI);Investissement (SNF + EI);
+Cost of labor;Coût réel du travail;
+Intermediate consumption price;Prix de CI;
