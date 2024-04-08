@@ -2,7 +2,7 @@
 #'
 #' @param x a character
 #' @param lang translation destination language
-#' @param trad_data_base a R data frame
+#' @param data a R data frame
 #' @param lang_source translation source language
 #'
 #' @import tidyr
@@ -11,7 +11,7 @@
 #'
 #' @examples \dontrun{trad("Alternatives", lang = "fr")}
 
-trad <- function(x,trad_data_base = trad_language_base,
+trad <- function(x,data = trad_database,
                  lang = language, lang_source = "en"){
 
   if(exists("language") == FALSE){
@@ -20,7 +20,7 @@ trad <- function(x,trad_data_base = trad_language_base,
       message_warning()
   }
 
-  trad_data <- trad_data_base
+  trad_data <- data
 
   to_trad <- data.frame(source = x , dest=x) |>
     mutate(!! lang_source := source) |>
@@ -38,10 +38,10 @@ trad <- function(x,trad_data_base = trad_language_base,
 
 # lang = "fr"
 # lang_source = "en"
-# trad_data_base = trad_language_base
+# data = trad_database
 #
 # x = c("World demand increase","Euro permanent depreciation","World demand increase", "plop")
 #
-# trad_data <- trad_data_base
+# trad_data <- data
 
 
