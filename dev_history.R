@@ -5,6 +5,7 @@ library(tidyverse)
 
 usethis::use_build_ignore("dev_history.r")
 usethis::use_build_ignore("tests")
+usethis::use_build_ignore("documentation")
 usethis::use_vignette("Functions_presentation")
 usethis::use_gpl3_license()
 ###to build and update
@@ -25,7 +26,9 @@ usethis::use_package("colorspace")
 usethis::use_package("flextable")
 usethis::use_package("officer")
 usethis::use_package("zip")
+usethis::use_package("glue")
 usethis::use_package("readxl")
+usethis::use_package("tools")
 usethis::use_package("crayon")
 
 # devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")
