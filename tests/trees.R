@@ -80,3 +80,17 @@ combine_basic_trees <- function(subtrees= c(tree_1,tree_2,tree_3),
   return<-tree
 
 }
+
+
+## shared threeme tree
+
+sample_data <- get_file_structure()
+
+map_data <- sample_data |>
+  mutate(
+    modenode = ifelse(model.dupe,NA,model) ,
+    subtypenode = ifelse(subtype.dupe,NA,subtype),
+    objectnode = object
+  ) |>
+  group_by(model,subtype) |>
+  mutate(finaltree = cur_group_id())

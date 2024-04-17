@@ -9,7 +9,7 @@ scenarios <- threeme_standard$scenario |> unique()
 
 list_threeme <-  purrr::set_names(scenarios, scenarios) |> map(~threeme_standard |> filter(scenario==.x) )
 purrr::set_names(scenarios, scenarios) |> map(~threeme_standard |> filter(scenario==.x) |> saveRDS(str_c(.x,".rds")) )
-saveRDS(list_threeme,"tests/lists_threeme")
+# saveRDS(list_threeme,"tests/lists_threeme")
 
 
 Sys.setenv("ARROW_R_DEV"="true")

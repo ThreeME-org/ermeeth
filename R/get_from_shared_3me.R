@@ -202,6 +202,7 @@ return <- success
 #'
 get_sample_data  <- function(...){
   get_remote_file(..., destination.folder = file.path("data","output"), root = "data")
+
 }
 
 #' Pre programmed get_remote_file function for qmd templates
@@ -212,6 +213,6 @@ get_sample_data  <- function(...){
 #' @export
 #'
 get_qmd_template  <- function(...){
-  get_remote_file(..., destination.folder = file.path("results","quarto_templates"), root = "data")
+  get_remote_file(..., destination.folder = file.path("results","quarto_templates"), root = "quarto")
 }
 
