@@ -193,9 +193,9 @@ return <- success
 
 }
 
-#' Pre programmed get_remote_file function for data
+#' Pre-programmed get_remote_file function for data
 #'
-#' @param ... arguments to be passed on to get_remote_file function
+#' @param ... arguments to be passed on to `get_remote_file` function
 #'
 #' @return downloads file
 #' @export
@@ -205,7 +205,7 @@ get_sample_data  <- function(...){
 
 }
 
-#' Pre programmed get_remote_file function for qmd templates
+#' Pre-programmed get_remote_file function for qmd templates
 #'
 #' @param ... arguments to be passed on to get_remote_file function
 #'
