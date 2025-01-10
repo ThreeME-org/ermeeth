@@ -23,7 +23,7 @@ label <- function(variable_code,
     as.data.frame() |>
     dplyr::left_join(data,by=c("variable_code"="code")) |>
     dplyr::pull(label) |>
-    ermeeth::trad()
+    ermeeth::trad(lang = lang)
 
   res
 

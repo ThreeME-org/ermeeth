@@ -2,16 +2,16 @@
 % Please edit documentation in R/get_from_shared_3me.R
 \name{get_sample_data}
 \alias{get_sample_data}
-\title{Pre programmed get_remote_file function for data}
+\title{Pre-programmed get_remote_file function for data}
 \usage{
 get_sample_data(...)
 }
 \arguments{
-\item{...}{arguments to be passed on to get_remote_file function}
+\item{...}{arguments to be passed on to `get_remote_file` function}
 }
 \value{
 downloads file
 }
 \description{
-Pre programmed get_remote_file function for data
+Pre-programmed get_remote_file function for data
 }

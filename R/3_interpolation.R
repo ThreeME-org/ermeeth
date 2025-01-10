@@ -87,12 +87,16 @@ interpolation_series <- function(date_vector  = NULL,
     stop(message = "value_vector must be numeric. \n")
   }
 
-  input_array <- data.frame(date = date_vector,input_vector = value_vector) %>% dplyr::arrange(date)
-
-  index_vector <- seq(from = first.date, to = last.date, by = seq.step )
+  input_array_def  <- input_array  <- data.frame(date = date_vector,input_vector = value_vector) %>% dplyr::arrange(date)
+  index_vector_def <- index_vector <- seq(from = first.date, to = last.date, by = seq.step )
 
   if(prod(date_vector %in% index_vector) == 0){
     stop(message="Some dates from date_vector could not be found in the sequence from = first.date to = last.date by seq.step. Please check seq.step specification. \n")
+  }
+
+  if(is.Date(index_vector)){
+    input_array
+
   }
 
   res_array <- data.frame(date = index_vector,res_vector = rep(NA, length(index_vector))) %>%

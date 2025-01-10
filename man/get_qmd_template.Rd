@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_from_shared_3me.R
 \name{get_qmd_template}
 \alias{get_qmd_template}
-\title{Pre programmed get_remote_file function for qmd templates}
+\title{Pre-programmed get_remote_file function for qmd templates}
 \usage{
 get_qmd_template(...)
 }
@@ -13,5 +13,5 @@ get_qmd_template(...)
 downloads file
 }
 \description{
-Pre programmed get_remote_file function for qmd templates
+Pre-programmed get_remote_file function for qmd templates
 }
