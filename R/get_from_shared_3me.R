@@ -36,6 +36,13 @@ threeme_scenario_labels <- function(){
 #'
 get_file_structure <- function(url = "https://raw.githubusercontent.com/ThreeME-org/shared_3me_data/main/tree.txt"){
 
+  files <- NULL
+  V1 <- NULL
+  V2 <- NULL
+  V3 <- NULL
+  V4 <- NULL
+  object <- NULL
+
   tree <- data.frame(files = readLines(url) ) |>
     filter(grepl("^resources",files)) |>
     mutate(files = str_remove(files,"^resources/"))

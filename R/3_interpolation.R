@@ -45,6 +45,7 @@ linear_fill <- function(vector){
 #' @export
 #' @import ggplot2 dplyr
 #' @importFrom purrr map imap reduce set_names
+#' @importFrom lubridate is.Date
 #' @examples
 #' interpolation_series(date_vector = c(2001, 2005, 2010, 2015, 2020),
 #' value_vector = c(20,30,10,25,45), first.date = 2000, last.date = 2020, full_results = TRUE)
@@ -58,6 +59,11 @@ interpolation_series <- function(date_vector  = NULL,
                                  full_results = FALSE,
                                  debug = FALSE){
 
+  test.r <- NULL
+  test.t <- NULL
+  x <- NULL
+  y <- NULL
+  dupes <- NULL
 
   if(debug){browser()}
 
@@ -94,7 +100,7 @@ interpolation_series <- function(date_vector  = NULL,
     stop(message="Some dates from date_vector could not be found in the sequence from = first.date to = last.date by seq.step. Please check seq.step specification. \n")
   }
 
-  if(is.Date(index_vector)){
+  if(lubridate::is.Date(index_vector)){
     input_array
 
   }

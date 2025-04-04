@@ -57,6 +57,25 @@ loadResults <- function(scenarios,
                         names_c = NULL,
                         csv_folder = "csv",
                         aggregation_rules_path = file.path("bridges","aggregation_rules.xlsx")) {
+
+  variable <- NULL
+  subcommodity <- NULL
+  subsector <- NULL
+  subcommodity2 <- NULL
+  subcommodity3 <- NULL
+  variable_root <- NULL
+  code <- NULL
+  name <- NULL
+  sector <- NULL
+  sector_id <- NULL
+  weighted_mean <- NULL
+  var_root <- NULL
+  weight_var <- NULL
+  commodity <- NULL
+  commodity2 <- NULL
+  commodity3 <- NULL
+  . <- NULL
+
   # To debug the function step by step, activate line below
 
   # browser()

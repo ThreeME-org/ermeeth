@@ -14,6 +14,10 @@
 trad <- function(x,data = trad_database,
                  lang = language, lang_source = "en"){
 
+  # trad_database <- NULL
+  # language <- NULL
+  dest <- NULL
+
   if(exists("language") == FALSE){
 
     paste0("Please set translation destination language.") %>%

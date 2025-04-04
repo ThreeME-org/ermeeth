@@ -28,7 +28,12 @@ Imports:
     methods,
     readxl,
     crayon,
-    glue
+    glue,
+    readr,
+    lubridate,
+    openxlsx,
+    gt,
+    dtplyr
 RoxygenNote: 7.3.2
 Suggests: 
     knitr,

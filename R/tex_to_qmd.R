@@ -10,6 +10,11 @@
 decompose_tex <-function(preface_file = "03.1-eq_preface.tex",
                          maintex_file = "03.1-eq.tex"){
 
+  rawline <- NULL
+  label_tex <- NULL
+  section <- NULL
+
+
   eq_table <- data.frame(rawline = read_lines(preface_file)  ) |> filter(grepl("repeatablebody",rawline)) |>
     mutate(
       label_tex = stringr::str_replace(rawline, "\\\\repeatablebody\\{([A-Za-z_0-9\\-\\.]+)\\}.+$","\\1"),
@@ -46,6 +51,23 @@ make_eq_qmd <-function(preface = "03.1-eq_preface.tex",
                        maintex = "03.1-eq.tex",
                        path = file.path("results","quarto_templates","results_side_files"),
                        out.dir =  file.path("results","quarto_templates","results_side_files") ){
+
+  sumsection <- NULL
+  rawline <- NULL
+  newline <- NULL
+  label_quarto <- NULL
+  equation <- NULL
+  label_tex <- NULL
+  labelline <- NULL
+  varline <- NULL
+  counter_l <- NULL
+  counter_v <- NULL
+  counter <- NULL
+  rawline2 <- NULL
+  name <- NULL
+  formula <- NULL
+  variable <- NULL
+  variable_def <- NULL
 
   ### File read
 

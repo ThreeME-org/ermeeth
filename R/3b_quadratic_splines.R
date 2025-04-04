@@ -30,9 +30,17 @@
 #'  xlab("X")+
 #'  ylab("Y")
 #'  }
-quadratric_splines <- function(x_vector, y_vector,
+quadratric_splines <- function(x_vector,
+                               y_vector,
                                side = "left",
                                steps = 1){
+
+  xa <- NULL
+  xb <- NULL
+  ya <- NULL
+  yb <- NULL
+  yc <- NULL
+  xc <- NULL
 
   # cat("\n quadra \n")
   # cat(paste(x_vector))

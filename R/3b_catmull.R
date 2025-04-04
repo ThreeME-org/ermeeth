@@ -30,6 +30,16 @@
 
 catmullrom_splines<- function(x_vector, y_vector, steps=1){
 
+  xb <- NULL
+  xc <- NULL
+  yb <- NULL
+  yc <- NULL
+  ya <- NULL
+  xa <- NULL
+  yd <- NULL
+  xd <- NULL
+  # . <- NULL
+
   # cat("\n cubic\n")
   # cat(paste(x_vector))
 

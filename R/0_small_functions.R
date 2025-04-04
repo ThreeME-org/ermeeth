@@ -11,6 +11,11 @@
 #' @export
 #'
 variables_like <- function(data,test,view = TRUE){
+
+  variable <- NULL
+  sector <- NULL
+  commodity <- NULL
+
   VariableShow <- data %>% dplyr::filter(grepl(test, variable)) %>% select(variable,sector,commodity) %>% unique()
   if(view == TRUE)
     {
@@ -63,7 +68,9 @@ if(fr_format == TRUE){c %>% as.character() %>% stringr::str_replace("\\.",",")}e
 #' @return character string with the path changed
 #' @export
 #'
-redirect <- function(normal_path, redirect = path_main){
+redirect <- function(normal_path, redirect = NULL){
+
+
   if(is.null(redirect)){
     res <- file.path(normal_path)
   }else{

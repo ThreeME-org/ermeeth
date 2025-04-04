@@ -46,7 +46,12 @@
 long_data <- function(data,
                       sector_names_table = names_sectors,
                       commodity_names_table = names_commodities){
-
+#
+#   names_sectors <- NULL
+#   names_commodities <- NULL
+  variable <- NULL
+  sector <- NULL
+  commodity <- NULL
 
   ## Checking data class and scenarios
 

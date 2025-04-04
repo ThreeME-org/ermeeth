@@ -30,6 +30,6 @@ character vector compiled
 get all elements from a vector with multiple regexes
 }
 \examples{
-get_regex(regex_list = c("y$"), vector = months)
+get_regex(regex_list = c("y$"), vector = month.name)
 
 }

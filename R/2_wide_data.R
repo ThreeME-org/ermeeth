@@ -48,6 +48,9 @@ wide_data <- function(data ,
                       ){
 
 
+  variable <- NULL
+
+
   ## scenario argument check
   if(is.null(scenarios)){
     scenarios <- "baseline"

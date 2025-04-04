@@ -27,6 +27,13 @@ contrib <- function(data,
                     neg.value = NULL )
 {
 
+  # scenarios <- NULL
+  variable <- NULL
+  baseline <- NULL
+  . <- NULL
+  scenario <- NULL
+  lag.value <- NULL
+
   if (is.null(scenar)){
     scenar = "baseline"
   }

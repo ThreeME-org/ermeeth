@@ -40,6 +40,15 @@ curve_sc_plot <- function(data , variable, group_type = "sector",
                           scenario.diff.ref = "baseline", growth.rate = FALSE, abs.diff = FALSE,
                           custom_x_breaks = NULL){
 
+  # scenario_to_analyse <- NULL
+  template_default <- NULL
+  name <- NULL
+  . <- NULL
+  sector <- NULL
+  commodity <- NULL
+  CAT <- NULL
+
+
   #########################
   ### 0. Running Checks ###
   #########################
@@ -356,6 +365,15 @@ stacked_sc_plot <- function(data , variable, group_type = "sector",
                             names4palette_sectors = names_sectors,
                             bridge4palette_commodity = bridge_commodities,
                             names4palette_commodity = names_commodities ){
+
+  # names_sectors <- NULL
+  scen.diff <- NULL
+  sector <- NULL
+  # . <- NULL
+  commodity <- NULL
+  name <- NULL
+  scen.type <- NULL
+  CAT <- NULL
 
   #########################
   ### 0. Running Checks ###

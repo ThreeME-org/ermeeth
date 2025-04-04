@@ -27,6 +27,9 @@ load_excel_calibration<- function(excel_sheet = "configuration/scenarii_calib/sc
                                   keep_baseyear_calib_data = TRUE
 ){
 
+  # config <- NULL
+  # . <- NULL
+
   wyellow <- function(text){crayon::yellow(crayon::bgBlack(text) )}
 
 

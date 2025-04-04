@@ -11,7 +11,7 @@
 #'
 #' @export
 #'
-#' @examples get_regex(regex_list = c("y$"), vector = months)
+#' @examples get_regex(regex_list = c("y$"), vector = month.name)
 #'
 get_regex <- function(regex_list = c("*"),vector=c(""), negate = FALSE,case_sensitive = FALSE , results_as_list = FALSE){
   # regex_list = c("gdp","Y.*")

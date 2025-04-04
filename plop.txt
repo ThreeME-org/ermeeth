@@ -1,0 +1,718 @@
+
+
+R_model_solver
+
+ configuration <- NULL
+ recompile_model <- NULL
+ baseyear <- NULL
+ lastyear <- NULL
+ themodel <- NULL
+ firstyear <- NULL
+ calib_test <- NULL
+ tolerance_calib_check <- NULL
+
+
+add_com_sec_names
+
+ names_commodities <- NULL
+ names_sectors <- NULL
+ variable <- NULL
+ s_code <- NULL
+ c_code <- NULL
+ c_id <- NULL
+ s_id <- NULL
+ unidentified_s <- NULL
+ unidentified_c <- NULL
+ s_name <- NULL
+ c_name <- NULL
+
+
+aggregate_com_sec
+
+ data_full <- NULL
+ scenario <- NULL
+ bridge_commodities <- NULL
+ bridge_sectors <- NULL
+ variable <- NULL
+ sec_com <- NULL
+ s_code <- NULL
+ c_code <- NULL
+ code <- NULL
+ super_code <- NULL
+ s_check <- NULL
+ root <- NULL
+ super_c <- NULL
+ c_check <- NULL
+ super_s <- NULL
+ weight_var <- NULL
+ weighted_mean <- NULL
+ var_root <- NULL
+ weight_com <- NULL
+ weight_sec <- NULL
+ root_com <- NULL
+ tot <- NULL
+ og_value <- NULL
+ weight <- NULL
+ test1 <- NULL
+ weightedmean <- NULL
+ root_sec <- NULL
+ root_com_sec <- NULL
+ weight_com_sec <- NULL
+
+
+calibration_environment
+
+ config <- NULL
+ input <- NULL
+ baseyear <- NULL
+ lastyear <- NULL
+ shockyear <- NULL
+ max_lags <- NULL
+ firstyear <- NULL
+ classification <- NULL
+ calib_baseline <- NULL
+ baseline_ch <- NULL
+
+
+catmullrom_splines
+
+ xb <- NULL
+ xc <- NULL
+ yb <- NULL
+ yc <- NULL
+ ya <- NULL
+ xa <- NULL
+ yd <- NULL
+ xd <- NULL
+ . <- NULL
+
+
+contrib
+
+ scenarios <- NULL
+ variable <- NULL
+ baseline <- NULL
+ . <- NULL
+ scenario <- NULL
+ lag.value <- NULL
+NA
+
+
+curve_sc_plot
+
+ scenario_to_analyse <- NULL
+ template_default <- NULL
+ name <- NULL
+ . <- NULL
+ sector <- NULL
+ commodity <- NULL
+ CAT <- NULL
+
+
+eviews_checks
+
+ configuration <- NULL
+ input <- NULL
+ advanced_config <- NULL
+ max_tresthor_capability <- NULL
+
+
+eviews_model_solver
+
+ configuration <- NULL
+ iso3 <- NULL
+ firstyear <- NULL
+ baseyear <- NULL
+ tolerance_calib_check <- NULL
+ lastyear <- NULL
+ recompile_model <- NULL
+ save_files_res <- NULL
+ . <- NULL
+ scenario <- NULL
+ eviews_timeout <- NULL
+
+
+flextable_theme
+
+ col_numb <- NULL
+ table_striped <- NULL
+
+
+get_sec_com
+
+ config <- NULL
+
+
+interpolation_series
+
+ test.r <- NULL
+ test.t <- NULL
+ x <- NULL
+ y <- NULL
+ dupes <- NULL
+
+
+label
+
+ language <- NULL
+
+
+loadResults
+
+ variable <- NULL
+ subcommodity <- NULL
+ subsector <- NULL
+ subcommodity2 <- NULL
+ subcommodity3 <- NULL
+ variable_root <- NULL
+ code <- NULL
+ name <- NULL
+ sector <- NULL
+ sector_id <- NULL
+ weighted_mean <- NULL
+ var_root <- NULL
+ weight_var <- NULL
+ commodity <- NULL
+ commodity2 <- NULL
+ commodity3 <- NULL
+ . <- NULL
+
+
+load_excel_calibration
+
+ config <- NULL
+ . <- NULL
+
+
+long_data
+
+ names_sectors <- NULL
+ names_commodities <- NULL
+ variable <- NULL
+ sector <- NULL
+ commodity <- NULL
+
+
+long_data_2
+
+ names_sectors <- NULL
+ names_commodities <- NULL
+ variable <- NULL
+ sector <- NULL
+ commodity <- NULL
+
+
+longer_data
+
+ variable <- NULL
+ sector <- NULL
+ commodity <- NULL
+ values_ref <- NULL
+
+
+make_eq_qmd
+
+ sumsection <- NULL
+ rawline <- NULL
+ newline <- NULL
+ label_quarto <- NULL
+ equation <- NULL
+ label_tex <- NULL
+ labelline <- NULL
+ varline <- NULL
+ counter_l <- NULL
+ counter_v <- NULL
+ counter <- NULL
+ rawline2 <- NULL
+ name <- NULL
+ formula <- NULL
+ variable <- NULL
+ variable_def <- NULL
+
+
+produce_quartos
+
+ config <- NULL
+
+
+quadratric_splines
+
+ xa <- NULL
+ xb <- NULL
+ ya <- NULL
+ yb <- NULL
+ yc <- NULL
+ xc <- NULL
+ . <- NULL
+
+
+read_3me_eviews_csv
+
+ V1 <- NULL
+ variable <- NULL
+
+
+readconfig
+
+ parameters_range <- NULL
+
+
+redirect
+
+ path_main <- NULL
+
+
+run_dynamo
+
+ configuration <- NULL
+ input <- NULL
+ model_folder <- NULL
+ baseyear <- NULL
+ advanced_config <- NULL
+ iso3 <- NULL
+ lastyear <- NULL
+ max_lags <- NULL
+
+
+run_simulations
+
+ config <- NULL
+ input <- NULL
+ baseyear <- NULL
+ baseline_ch <- NULL
+ firstyear <- NULL
+ lastyear <- NULL
+ Rsolver <- NULL
+ output_saved <- NULL
+ V1 <- NULL
+ V2 <- NULL
+ project_name <- NULL
+
+
+selectseries
+
+ variable <- NULL
+ baseline <- NULL
+ lag_baseline <- NULL
+ lag_scenario <- NULL
+
+
+simpleplot
+
+ template_default <- NULL
+ . <- NULL
+ variable <- NULL
+ gr_base <- NULL
+ gr_scen <- NULL
+ base <- NULL
+ scen <- NULL
+ transfo <- NULL
+
+
+stacked_sc_plot
+
+ names_sectors <- NULL
+ scen.diff <- NULL
+ sector <- NULL
+ . <- NULL
+ commodity <- NULL
+ name <- NULL
+ scen.type <- NULL
+ CAT <- NULL
+
+
+trad
+
+ trad_database <- NULL
+ language <- NULL
+ dest <- NULL
+
+
+translate_modelprg
+
+ baseyear <- NULL
+ lastyear <- NULL
+ original <- NULL
+ var_A <- NULL
+ V1 <- NULL
+ V2 <- NULL
+ var_B <- NULL
+
+
+variables_like
+
+ variable <- NULL
+ sector <- NULL
+ commodity <- NULL
+
+
+wide_data
+
+ scenario_to_analyse <- NULL
+ variable <- NULL
+
+
+wide_data_2
+
+ variable <- NULL
+ scenario <- NULL
+ values <- NULL
+
+
+R_model_solver
+
+ configuration <- NULL
+ recompile_model <- NULL
+ baseyear <- NULL
+ lastyear <- NULL
+ themodel <- NULL
+ firstyear <- NULL
+ calib_test <- NULL
+ tolerance_calib_check <- NULL
+
+
+add_com_sec_names
+
+ names_commodities <- NULL
+ names_sectors <- NULL
+ variable <- NULL
+ s_code <- NULL
+ c_code <- NULL
+ c_id <- NULL
+ s_id <- NULL
+ unidentified_s <- NULL
+ unidentified_c <- NULL
+ s_name <- NULL
+ c_name <- NULL
+
+
+aggregate_com_sec
+
+ data_full <- NULL
+ scenario <- NULL
+ bridge_commodities <- NULL
+ bridge_sectors <- NULL
+ variable <- NULL
+ sec_com <- NULL
+ s_code <- NULL
+ c_code <- NULL
+ code <- NULL
+ super_code <- NULL
+ s_check <- NULL
+ root <- NULL
+ super_c <- NULL
+ c_check <- NULL
+ super_s <- NULL
+ weight_var <- NULL
+ weighted_mean <- NULL
+ var_root <- NULL
+ weight_com <- NULL
+ weight_sec <- NULL
+ root_com <- NULL
+ tot <- NULL
+ og_value <- NULL
+ weight <- NULL
+ test1 <- NULL
+ weightedmean <- NULL
+ root_sec <- NULL
+ root_com_sec <- NULL
+ weight_com_sec <- NULL
+
+
+calibration_environment
+
+ config <- NULL
+ input <- NULL
+ baseyear <- NULL
+ lastyear <- NULL
+ shockyear <- NULL
+ max_lags <- NULL
+ firstyear <- NULL
+ classification <- NULL
+ calib_baseline <- NULL
+ baseline_ch <- NULL
+
+
+catmullrom_splines
+
+ xb <- NULL
+ xc <- NULL
+ yb <- NULL
+ yc <- NULL
+ ya <- NULL
+ xa <- NULL
+ yd <- NULL
+ xd <- NULL
+ . <- NULL
+
+
+contrib
+
+ scenarios <- NULL
+ variable <- NULL
+ baseline <- NULL
+ . <- NULL
+ scenario <- NULL
+ lag.value <- NULL
+NA
+
+
+curve_sc_plot
+
+ scenario_to_analyse <- NULL
+ template_default <- NULL
+ name <- NULL
+ . <- NULL
+ sector <- NULL
+ commodity <- NULL
+ CAT <- NULL
+
+
+eviews_checks
+
+ configuration <- NULL
+ input <- NULL
+ advanced_config <- NULL
+ max_tresthor_capability <- NULL
+
+
+eviews_model_solver
+
+ configuration <- NULL
+ iso3 <- NULL
+ firstyear <- NULL
+ baseyear <- NULL
+ tolerance_calib_check <- NULL
+ lastyear <- NULL
+ recompile_model <- NULL
+ save_files_res <- NULL
+ . <- NULL
+ scenario <- NULL
+ eviews_timeout <- NULL
+
+
+flextable_theme
+
+ col_numb <- NULL
+ table_striped <- NULL
+
+
+get_sec_com
+
+ config <- NULL
+
+
+interpolation_series
+
+ test.r <- NULL
+ test.t <- NULL
+ x <- NULL
+ y <- NULL
+ dupes <- NULL
+
+
+label
+
+ language <- NULL
+
+
+loadResults
+
+ variable <- NULL
+ subcommodity <- NULL
+ subsector <- NULL
+ subcommodity2 <- NULL
+ subcommodity3 <- NULL
+ variable_root <- NULL
+ code <- NULL
+ name <- NULL
+ sector <- NULL
+ sector_id <- NULL
+ weighted_mean <- NULL
+ var_root <- NULL
+ weight_var <- NULL
+ commodity <- NULL
+ commodity2 <- NULL
+ commodity3 <- NULL
+ . <- NULL
+
+
+load_excel_calibration
+
+ config <- NULL
+ . <- NULL
+
+
+long_data
+
+ names_sectors <- NULL
+ names_commodities <- NULL
+ variable <- NULL
+ sector <- NULL
+ commodity <- NULL
+
+
+long_data_2
+
+ names_sectors <- NULL
+ names_commodities <- NULL
+ variable <- NULL
+ sector <- NULL
+ commodity <- NULL
+
+
+longer_data
+
+ variable <- NULL
+ sector <- NULL
+ commodity <- NULL
+ values_ref <- NULL
+
+
+make_eq_qmd
+
+ sumsection <- NULL
+ rawline <- NULL
+ newline <- NULL
+ label_quarto <- NULL
+ equation <- NULL
+ label_tex <- NULL
+ labelline <- NULL
+ varline <- NULL
+ counter_l <- NULL
+ counter_v <- NULL
+ counter <- NULL
+ rawline2 <- NULL
+ name <- NULL
+ formula <- NULL
+ variable <- NULL
+ variable_def <- NULL
+
+
+produce_quartos
+
+ config <- NULL
+
+
+quadratric_splines
+
+ xa <- NULL
+ xb <- NULL
+ ya <- NULL
+ yb <- NULL
+ yc <- NULL
+ xc <- NULL
+ . <- NULL
+
+
+read_3me_eviews_csv
+
+ V1 <- NULL
+ variable <- NULL
+
+
+readconfig
+
+ parameters_range <- NULL
+
+
+redirect
+
+ path_main <- NULL
+
+
+run_dynamo
+
+ configuration <- NULL
+ input <- NULL
+ model_folder <- NULL
+ baseyear <- NULL
+ advanced_config <- NULL
+ iso3 <- NULL
+ lastyear <- NULL
+ max_lags <- NULL
+
+
+run_simulations
+
+ config <- NULL
+ input <- NULL
+ baseyear <- NULL
+ baseline_ch <- NULL
+ firstyear <- NULL
+ lastyear <- NULL
+ Rsolver <- NULL
+ output_saved <- NULL
+ V1 <- NULL
+ V2 <- NULL
+ project_name <- NULL
+
+
+selectseries
+
+ variable <- NULL
+ baseline <- NULL
+ lag_baseline <- NULL
+ lag_scenario <- NULL
+
+
+simpleplot
+
+ template_default <- NULL
+ . <- NULL
+ variable <- NULL
+ gr_base <- NULL
+ gr_scen <- NULL
+ base <- NULL
+ scen <- NULL
+ transfo <- NULL
+
+
+stacked_sc_plot
+
+ names_sectors <- NULL
+ scen.diff <- NULL
+ sector <- NULL
+ . <- NULL
+ commodity <- NULL
+ name <- NULL
+ scen.type <- NULL
+ CAT <- NULL
+
+
+trad
+
+ trad_database <- NULL
+ language <- NULL
+ dest <- NULL
+
+
+translate_modelprg
+
+ baseyear <- NULL
+ lastyear <- NULL
+ original <- NULL
+ var_A <- NULL
+ V1 <- NULL
+ V2 <- NULL
+ var_B <- NULL
+
+
+variables_like
+
+ variable <- NULL
+ sector <- NULL
+ commodity <- NULL
+
+
+wide_data
+
+ scenario_to_analyse <- NULL
+ variable <- NULL
+
+
+wide_data_2
+
+ variable <- NULL
+ scenario <- NULL
+ values <- NULL

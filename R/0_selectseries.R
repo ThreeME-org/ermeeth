@@ -21,6 +21,11 @@ selectseries <- function(data,
                          transformation="reldiff",
                          baseline_name = "baseline") {
 
+  variable <- NULL
+  baseline <- NULL
+  lag_baseline <- NULL
+  lag_scenario <- NULL
+
   # To debug the function step by step, activate line below
   #browser()
 

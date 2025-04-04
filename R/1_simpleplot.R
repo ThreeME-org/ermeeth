@@ -41,6 +41,15 @@ simpleplot <- function(data,
                        name_baseline = "baseline"
                        ) {
 
+  # template_default <- NULL
+  . <- NULL
+  variable <- NULL
+  gr_base <- NULL
+  gr_scen <- NULL
+  base <- NULL
+  scen <- NULL
+  transfo <- NULL
+
   # To debug the function step by step, activate line below
   # browser()
 
