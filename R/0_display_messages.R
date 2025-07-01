@@ -8,7 +8,7 @@
 #' @return cat message with formatting
 #' @export
 #'
-#' @importFrom crayon make_style bold
+#' @importFrom crayon make_style
 #' @importFrom stringr str_c
 #'
 message_3me <-   function(text_message, colour_bg =  "seagreen2" , text_black = TRUE , symbol_u = "\U2705"){
@@ -16,7 +16,7 @@ message_3me <-   function(text_message, colour_bg =  "seagreen2" , text_black = 
   bg_fn <- crayon::make_style(colour_bg, bg= TRUE)
   ct_fn <- crayon::make_style(ifelse(text_black,"black","white"), bg= FALSE)
 
-  new_message<- stringr::str_c(text_message, "\n") %>% ct_fn %>% bg_fn %>% crayon::bold()
+  new_message<- stringr::str_c(text_message, "\n") %>% ct_fn %>% bg_fn
   cat(stringr::str_c("\n ",symbol_u, " " ,new_message)
 
   )

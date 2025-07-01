@@ -4,7 +4,7 @@
 \alias{label}
 \title{Title}
 \usage{
-label(variable_code, data = ermeeth::label_database, lang = language)
+label(variable_code, data = label_database, lang = language)
 }
 \arguments{
 \item{variable_code}{a character or a character vector}

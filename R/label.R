@@ -11,7 +11,7 @@
 #' @examples \dontrun{label("GDP")}
 
 label <- function(variable_code,
-                  data = ermeeth::label_database,
+                  data = label_database,
                   lang = language){
 
   # language <- NULL ## This needs work

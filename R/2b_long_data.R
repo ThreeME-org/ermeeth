@@ -19,7 +19,7 @@
 # scenarios = c("baseline","oilprice_fra")
 #
 #
-# plop <- ermeeth::wide_data(data = data,
+# plop <- wide_data(data = data,
 #                   scenarios = scenarios,
 #                   variables = variables,
 #                   out_format = "list")

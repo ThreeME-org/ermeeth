@@ -17,9 +17,11 @@
 #'
 #' @returns a data.frame containing the series from the excel sheet, without missing observation
 #' @export
-#' @import crayon stringr dplyr
+#' @import  stringr dplyr
 #' @importFrom readxl read_excel
+#' @importFrom data.table fread
 #' @importFrom purrr map set_names reduce
+#' @importFrom crayon yellow bgBlack
 #'
 #' @examples
 #' \dontrun{

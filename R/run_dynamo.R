@@ -59,7 +59,7 @@ run_dynamo <- function(config_list = configuration){
 
     ### B2. Run the DynaMo compiler
 
-    ermeeth::runDynaMo(iso3, baseyear, lastyear, calib_files, model_files, max_lags)
+    runDynaMo(iso3, baseyear, lastyear, calib_files, model_files, max_lags)
   }
 
   ### B3. Bug correction if dynamo doesn't put the files in the right place

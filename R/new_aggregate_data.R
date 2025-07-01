@@ -19,7 +19,8 @@
 #' @importFrom readr read_csv2
 #' @importFrom purrr safely imap reduce
 #' @importFrom dtplyr lazy_dt
-#' @import data.table dplyr stringr
+#' @importFrom data.table as.data.table melt dcast
+#' @import dplyr stringr
 #'
 #' @export
 #'
@@ -385,7 +386,7 @@ aggregate_com_sec <- function(data=data_full,
 
     compute_sec_res_wmean <- data.table::merge.data.table(value_sec,weights_sec,by= c("scenario","year","weight_sec")) |>
       dtplyr::lazy_dt() |>
-      dtplyr::mutate(weightedmean = ifelse(is.nan(test1) == 0,
+      dplyr::mutate(weightedmean = ifelse(is.nan(test1) == 0,
                                    og_value*weight,
                                    og_value) ) |>
       data.table::as.data.table()
@@ -465,7 +466,7 @@ aggregate_com_sec <- function(data=data_full,
            value.name = "og_value")
 
     compute_com_sec_res_wmean <- data.table::merge.data.table(value_com_sec,weights_com_sec,by= c("scenario","year","weight_com_sec")) |>
-      data.table::lazy_dt() |>
+      # dtplyr::lazy_dt() |>
       dplyr::mutate(weightedmean = ifelse(is.nan(test1) == 0,
                                    og_value*weight,
                                    og_value) ) |>

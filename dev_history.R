@@ -35,6 +35,8 @@ usethis::use_package("readxl")
 usethis::use_package("readr")
 usethis::use_package("tools")
 usethis::use_package("crayon")
+usethis::use_package("tresthor")
+usethis::use_package("quarto")
 
 # devtools::build(path = "../ThreeMe/ThreeME_V3/R_ThreeME/src/")
 devtools::build(path = "../ThreeME_V3/R_ThreeME/src/")

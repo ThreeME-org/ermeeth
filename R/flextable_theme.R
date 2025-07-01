@@ -10,7 +10,7 @@
 #' @param fontsize size of font in the table. Default: 12
 #' @param palette_confetti Palette to use, made by the confetti function
 #'
-#' @import flextable
+#' @importFrom flextable fp_border_default fontsize font theme_zebra align valign bg color border_remove border_inner border_outer vline fix_border_issues line_spacing set_table_properties colformat_num italic padding
 #' @importFrom scales col_numeric
 #'
 #' @returns a flextable with the format

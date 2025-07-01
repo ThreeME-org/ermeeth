@@ -28,11 +28,11 @@ contrib <- function(data,
 {
 
   # scenarios <- NULL
-  variable <- NULL
-  baseline <- NULL
-  . <- NULL
-  scenario <- NULL
-  lag.value <- NULL
+  # variable <- NULL
+  # baseline <- NULL
+  # . <- NULL
+  # scenario <- NULL
+  # lag.value <- NULL
 
   if (is.null(scenar)){
     scenar = "baseline"
@@ -47,10 +47,10 @@ contrib <- function(data,
     stop(message = "If two scenarios are given, one must be the ' 'baseline' scenario.\n")
   }
 
-  if (prod(scenar %in% names(data)) == 0 ) {
-    not_found <- setdiff(scenar, names(data))
-    stop(message = paste0("The '",not_found,"' scenario was not found in the database.\n"))
-  }
+  # if (prod(scenar %in% names(data)) == 0 ) {
+  #   not_found <- setdiff(scenar, names(data))
+  #   stop(message = paste0("The '",not_found,"' scenario was not found in the database.\n"))
+  # }
   ####
 
   filtered.var <- c(var1,var2)

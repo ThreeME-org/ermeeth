@@ -30,3 +30,27 @@
 #' #' ##Dataexport
 #' "oilprice_fra_agg"
 #'
+
+#' Translation database for commonly found labels
+#'
+#' @name trad_database
+#' @docType data
+#' @author ThreeMe team
+#' @source Translation excel sheet
+#' @format data.frame
+#' @keywords data
+#' @usage data(trad_database)
+##Dataexport
+"trad_database"
+
+#' Variables label database
+#'
+#' @name label_database
+#' @docType data
+#' @author ThreeMe team
+#' @source Labels and variables excel sheet
+#' @format data.frame
+#' @keywords data
+#' @usage data(label_database)
+##Dataexport
+"label_database"
