@@ -25,7 +25,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' shock_ch <- load_excel_calibration(excel_sheet = "data/input/Luxembourg/scenarii_inputs_statec.xlsx",
+#' shock_ch <- load_excel_calibration(excel_sheet = "data/scenarii_inputs.xlsx",
 #' sheet_to_load = "shock_NEAM",
 #' stop_if_calib_fail = FALSE,
 #' check_tol = 10e-8,

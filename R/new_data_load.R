@@ -3,7 +3,7 @@
 #'
 #' @param csv.file.path file path to the EViews simulation csv output
 #' @param variables_selection vector of variables
-#' @param scenario_label
+#' @param scenario_label name to give to the scenario, if different from the basename of the csv file. Default is NULL and uses the basename of the csv.file
 #'
 #' @importFrom data.table fread
 #' @importFrom stats na.omit

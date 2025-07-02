@@ -11,3 +11,5 @@
 ^.*\.pdf$
 ^doc$
 ^Meta$
+^documentation\.*
+^plop.

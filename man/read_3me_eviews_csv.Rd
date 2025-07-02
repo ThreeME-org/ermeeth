@@ -15,7 +15,7 @@ read_3me_eviews_csv(
 
 \item{variables_selection}{vector of variables}
 
-\item{scenario_label}{}
+\item{scenario_label}{name to give to the scenario, if different from the basename of the csv file. Default is NULL and uses the basename of the csv.file}
 }
 \value{
 a data.frame containing the simulation output
